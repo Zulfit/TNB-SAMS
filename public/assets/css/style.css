@@ -220,7 +220,7 @@ h6 {
 .card {
   margin-bottom: 30px;
   border: none;
-  border-radius: 5px;
+  border-radius: 15px;
   box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
 }
 
@@ -233,7 +233,7 @@ h6 {
 }
 
 .card-title {
-  padding: 20px 0 15px 0;
+  padding: 20px 0 0px 0;
   font-size: 18px;
   font-weight: 500;
   color: #012970;
@@ -247,7 +247,7 @@ h6 {
 }
 
 .card-body {
-  padding: 0 20px 20px 20px;
+  padding: 0 20px 0px 20px;
 }
 
 .card-img-overlay {
@@ -601,8 +601,8 @@ h6 {
   position: fixed;
   top: 60px;
   left: 0;
-  bottom: 0;
-  width: 300px;
+  bottom: 120px;
+  width: 230px;
   z-index: 996;
   transition: all 0.3s;
   padding: 20px;
@@ -611,6 +611,7 @@ h6 {
   scrollbar-color: #aab7cf transparent;
   box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
   background-color: #fff;
+  border-radius: 25px;
 }
 
 @media (max-width: 1199px) {
@@ -633,7 +634,8 @@ h6 {
 
   #main,
   #footer {
-    margin-left: 300px;
+    margin-left: 190px;
+    margin-right: -10px;
   }
 }
 

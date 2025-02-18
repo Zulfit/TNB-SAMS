@@ -12,7 +12,7 @@
                 <!-- Upload Dataset Card -->
                 <div class="card shadow-lg border-0 rounded-4 p-4">
                     <div class="card-body">
-                        <h4 class="card-title fw-bold">User Access Control</h4>
+                        <h5 class="card-title">User Access Control</h5>
                 
                         <!-- User Form -->
                         <form>
@@ -119,7 +119,7 @@
                 <!-- Dataset Table -->
                 <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
                     <div class="card-body">
-                        <table class="table table-bordered align-middle">
+                        <table class="table table-bordered align-middle text-center">
                             <thead class="table-light">
                                 <tr>
                                     <th>#</th>
@@ -136,7 +136,7 @@
                                     <td>Staff Maintenance</td>
                                     <td><span class="badge bg-success">Success</span></td>
                                     <td>
-                                        <button class="btn btn-warning bi bi-pencil-square"></button>
+                                        <a href="#" class="bi bi-pencil-square text-primary"></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -145,7 +145,7 @@
                                     <td>Staff Maintenance</td>
                                     <td><span class="badge bg-success">Success</span></td>
                                     <td>
-                                        <button class="btn btn-warning bi bi-pencil-square"></button>
+                                        <a href="#" class="bi bi-pencil-square text-primary"></a>
                                     </td>
                                 </tr>
                             </tbody>

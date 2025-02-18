@@ -12,7 +12,7 @@
                 <!-- Upload Dataset Card -->
                 <div class="card shadow-lg border-0 rounded-4 p-3">
                     <div class="card-body">
-                        <h4 class="card-title fw-bold">Generate New Report</h4>
+                        <h5 class="card-title">Generate New Report</h5>
 
                         <!-- Upload Form -->
                         <form>
@@ -40,7 +40,7 @@
                 <!-- Dataset Table -->
                 <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
                     <div class="card-body">
-                        <table class="table table-bordered align-middle">
+                        <table class="table table-bordered align-middle text-center">
                             <thead class="table-light">
                                 <tr>
                                     <th>#</th>
@@ -57,7 +57,7 @@
                                     <td>24/12/2024</td>
                                     <td>14/1/2025</td>
                                     <td>
-                                        <button class="btn btn-success bi bi-download"></button>
+                                        <a href="#" class="text-success bi bi-download"></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -66,7 +66,7 @@
                                     <td>24/12/2024</td>
                                     <td>14/1/2025</td>
                                     <td>
-                                        <button class="btn btn-success bi bi-download"></button>
+                                        <a href="#" class="text-success bi bi-download"></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -75,7 +75,7 @@
                                     <td>24/12/2024</td>
                                     <td>14/1/2025</td>
                                     <td>
-                                        <button class="btn btn-success bi bi-download"></button>
+                                        <a href="#" class="text-success bi bi-download"></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -84,7 +84,7 @@
                                     <td>24/12/2024</td>
                                     <td>14/1/2025</td>
                                     <td>
-                                        <button class="btn btn-success bi bi-download"></button>
+                                        <a href="#" class="text-success bi bi-download"></a>
                                     </td>
                                 </tr>
                             </tbody>

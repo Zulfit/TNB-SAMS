@@ -63,7 +63,7 @@
                             </div>
 
                             <!-- Sensor Table -->
-                            <table class="table table-striped">
+                            <table class="table table-striped text-center">
                                 <thead>
                                     <tr>
                                         <th>ID</th>

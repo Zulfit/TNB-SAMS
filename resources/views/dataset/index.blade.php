@@ -12,7 +12,7 @@
                 <!-- Upload Dataset Card -->
                 <div class="card shadow-lg border-0 rounded-4 p-3">
                     <div class="card-body">
-                        <h4 class="card-title fw-bold">Upload Dataset</h4>
+                        <h5 class="card-title">Upload Dataset</h5>
 
                         <!-- Upload Form -->
                         <form>
@@ -50,7 +50,7 @@
                 <!-- Dataset Table -->
                 <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
                     <div class="card-body">
-                        <table class="table table-bordered align-middle">
+                        <table class="table table-bordered align-middle text-center">
                             <thead class="table-light">
                                 <tr>
                                     <th>#</th>
@@ -70,7 +70,7 @@
                                     <td>Substation Ampang</td>
                                     <td>24/12/2024</td>
                                     <td><span class="badge bg-warning text-dark">Loading</span></td>
-                                    <td><button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button></td>
+                                    <td><a href="#" class="bi bi-trash text-danger"></a></td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
@@ -79,7 +79,7 @@
                                     <td>Substation Cheras</td>
                                     <td>20/11/2024</td>
                                     <td><span class="badge bg-success">Success</span></td>
-                                    <td><button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button></td>
+                                    <td><a href="#" class="bi bi-trash text-danger"></a></td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
@@ -88,7 +88,7 @@
                                     <td>Substation Keramat</td>
                                     <td>20/11/2024</td>
                                     <td><span class="badge bg-danger">Failed</span></td>
-                                    <td><button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button></td>
+                                    <td><a href="#" class="bi bi-trash text-danger"></a></td>
                                 </tr>
                                 <tr>
                                     <td>4</td>
@@ -97,7 +97,7 @@
                                     <td>Substation Bangi</td>
                                     <td>4/10/2024</td>
                                     <td><span class="badge bg-success">Success</span></td>
-                                    <td><button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button></td>
+                                    <td><a href="#" class="bi bi-trash text-danger"></a></td>
                                 </tr>
                             </tbody>
                         </table>

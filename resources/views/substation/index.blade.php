@@ -12,7 +12,7 @@
                 <!-- Upload Dataset Card -->
                 <div class="card shadow-lg border-0 rounded-4 p-3">
                     <div class="card-body">
-                        <h4 class="card-title fw-bold">Create New Substation</h4>
+                        <h5 class="card-title">Create New Substation</h5>
 
                         <!-- Upload Form -->
                         <form>
@@ -40,7 +40,7 @@
                 <!-- Dataset Table -->
                 <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
                     <div class="card-body">
-                        <table class="table table-bordered align-middle">
+                        <table class="table table-bordered align-middle text-center">
                             <thead class="table-light">
                                 <tr>
                                     <th>#</th>
@@ -57,9 +57,9 @@
                                     <td>234 Industrial Road, Kuala Lumpur</td>
                                     <td>24/12/2024</td>
                                     <td>
-                                        <button class="btn btn-info bi bi-eye"></button>
-                                        <button class="btn btn-warning bi bi-pencil-square"></button>
-                                        <button class="btn btn-danger bi bi-trash"></button>
+                                        <a href="#" class="text-primary bi bi-eye"></a>
+                                        <a href="#" class="text-success bi bi-pencil-square"></a>
+                                        <a href="#" class="text-danger bi bi-trash"></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -68,9 +68,9 @@
                                     <td>234 Industrial Road, Kuala Lumpur</td>
                                     <td>24/12/2024</td>
                                     <td>
-                                        <button class="btn btn-info bi bi-eye"></button>
-                                        <button class="btn btn-warning bi bi-pencil-square"></button>
-                                        <button class="btn btn-danger bi bi-trash"></button>
+                                        <a href="#" class="text-primary bi bi-eye"></a>
+                                        <a href="#" class="text-success bi bi-pencil-square"></a>
+                                        <a href="#" class="text-danger bi bi-trash"></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -79,9 +79,9 @@
                                     <td>234 Industrial Road, Kuala Lumpur</td>
                                     <td>24/12/2024</td>
                                     <td>
-                                        <button class="btn btn-info bi bi-eye"></button>
-                                        <button class="btn btn-warning bi bi-pencil-square"></button>
-                                        <button class="btn btn-danger bi bi-trash"></button>
+                                        <a href="#" class="text-primary bi bi-eye"></a>
+                                        <a href="#" class="text-success bi bi-pencil-square"></a>
+                                        <a href="#" class="text-danger bi bi-trash"></a>
                                     </td>
                                 </tr>
                                 <tr>
@@ -90,9 +90,9 @@
                                     <td>234 Industrial Road, Kuala Lumpur</td>
                                     <td>24/12/2024</td>
                                     <td>
-                                        <button class="btn btn-info bi bi-eye"></button>
-                                        <button class="btn btn-warning bi bi-pencil-square"></button>
-                                        <button class="btn btn-danger bi bi-trash"></button>
+                                        <a href="#" class="text-primary bi bi-eye"></a>
+                                        <a href="#" class="text-success bi bi-pencil-square"></a>
+                                        <a href="#" class="text-danger bi bi-trash"></a>
                                     </td>
                                 </tr>
                             </tbody>

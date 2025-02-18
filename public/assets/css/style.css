@@ -233,7 +233,7 @@ h6 {
 }
 
 .card-title {
-  padding: 20px 0 0px 0;
+  padding: 20px 0 20px 0;
   font-size: 18px;
   font-weight: 500;
   color: #012970;
@@ -360,7 +360,7 @@ h6 {
 
 @media (min-width: 1200px) {
   .logo {
-    width: 280px;
+    width: 200px;
   }
 }
 
@@ -1233,3 +1233,4 @@ h6 {
   font-size: 13px;
   color: #012970;
 }
+

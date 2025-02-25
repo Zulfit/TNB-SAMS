@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\UserManagement;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,8 @@ class UserManagementController extends Controller
      */
     public function index()
     {
-        return view('user_management.index');
+        $unverified_users = User::where('email_verified_at',NULL)->get();
+        return view('user_management.index',compact('unverified_users'));
     }
 
     /**

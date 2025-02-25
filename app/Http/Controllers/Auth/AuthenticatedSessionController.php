@@ -28,6 +28,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Check if the authenticated user is verified
+        if (Auth::user()->email_verified_at === NULL) {
+            Auth::logout(); // Logout the user
+            return back()->withErrors(['email' => 'This account is not verified yet. Please wait for admin approval.']);
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

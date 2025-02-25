@@ -17,8 +17,26 @@
                         <!-- User Form -->
                         <form>
                             <div class="d-flex align-items-center gap-3 mb-3">
+                                <label class="form-label w-25">User’s Name</label>
+                                <select name="email" class="form-control w-75">
+                                    <option value=""></option>
+                                    @foreach ($unverified_users as $unverified_user)
+                                        <option value="{{ $unverified_user->id }}">{{ $unverified_user->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">User’s Email</label>
-                                <input type="email" class="form-control w-75">
+                                <select name="email" class="form-control w-75">
+                                    <option value=""></option>
+                                    @foreach ($unverified_users as $unverified_user)
+                                        <option value="{{ $unverified_user->email }}">{{ $unverified_user->email }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <label class="form-label w-25">User’s ID</label>
+                                <input type="text" class="form-control w-75">
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">User’s Role</label>

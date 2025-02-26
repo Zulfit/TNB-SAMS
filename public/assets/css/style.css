@@ -1234,3 +1234,10 @@ h6 {
   color: #012970;
 }
 
+/*--------------------------------------------------------------
+# read-only
+--------------------------------------------------------------*/
+.readonly-field {
+  background-color: #e9ecef; /* Light grey background */
+  cursor: not-allowed; /* Show disabled cursor */
+}

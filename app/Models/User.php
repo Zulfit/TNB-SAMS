@@ -48,8 +48,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function user()
+    public function userManagement()
     {
-        return $this->hasOne(UserManagement::class); 
+        return $this->hasOne(UserManagement::class,'user_id'); 
     }
 }

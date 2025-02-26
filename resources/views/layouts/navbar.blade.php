@@ -47,7 +47,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="{{ route('user_management') }}">
+            <a class="nav-link collapsed" href="{{ route('user_management.index') }}">
                 <i class="bi bi-people"></i><span>User Management</span>
             </a>
         </li>

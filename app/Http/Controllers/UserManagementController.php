@@ -14,7 +14,9 @@ class UserManagementController extends Controller
     public function index()
     {
         $unverified_users = User::where('email_verified_at',NULL)->get();
-        return view('user_management.index',compact('unverified_users'));
+        $users = UserManagement::with('user')->get();
+
+        return view('user_management.index',compact('unverified_users','users'));
     }
 
     /**
@@ -30,7 +32,38 @@ class UserManagementController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'dashboard_access' => 'integer',
+            'analytics_access' => 'integer',
+            'dataset_access' => 'integer',
+            'substation_access' => 'integer',
+            'asset_access' => 'integer',
+            'sensor_access' => 'integer',
+            'report_access' => 'integer',
+            'user_management_access' => 'integer',
+        ]);
+
+        // dd($validated);
+
+        UserManagement::create([
+            'user_id' => $validated['user_id'],
+            'dashboard_access' => $validated['dashboard_access'] ?? 0,
+            'analytics_access' => $validated['analytics_access'] ?? 0,
+            'dataset_access' => $validated['dataset_access'] ?? 0,
+            'substation_access' => $validated['substation_access'] ?? 0,
+            'asset_access' => $validated['asset_access'] ?? 0,
+            'sensor_access' => $validated['sensor_access'] ?? 0,
+            'report_access' => $validated['report_access'] ?? 0,
+            'user_management_access' => $validated['user_management_access'] ?? 0,
+        ]);
+
+        User::where('id', $validated['user_id'])->update([
+            'email_verified_at' => now() 
+        ]);
+
+        return redirect()->route('user_management.index')->with('success', 'User permissions updated successfully!');
+
     }
 
     /**

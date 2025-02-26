@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('user_management', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->integer('dashboard_access');
+            $table->integer('analytics_access');
+            $table->integer('dataset_access');
+            $table->integer('substation_access');
+            $table->integer('asset_access');
+            $table->integer('sensor_access');
+            $table->integer('report_access');
+            $table->integer('user_management_access');
             $table->timestamps();
         });
     }

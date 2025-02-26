@@ -31,6 +31,7 @@ Route::get('substation',[SubstationController::class,'index'])->name('substation
 Route::get('asset',[AssetController::class,'index'])->name('asset');
 Route::get('sensor',[SensorController::class,'index'])->name('sensor');
 Route::get('report',[ReportController::class,'index'])->name('report');
-Route::get('user_management',[UserManagementController::class,'index'])->name('user_management');
+// Route::get('user_management',[UserManagementController::class,'index'])->name('user_management');
+Route::resource('user_management',UserManagementController::class)->names(['index' => 'user_management.index']);
 
 require __DIR__.'/auth.php';

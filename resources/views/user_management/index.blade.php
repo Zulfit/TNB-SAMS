@@ -13,36 +13,46 @@
                 <div class="card shadow-lg border-0 rounded-4 p-4">
                     <div class="card-body">
                         <h5 class="card-title">User Access Control</h5>
-                
+
                         <!-- User Form -->
-                        <form>
+                        <form action= "{{ route('user_management.store') }}" method="POST">
+                            @csrf
+                            <!-- User's Name Dropdown -->
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">User’s Name</label>
-                                <select name="email" class="form-control w-75">
-                                    <option value=""></option>
+                                {{-- @dd($unverified_users) --}}
+                                <select name="user_id" id="user-select" class="form-control w-75">
+                                    <option value="" selected disabled>Select a user</option>
                                     @foreach ($unverified_users as $unverified_user)
-                                        <option value="{{ $unverified_user->id }}">{{ $unverified_user->name }}</option>
+                                        <option value="{{ $unverified_user->id }}"
+                                            data-email="{{ $unverified_user->email }}"
+                                            data-id="{{ $unverified_user->id_staff }}"
+                                            data-role="{{ $unverified_user->position }}">
+                                            {{ $unverified_user->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
+
+                            <!-- User’s Email (Auto-filled) -->
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">User’s Email</label>
-                                <select name="email" class="form-control w-75">
-                                    <option value=""></option>
-                                    @foreach ($unverified_users as $unverified_user)
-                                        <option value="{{ $unverified_user->email }}">{{ $unverified_user->email }}</option>
-                                    @endforeach
-                                </select>
+                                <input type="text" id="user-email" class="form-control w-75 readonly-field" readonly>
                             </div>
+
+                            <!-- User’s ID (Auto-filled) -->
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">User’s ID</label>
-                                <input type="text" class="form-control w-75">
+                                <input type="text" id="user-id" class="form-control w-75 readonly-field" readonly>
                             </div>
+
+                            <!-- User’s Role (Auto-filled) -->
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">User’s Role</label>
-                                <input type="text" class="form-control w-75">
+                                <input type="text" id="user-role" class="form-control w-75 readonly-field" readonly>
                             </div>
-                
+
+
                             <!-- Permission Table -->
                             <div class="table-responsive">
                                 <table class="table table-bordered text-center">
@@ -50,7 +60,7 @@
                                         <tr>
                                             <th class="text-start fw-bold">List Screen</th>
                                             <th>Full Access</th>
-                                            <th>Read Only</th>
+                                            <th>View</th>
                                             <th>Create</th>
                                             <th>Edit</th>
                                             <th>Delete</th>
@@ -59,80 +69,80 @@
                                     <tbody>
                                         <tr>
                                             <td class="text-start">Dashboard Admin</td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
+                                            <td><input name="dashboard_access" type="checkbox" value="1"></td>
+                                            <td><input name="dashboard_access" type="checkbox" value="2"></td>
+                                            <td><input name="dashboard_access" type="checkbox" value="3"></td>
+                                            <td><input name="dashboard_access" type="checkbox" value="4"></td>
+                                            <td><input name="dashboard_access" type="checkbox" value="5"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Analytics</td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
+                                            <td><input name="analytics_access" type="checkbox" value="1"></td>
+                                            <td><input name="analytics_access" type="checkbox" value="2"></td>
+                                            <td><input name="analytics_access" type="checkbox" value="3"></td>
+                                            <td><input name="analytics_access" type="checkbox" value="4"></td>
+                                            <td><input name="analytics_access" type="checkbox" value="5"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Dataset</td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
+                                            <td><input name="dataset_access" type="checkbox" value="1"></td>
+                                            <td><input name="dataset_access" type="checkbox" value="2"></td>
+                                            <td><input name="dataset_access" type="checkbox" value="3"></td>
+                                            <td><input name="dataset_access" type="checkbox" value="4"></td>
+                                            <td><input name="dataset_access" type="checkbox" value="5"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Substation</td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
+                                            <td><input name="substation_access" type="checkbox" value="1"></td>
+                                            <td><input name="substation_access" type="checkbox" value="2"></td>
+                                            <td><input name="substation_access" type="checkbox" value="3"></td>
+                                            <td><input name="substation_access" type="checkbox" value="4"></td>
+                                            <td><input name="substation_access" type="checkbox" value="5"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Asset</td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
+                                            <td><input name="asset_access" type="checkbox" value="1"></td>
+                                            <td><input name="asset_access" type="checkbox" value="2"></td>
+                                            <td><input name="asset_access" type="checkbox" value="3"></td>
+                                            <td><input name="asset_access" type="checkbox" value="4"></td>
+                                            <td><input name="asset_access" type="checkbox" value="5"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Sensor</td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
+                                            <td><input name="sensor_access" type="checkbox" value="1"></td>
+                                            <td><input name="sensor_access" type="checkbox" value="2"></td>
+                                            <td><input name="sensor_access" type="checkbox" value="3"></td>
+                                            <td><input name="sensor_access" type="checkbox" value="4"></td>
+                                            <td><input name="sensor_access" type="checkbox" value="5"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Report Log</td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
+                                            <td><input name="report_access" type="checkbox" value="1"></td>
+                                            <td><input name="report_access" type="checkbox" value="2"></td>
+                                            <td><input name="report_access" type="checkbox" value="3"></td>
+                                            <td><input name="report_access" type="checkbox" value="4"></td>
+                                            <td><input name="report_access" type="checkbox" value="5"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">User Management</td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
-                                            <td><input type="checkbox"></td>
+                                            <td><input name="user_management_access" type="checkbox" value="1"></td>
+                                            <td><input name="user_management_access" type="checkbox" value="2"></td>
+                                            <td><input name="user_management_access" type="checkbox" value="3"></td>
+                                            <td><input name="user_management_access" type="checkbox" value="4"></td>
+                                            <td><input name="user_management_access" type="checkbox" value="5"></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
-                
+
                             <!-- Generate Button -->
                             <div class="d-flex justify-content-end mt-3">
-                                <button class="btn btn-info px-4">Generate</button>
+                                <button type="submit" class="btn btn-primary px-4">Generate</button>
                             </div>
                         </form>
                     </div>
                 </div>
-                
+
 
                 <!-- Dataset Table -->
                 <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
@@ -141,31 +151,25 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>#</th>
-                                    <th>User's Email</th>
-                                    <th>User's Role</th>
+                                    <th>User's Name</th>
+                                    <th>User's Position</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>zulfitrih@gmail.com</td>
-                                    <td>Staff Maintenance</td>
-                                    <td><span class="badge bg-success">Success</span></td>
-                                    <td>
-                                        <a href="#" class="bi bi-pencil-square text-primary"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>zulfitrih@gmail.com</td>
-                                    <td>Staff Maintenance</td>
-                                    <td><span class="badge bg-success">Success</span></td>
-                                    <td>
-                                        <a href="#" class="bi bi-pencil-square text-primary"></a>
-                                    </td>
-                                </tr>
+                                @php $i = 1; @endphp
+                                @foreach ($users as $user)
+                                    <tr>
+                                        <td> {{ $i++}} </td>
+                                        <td> {{ $user->user->name }} </td>
+                                        <td> {{ $user->user->position }} </td>
+                                        <td><span class="badge bg-success">Success</span></td>
+                                        <td>
+                                            <a href="#" class="bi bi-pencil-square text-primary"></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -174,4 +178,18 @@
 
         </section>
     </main>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#user-select').change(function() {
+                // Get selected option
+                var selectedUser = $(this).find(':selected');
+
+                // Autofill fields
+                $('#user-email').val(selectedUser.data('email'));
+                $('#user-id').val(selectedUser.data('id'));
+                $('#user-role').val(selectedUser.data('role'));
+            });
+        });
+    </script>
 @endsection

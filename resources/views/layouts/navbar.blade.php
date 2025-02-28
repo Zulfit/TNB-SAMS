@@ -23,7 +23,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link collapsed" href="{{ route('substation') }}">
+            <a class="nav-link collapsed" href="{{ route('substation.index') }}">
                 <i class="bi bi-lightning-charge"></i><span>Substation</span>
             </a>
         </li>

@@ -15,22 +15,23 @@
                         <h5 class="card-title">Create New Substation</h5>
 
                         <!-- Upload Form -->
-                        <form>
+                        <form action="{{ route('substation.store') }}" method="POST">
+                            @csrf
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Substation Name</label>
-                                <input type="text" class="form-control w-75">
+                                <input name="substation_name" type="text" class="form-control w-75">
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Substation Location</label>
-                                <input type="text" class="form-control w-75">
+                                <input name="substation_location" type="text" class="form-control w-75">
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Commisioning Date</label>
-                                <input type="text" class="form-control w-75">
+                                <input name="substation_date" type="date" class="form-control w-75">
                             </div>
-                            
+
                             <div class="d-flex justify-content-end">
-                                <button class="btn btn-primary px-4">Create New</button>
+                                <button name="submit" type="submit" class="btn btn-primary px-4">Create New</button>
                             </div>
 
                         </form>
@@ -51,50 +52,26 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Substation Ampang</td>
-                                    <td>234 Industrial Road, Kuala Lumpur</td>
-                                    <td>24/12/2024</td>
-                                    <td>
-                                        <a href="#" class="text-primary bi bi-eye"></a>
-                                        <a href="#" class="text-success bi bi-pencil-square"></a>
-                                        <a href="#" class="text-danger bi bi-trash"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Substation Ampang</td>
-                                    <td>234 Industrial Road, Kuala Lumpur</td>
-                                    <td>24/12/2024</td>
-                                    <td>
-                                        <a href="#" class="text-primary bi bi-eye"></a>
-                                        <a href="#" class="text-success bi bi-pencil-square"></a>
-                                        <a href="#" class="text-danger bi bi-trash"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Substation Ampang</td>
-                                    <td>234 Industrial Road, Kuala Lumpur</td>
-                                    <td>24/12/2024</td>
-                                    <td>
-                                        <a href="#" class="text-primary bi bi-eye"></a>
-                                        <a href="#" class="text-success bi bi-pencil-square"></a>
-                                        <a href="#" class="text-danger bi bi-trash"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Substation Ampang</td>
-                                    <td>234 Industrial Road, Kuala Lumpur</td>
-                                    <td>24/12/2024</td>
-                                    <td>
-                                        <a href="#" class="text-primary bi bi-eye"></a>
-                                        <a href="#" class="text-success bi bi-pencil-square"></a>
-                                        <a href="#" class="text-danger bi bi-trash"></a>
-                                    </td>
-                                </tr>
+                                @foreach ($substations as $substation)
+                                    <tr>
+                                        <td>1</td>
+                                        <td>{{ $substation->substation_name }}</td>
+                                        <td>{{ $substation->substation_location }}</td>
+                                        <td>{{ $substation->substation_date }}</td>
+                                        <td>
+                                            <a href="#" class="text-primary bi bi-eye"></a>
+                                            <a href="#" class="text-success bi bi-pencil-square"></a>
+                                            <form action="{{ route(  'substation.destroy', $substation->id) }}" method="POST"
+                                                onsubmit="return confirm('Are you sure you want to delete this milestone?');"
+                                                style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
                             </tbody>
                         </table>
                     </div>

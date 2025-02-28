@@ -12,7 +12,9 @@ class SubstationController extends Controller
      */
     public function index()
     {
-        return view('substation.index');
+        $substations = Substation::all();
+
+        return view('substation.index',compact('substations'));
     }
 
     /**
@@ -28,7 +30,19 @@ class SubstationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'substation_name' => 'required|max:255| string',
+            'substation_location' => 'required|max:255| string',
+            'substation_date' => 'required|date',
+        ]);
+
+        Substation::create([
+            'substation_name' => $validated['substation_name'],
+            'substation_location' => $validated['substation_location'],
+            'substation_date' => $validated['substation_date'],
+        ]);
+
+        return redirect()->route('substation.index')->with('success','Substation created successfully!');
     }
 
     /**
@@ -60,6 +74,7 @@ class SubstationController extends Controller
      */
     public function destroy(Substation $substation)
     {
-        //
+        $substation->delete();
+        return redirect()->route('substation.index')->with('success','Substation successfully deleted!');
     }
 }

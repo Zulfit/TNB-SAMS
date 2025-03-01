@@ -23,15 +23,39 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            'name' => 'Admin',
-            'email' => 'tnbsamsa@gmail.com',
-            'email_verified_at' => now(),
-            'id_staff' => 'TNB001',
-            'position' => 'Admin',
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
-        ];
+        static $isFirst = true;
+        if ($isFirst == true) {
+
+            $isFirst = false;
+
+            return [
+
+                'name' => 'Admin',
+                'email' => 'tnbsamsa@gmail.com',
+                'email_verified_at' => now(),
+                'id_staff' => 'TNB001',
+                'position' => 'Admin',
+                'password' => static::$password ??= Hash::make('password'),
+                'remember_token' => Str::random(10),
+            ];         
+        }
+
+        else{
+
+            return [
+
+                'name' => $this->faker->name,
+                'email' => $this->faker->unique()->safeEmail,
+                'email_verified_at' => null,
+                'id_staff' => 'TNB00'.$this->faker->unique()->numberBetween(2,10),
+                'position' => $this->faker->randomElement([
+                    'Staff',
+                    'Manager'
+                ]),
+                'password' => static::$password ??= Hash::make('password'),
+                'remember_token' => Str::random(10),
+            ];
+        }
     }
 
     /**
@@ -39,7 +63,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

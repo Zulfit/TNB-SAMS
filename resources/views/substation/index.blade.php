@@ -52,9 +52,10 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                @php $i = 1; @endphp
                                 @foreach ($substations as $substation)
                                     <tr>
-                                        <td>1</td>
+                                        <td>{{ $i++ }}</td>
                                         <td>{{ $substation->substation_name }}</td>
                                         <td>{{ $substation->substation_location }}</td>
                                         <td>{{ $substation->substation_date }}</td>

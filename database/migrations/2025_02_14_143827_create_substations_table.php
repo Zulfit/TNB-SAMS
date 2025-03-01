@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('substations', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('substation_name');
             $table->string('substation_location');
             $table->date('substation_date');
+            $table->timestamps();
         });
     }
 

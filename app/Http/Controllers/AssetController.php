@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Asset;
+use App\Models\Substation;
 use Illuminate\Http\Request;
 
 class AssetController extends Controller
@@ -12,7 +13,9 @@ class AssetController extends Controller
      */
     public function index()
     {
-        return view('asset.index');
+        $substations = Substation::all();
+        $assets = Asset::with('substation')->get();
+        return view('asset.index',compact('substations','assets'));
     }
 
     /**
@@ -28,7 +31,23 @@ class AssetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'asset_name' => 'required|max:255|string',
+            'asset_type' => 'required|string',
+            'asset_substation' => 'required|exists:substations,id',
+            'asset_date' => 'required|date',
+            'asset_status' => 'required|string',
+        ]);
+        // dd($validated);
+        Asset::create([
+            'asset_name' => $validated['asset_name'],
+            'asset_type' => $validated['asset_type'],
+            'asset_substation' => $validated['asset_substation'],
+            'asset_date' => $validated['asset_date'],
+            'asset_status' => $validated['asset_status']
+        ]);
+
+        return redirect()->route('asset.index')->with('success','Asset created successfully!');
     }
 
     /**
@@ -60,6 +79,8 @@ class AssetController extends Controller
      */
     public function destroy(Asset $asset)
     {
-        //
+        $asset->delete();
+
+        return redirect()->to('asset.index')->with('success','Asset successfully deleted!');
     }
 }

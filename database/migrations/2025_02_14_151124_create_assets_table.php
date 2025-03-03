@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('assets', function (Blueprint $table) {
             $table->id();
+            $table->string('asset_name');
+            $table->string('asset_type');
+            $table->foreignId('asset_substation')->constrained('substations')->onDelete('cascade');
+            $table->date('asset_date');
+            $table->string('asset_status');
             $table->timestamps();
         });
     }

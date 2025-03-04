@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sensor;
+use App\Models\Substation;
 use Illuminate\Http\Request;
 
 class SensorController extends Controller
@@ -12,7 +13,10 @@ class SensorController extends Controller
      */
     public function index()
     {
-        return view('sensor.index');
+        $substations = Substation::all();
+        $sensors = Sensor::with('substation')->get();
+
+        return view('sensor.index',compact('substations','sensors'));
     }
 
     /**
@@ -28,7 +32,23 @@ class SensorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'sensor_name' => 'required|max:255|string',
+            'sensor_type' => 'required|string',
+            'sensor_substation' => 'required|exists:substations,id',
+            'sensor_date' => 'required|date',
+            'sensor_status' => 'required',
+        ]);
+
+        Sensor::create([
+            'sensor_name' => $validated['sensor_name'],
+            'sensor_type' => $validated['sensor_type'],
+            'sensor_substation' => $validated['sensor_substation'],
+            'sensor_date' => $validated['sensor_date'],
+            'sensor_status' => $validated['sensor_status'],
+        ]);
+
+        return redirect()->route('sensor.index')->with('success','Sensor created successfully!');
     }
 
     /**

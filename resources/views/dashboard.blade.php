@@ -119,21 +119,34 @@
                                 style="background: white; box-shadow: 0px 4px 20px rgba(120, 100, 200, 0.3);">
                                 <div class="card-body">
                                     <!-- Title & Filters -->
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h5 class="card-title">Sensor Temperature °C</h5>
-                                        <div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                                        <h5 class="card-title mb-0">Sensor Temperature °C</h5>
+                                        <div class="d-flex align-items-center flex-wrap gap-2">
                                             <span>Substation</span>
-                                            <select class="form-select d-inline-block w-auto mx-2">
-                                                <option>Substation Cheras</option>
-                                                <option>Substation Ampang</option>
+                                            <select class="form-select form-select-sm w-auto">
+                                                <option>PMU KLCC</option>
+                                                <option>PPU BTRZ</option>
+                                                <option>PPU TASIK TAMBAHAN</option>
                                             </select>
-                                            <span>Switchgear</span>
-                                            <select class="form-select d-inline-block w-auto">
-                                                <option>SG-01</option>
-                                                <option>SG-02</option>
+                                            <span>Panels</span>
+                                            <select class="form-select form-select-sm w-auto">
+                                                <option>Bus Section 30</option>
+                                                <option>Bus Coupler 34</option>
+                                                <option>Feeder 1</option>
+                                                <option>Feeder 2</option>
+                                                <option>Feeder 3</option>
+                                            </select>
+                                            <span>Compartments</span>
+                                            <select class="form-select form-select-sm w-auto">
+                                                <option>Main Busbar</option>
+                                                <option>Reserve Busbar</option>
+                                                <option>CB - Top</option>
+                                                <option>CB - Bottom</option>
+                                                <option>Cable Compartments</option>
                                             </select>
                                         </div>
                                     </div>
+
 
                                     <!-- Chart -->
                                     <canvas id="tempChart" style="max-height: 400px;"></canvas>
@@ -141,8 +154,6 @@
                                     <!-- Legend & Info -->
                                     <div class="d-flex justify-content-between align-items-center mt-3">
 
-
-                                        <!-- Legend -->
                                         <div>
                                             <span class="d-flex align-items-center"><span
                                                     class="rounded-circle bg-danger d-inline-block me-2"
@@ -155,7 +166,6 @@
                                                     style="width: 10px; height: 10px;"></span> Wire Blue</span>
                                         </div>
 
-                                        <!-- Metrics -->
                                         <div>
                                             <div class="d-flex justify-content-between align-items-center mb-1">
                                                 <span>Variance between wires</span>
@@ -165,6 +175,13 @@
                                             <div class="d-flex justify-content-between align-items-center mb-1">
                                                 <span>Maximum variances</span>
                                                 <input type="text" class="form-control text-center w-25" value="12 %"
+                                                    readonly>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span>Difference max & min variances</span>
+                                                <input type="text" class="form-control text-center w-25" value="2 %"
                                                     readonly>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center">
@@ -185,18 +202,30 @@
                                 style="background: white; box-shadow: 0px 4px 20px rgba(120, 100, 200, 0.3);">
                                 <div class="card-body">
                                     <!-- Title & Filters -->
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h5 class="card-title">Sensor Partial Discharge</h5>
-                                        <div>
+                                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                                        <h5 class="card-title mb-0">Sensor Partial Discharge</h5>
+                                        <div class="d-flex align-items-center flex-wrap gap-2">
                                             <span>Substation</span>
-                                            <select class="form-select d-inline-block w-auto mx-2">
-                                                <option>Substation Cheras</option>
-                                                <option>Substation Ampang</option>
+                                            <select class="form-select form-select-sm w-auto">
+                                                <option>PMU KLCC</option>
+                                                <option>PPU BTRZ</option>
+                                                <option>PPU TASIK TAMBAHAN</option>
                                             </select>
-                                            <span>Switchgear</span>
-                                            <select class="form-select d-inline-block w-auto">
-                                                <option>SG-01</option>
-                                                <option>SG-02</option>
+                                            <span>Panels</span>
+                                            <select class="form-select form-select-sm w-auto">
+                                                <option>Bus Section 30</option>
+                                                <option>Bus Coupler 34</option>
+                                                <option>Feeder 1</option>
+                                                <option>Feeder 2</option>
+                                                <option>Feeder 3</option>
+                                            </select>
+                                            <span>Compartments</span>
+                                            <select class="form-select form-select-sm w-auto">
+                                                <option>Main Busbar</option>
+                                                <option>Reserve Busbar</option>
+                                                <option>CB - Top</option>
+                                                <option>CB - Bottom</option>
+                                                <option>Cable Compartments</option>
                                             </select>
                                         </div>
                                     </div>
@@ -288,7 +317,7 @@
                                         labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
                                         datasets: [{
                                             label: '',
-                                            data: [0, 15, 14, 13, 12, 20, 18, 25, 22, 30],
+                                            data: [0, 0, 0, 0, 0, 0, 0, 15, 20, 0],
                                             borderColor: '#2563eb',
                                             borderWidth: 2,
                                             fill: false,

@@ -42,7 +42,6 @@ h6 {
 # Main
 --------------------------------------------------------------*/
 #main {
-  margin-top: 60px;
   padding: 20px 30px;
   transition: all 0.3s;
 }
@@ -380,8 +379,9 @@ h6 {
   transition: all 0.5s;
   z-index: 997;
   height: 60px;
-  box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
-  background-color: #fff;
+  padding-top: 10px;
+  /* box-shadow: 0px 2px 20px rgba(1, 41, 112, 0.1);
+  background-color: #fff; */
   padding-left: 20px;
   /* Toggle Sidebar Button */
   /* Search Bar */
@@ -599,7 +599,7 @@ h6 {
 --------------------------------------------------------------*/
 .sidebar {
   position: fixed;
-  top: 60px;
+  top: 10px;
   left: 0;
   bottom: 120px;
   width: 230px;
@@ -686,9 +686,9 @@ h6 {
   align-items: center;
   font-size: 15px;
   font-weight: 600;
-  color: #4154f1;
+  color: #012970;
+  background: #fff;
   transition: 0.3;
-  background: #f6f9ff;
   padding: 10px 15px;
   border-radius: 4px;
 }
@@ -696,7 +696,7 @@ h6 {
 .sidebar-nav .nav-link i {
   font-size: 16px;
   margin-right: 10px;
-  color: #4154f1;
+  color: #012970;
 }
 
 .sidebar-nav .nav-link.collapsed {
@@ -758,6 +758,17 @@ h6 {
 .sidebar-nav .nav-content a.active i {
   background-color: #4154f1;
 }
+
+.nav-link.active {
+  color: #4154f1;
+  background: #f6f9ff;
+}
+
+.nav-link.active i{
+  color: #4154f1;
+  background: #f6f9ff;
+}
+
 
 /*--------------------------------------------------------------
 # Dashboard

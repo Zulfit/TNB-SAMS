@@ -34,12 +34,12 @@
                 <i class="bi bi-lightning-charge"></i><span>Substation</span>
             </a>
         </li>
-
+{{-- 
         <li class="nav-item">
             <a class="nav-link" href="{{ route('asset.index') }}">
                 <i class="bi bi-box-seam"></i><span>Asset</span>
             </a>
-        </li>
+        </li> --}}
 
         <li class="nav-item">
             <a class="nav-link" href="{{ route('sensor.index') }}">

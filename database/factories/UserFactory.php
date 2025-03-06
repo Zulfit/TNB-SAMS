@@ -31,7 +31,7 @@ class UserFactory extends Factory
             return [
 
                 'name' => 'Admin',
-                'email' => 'tnbsamsa@gmail.com',
+                'email' => 'tnbsamsa@tnb.com.my',
                 'email_verified_at' => now(),
                 'id_staff' => 'TNB001',
                 'position' => 'Admin',
@@ -45,7 +45,7 @@ class UserFactory extends Factory
             return [
 
                 'name' => $this->faker->name,
-                'email' => $this->faker->unique()->safeEmail,
+                'email' => $this->faker->userName().'@tnb.com.my',
                 'email_verified_at' => null,
                 'id_staff' => 'TNB00'.$this->faker->unique()->numberBetween(2,10),
                 'position' => $this->faker->randomElement([

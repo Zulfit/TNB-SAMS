@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
 
         Substation::factory(5)->create();
 
-        UserManagement::factory(5)->create();
+        UserManagement::factory(2)->create();
 
     }
 }

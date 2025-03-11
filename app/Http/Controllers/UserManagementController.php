@@ -13,10 +13,10 @@ class UserManagementController extends Controller
      */
     public function index()
     {
-        $unverified_users = User::where('email_verified_at',NULL)->get();
+        $unverified_users = User::where('email_verified_at', NULL)->get();
         $users = UserManagement::with('user')->get();
 
-        return view('user_management.index',compact('unverified_users','users'));
+        return view('user_management.index', compact('unverified_users', 'users'));
     }
 
     /**
@@ -59,7 +59,7 @@ class UserManagementController extends Controller
         ]);
 
         User::where('id', $validated['user_id'])->update([
-            'email_verified_at' => now() 
+            'email_verified_at' => now()
         ]);
 
         return redirect()->route('user_management.index')->with('success', 'User permissions updated successfully!');
@@ -71,7 +71,14 @@ class UserManagementController extends Controller
      */
     public function show(UserManagement $userManagement)
     {
-        //
+        // retrieve user that have been clicked
+        $user = User::find($userManagement->user_id);
+        // retrieve user's access control
+        $user_management = $userManagement;
+        // retrieve all user that have user access
+        $users = UserManagement::with('user')->get();
+
+        return view('user_management.show', compact( 'user','user_management','users'));
     }
 
     /**
@@ -79,7 +86,14 @@ class UserManagementController extends Controller
      */
     public function edit(UserManagement $userManagement)
     {
-        //
+        // retrieve user that have been clicked
+        $user = User::find($userManagement->user_id);
+        // retrieve user's access control
+        $user_management = $userManagement;
+        // retrieve all user that have user access
+        $users = UserManagement::with('user')->get();
+
+        return view('user_management.edit', compact( 'user','user_management','users'));
     }
 
     /**
@@ -87,7 +101,18 @@ class UserManagementController extends Controller
      */
     public function update(Request $request, UserManagement $userManagement)
     {
-        //
+        $userManagement->dashboard_access = $request->dashboard_access;
+        $userManagement->analytics_access = $request->analytics_access;
+        $userManagement->dataset_access = $request->dataset_access;
+        $userManagement->substation_access = $request->substation_access;
+        $userManagement->asset_access = $request->asset_access;
+        $userManagement->sensor_access = $request->sensor_access;
+        $userManagement->report_access = $request->report_access;
+        $userManagement->user_management_access = $request->user_management_access;
+
+        $userManagement->save();
+
+        return redirect()->route('user_management.index')->with('success','User access control successfully updated!');
     }
 
     /**
@@ -95,6 +120,10 @@ class UserManagementController extends Controller
      */
     public function destroy(UserManagement $userManagement)
     {
-        //
+        $userManagement->delete();
+
+        User::where('id', $userManagement)->update([
+            'email_verified_at' => null
+        ]);
     }
 }

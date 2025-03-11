@@ -20,7 +20,6 @@
                             <!-- User's Name Dropdown -->
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">User’s Name</label>
-                                {{-- @dd($unverified_users) --}}
                                 <select name="user_id" id="user-select" class="form-control w-75">
                                     <option value="" selected disabled>Select a user</option>
                                     @foreach ($unverified_users as $unverified_user)
@@ -166,7 +165,15 @@
                                         <td> {{ $user->user->position }} </td>
                                         <td><span class="badge bg-success">Success</span></td>
                                         <td>
-                                            <a href="#" class="bi bi-pencil-square text-primary"></a>
+                                            <a href="{{ route('user_management.show',$user->id) }}" class="text-primary bi bi-eye"></a>
+                                            <a href="{{ route('user_management.edit',$user->id) }}"class="text-success bi bi-pencil-square"></a>
+                                            <form action="{{ route(  'user_management.destroy', $user->id) }}" method="POST"
+                                                onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                                style="display: inline;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -180,6 +187,7 @@
     </main>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+        // auto fill form
         $(document).ready(function() {
             $('#user-select').change(function() {
                 // Get selected option
@@ -191,5 +199,7 @@
                 $('#user-role').val(selectedUser.data('role'));
             });
         });
-    </script>
+
+        </script>
+        
 @endsection

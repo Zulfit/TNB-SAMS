@@ -46,7 +46,7 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Substation Name</th>
-                                    <th>Substation Location</th>
+                                    <th>Functional Location No</th>
                                     <th>Commissioning Date</th>
                                     <th>Action</th>
                                 </tr>

@@ -22,7 +22,7 @@
                                 <input value="{{ $substation->substation_name }}" name="substation_name" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Substation Location</label>
+                                <label class="form-label w-25">Functional Location No</label>
                                 <input value="{{ $substation->substation_location }}" name="substation_location" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">

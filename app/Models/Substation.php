@@ -14,4 +14,12 @@ class Substation extends Model
         'substation_location',
         'substation_date',
     ];
+
+    public function assets(){
+        return $this->hasMany(Asset::class);
+    }
+
+    public function sensors(){
+        return $this->hasMany(Sensor::class);
+    }
 }

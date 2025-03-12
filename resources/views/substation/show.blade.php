@@ -12,26 +12,26 @@
                 <!-- Upload Dataset Card -->
                 <div class="card shadow-lg border-0 rounded-4 p-3">
                     <div class="card-body">
-                        <h5 class="card-title">Create New Substation</h5>
+                        <h5 class="card-title">Substation Details</h5>
 
                         <!-- Upload Form -->
-                        <form action="{{ route('substation.store') }}" method="POST">
+                        <form action="{{ route('substation.edit', $substation->id) }}" method="GET">
                             @csrf
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Substation Name</label>
-                                <input name="substation_name" type="text" class="form-control w-75">
+                                <input value="{{ $substation->substation_name }}" name="substation_name" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Substation Location</label>
-                                <input name="substation_location" type="text" class="form-control w-75">
+                                <input value="{{ $substation->substation_location }}" name="substation_location" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Commisioning Date</label>
-                                <input name="substation_date" type="date" class="form-control w-75">
+                                <input value="{{ $substation->substation_date }}" name="substation_date" type="date" class="form-control w-75 readonly-field" readonly>
                             </div>
 
                             <div class="d-flex justify-content-end">
-                                <button name="submit" type="submit" class="btn btn-primary px-4">Create New</button>
+                                <button name="submit" type="submit" class="btn btn-primary px-4">Edit</button>
                             </div>
 
                         </form>

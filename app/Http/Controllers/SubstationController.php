@@ -50,7 +50,8 @@ class SubstationController extends Controller
      */
     public function show(Substation $substation)
     {
-        //
+        $substations = Substation::all();
+        return view('substation.show',compact('substation','substations'));
     }
 
     /**
@@ -58,7 +59,8 @@ class SubstationController extends Controller
      */
     public function edit(Substation $substation)
     {
-        //
+        $substations = Substation::all();
+        return view('substation.edit',compact('substation','substations'));
     }
 
     /**
@@ -66,7 +68,13 @@ class SubstationController extends Controller
      */
     public function update(Request $request, Substation $substation)
     {
-        //
+        $substation->substation_name = $request->substation_name;
+        $substation->substation_location = $request->substation_location;
+        $substation->substation_date = $request->substation_date;
+
+        $substation->save();
+
+        return redirect()->route('substation.index')->with('success','Substation successfully updated!');
     }
 
     /**

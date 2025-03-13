@@ -16,23 +16,28 @@ class SubstationFactory extends Factory
      */
     public function definition(): array
     {
+        $substations = [
+            [
+                'substation_name' => 'PMU KLCC',
+                'substation_location' => 'KLCC/KVT/G0001',
+            ],
+            [
+                'substation_name' => 'PPU BTRZ',
+                'substation_location' => 'BTRZ/KVT/G0002',
+            ],
+            [
+                'substation_name' => 'PPU TASIK TAMBAHAN',
+                'substation_location' => 'TBHN/KVT/G0003',
+            ]
+        ];
+    
+        // Pick one randomly for variation
+        $substation = $this->faker->randomElement($substations);
+    
         return [
-            'substation_name' => $this->faker->randomElement([
-                'Substation Ampang',
-                'Substation Cheras',
-                'Substation Putrajaya',
-                'Substation Klang',
-                'Substation Bangi'
-            ]),
-            'substation_location' => $this->faker->randomElement([
-                'No 123, Jalan Ampang, 68000, Selangor, Malaysia',
-                'No 456, Jalan Cheras, 56100, Kuala Lumpur, Malaysia',
-                'No 789, Persiaran Putrajaya, 62000, Putrajaya, Malaysia',
-                'No 321, Jalan Meru, 41050, Klang, Selangor, Malaysia',
-                'No 654, Jalan Bangi, 43650, Bangi, Selangor, Malaysia'
-            ]),
+            'substation_name' => $substation['substation_name'],
+            'substation_location' => $substation['substation_location'],
             'substation_date' => $this->faker->dateTimeBetween('2024-01-01', '2025-12-31')->format('Y-m-d'),
         ];
-
     }
 }

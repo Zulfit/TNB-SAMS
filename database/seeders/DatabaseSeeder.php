@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
     {
         User::factory(5)->create();
 
-        Substation::factory(5)->create();
+        $this->call(SubstationSeeder::class);
 
         UserManagement::factory(2)->create();
 

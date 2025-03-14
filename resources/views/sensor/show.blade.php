@@ -12,64 +12,39 @@
                 <!-- Upload Dataset Card -->
                 <div class="card shadow-lg border-0 rounded-4 p-3">
                     <div class="card-body">
-                        <h5 class="card-title">Create New Sensor</h5>
+                        <h5 class="card-title">Sensor Details</h5>
 
                         <!-- Upload Form -->
-                        <form action="{{ route('sensor.store') }}" method="POST">
+                        <form action="{{ route('sensor.edit',$sensor->id) }}" method="GET">
                             @csrf
-
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Sensor Name</label>
-                                <input name="sensor_name" type="text" class="form-control w-75">
+                                <input value="{{ $sensor->sensor_name }}" name="sensor_name" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Panels</label>
-                                <select name="sensor_panel" class="form-control w-75">
-                                    <option value=""></option>
-                                    <option value="Bus Section 30">Bus Section 30 </option>
-                                    <option value="Bus Coupler 34">Bus Coupler 34</option>
-                                    <option value="Feeder 1">Feeder 1</option>
-                                    <option value="Feeder 2">Feeder 2</option>
-                                    <option value="Feeder 3">Feeder 3</option>
-                                </select>
+                                <input value="{{ $sensor->sensor_panel }}" name="sensor_panel" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Compartments</label>
-                                <select name="sensor_compartment" class="form-control w-75">
-                                    <option value=""></option>
-                                    <option value="Main Busbar">Main Busbar</option>
-                                    <option value="Reserve Busbar">Reserve Busbar</option>
-                                    <option value="CB-Top">CB-Top</option>
-                                    <option value="CB-Bottom">CB-Bottom</option>
-                                    <option value="Cable Compartments">Cable Compartments</option>
-                                </select>
+                                <input value="{{ $sensor->sensor_compartment }}" name="sensor_compartment" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Assigned Substation</label>
-                                <select name="sensor_substation" class="form-control w-75">
-                                    <option value=""></option>
-
-                                    @foreach ($substations as $substation)
-                                        <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
-                                    @endforeach
-                                </select>
+                                <input value="{{ $sensor->substation->substation_name }}" name="sensor_substation" type="text" class="form-control w-75 readonly-field" readonly>
 
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Installation Date</label>
-                                <input name="sensor_date" type="date" class="form-control w-75">
+                                <input value="{{ $sensor->sensor_date }}" name="sensor_date" type="date" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Status</label>
-                                <select name="sensor_status" class="form-control w-75">
-                                    <option value=""></option>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
+                                <input value="{{ $sensor->sensor_status }}" name="sensor_status" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
 
                             <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary px-4">Create New</button>
+                                <button type="submit" class="btn btn-primary px-4">Edit</button>
                             </div>
 
                         </form>

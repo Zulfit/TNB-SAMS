@@ -23,11 +23,11 @@
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Panels</label>
-                                <input value="{{ $sensor->sensor_panel }}" name="sensor_panel" type="text" class="form-control w-75 readonly-field" readonly>
+                                <input value="{{ $sensor->panel->panel_name }}" name="sensor_panel" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Compartments</label>
-                                <input value="{{ $sensor->sensor_compartment }}" name="sensor_compartment" type="text" class="form-control w-75 readonly-field" readonly>
+                                <input value="{{ $sensor->compartment->compartment_name }}" name="sensor_compartment" type="text" class="form-control w-75 readonly-field" readonly>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Assigned Substation</label>
@@ -61,7 +61,7 @@
                                     <th>Sensor Name</th>
                                     <th>Panel</th>
                                     <th>Compartment</th>
-                                    <th>Assigned Asset</th>
+                                    <th>Assigned Substation</th>
                                     <th>Installation Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -70,10 +70,10 @@
                             <tbody>
                                 @foreach ($sensors as $sensor)
                                     <tr>
-                                        <td>1</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $sensor->sensor_name }}</td>
-                                        <td>{{ $sensor->sensor_panel }}</td>
-                                        <td>{{ $sensor->sensor_compartment }}</td>
+                                        <td>{{ $sensor->panel->panel_name }}</td>
+                                        <td>{{ $sensor->compartment->compartment_name }}</td>
                                         <td>{{ $sensor->substation->substation_name }}</td>
                                         <td>{{ $sensor->sensor_date }}</td>
                                         <td><span class="badge bg-success">{{ $sensor->sensor_status }}</span></td>

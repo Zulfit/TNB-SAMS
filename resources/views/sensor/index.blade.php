@@ -26,22 +26,19 @@
                                 <label class="form-label w-25">Panels</label>
                                 <select name="sensor_panel" class="form-control w-75">
                                     <option value=""></option>
-                                    <option value="Bus Section 30">Bus Section 30 </option>
-                                    <option value="Bus Coupler 34">Bus Coupler 34</option>
-                                    <option value="Feeder 1">Feeder 1</option>
-                                    <option value="Feeder 2">Feeder 2</option>
-                                    <option value="Feeder 3">Feeder 3</option>
+
+                                    @foreach ($panels as $panel)
+                                        <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Compartments</label>
                                 <select name="sensor_compartment" class="form-control w-75">
                                     <option value=""></option>
-                                    <option value="Main Busbar">Main Busbar</option>
-                                    <option value="Reserve Busbar">Reserve Busbar</option>
-                                    <option value="CB-Top">CB-Top</option>
-                                    <option value="CB-Bottom">CB-Bottom</option>
-                                    <option value="Cable Compartments">Cable Compartments</option>
+                                    @foreach ($compartments as $compartment)
+                                        <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
@@ -86,7 +83,7 @@
                                     <th>Sensor Name</th>
                                     <th>Panel</th>
                                     <th>Compartment</th>
-                                    <th>Assigned Asset</th>
+                                    <th>Assigned Substation</th>
                                     <th>Installation Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -95,10 +92,10 @@
                             <tbody>
                                 @foreach ($sensors as $sensor)
                                     <tr>
-                                        <td>1</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $sensor->sensor_name }}</td>
-                                        <td>{{ $sensor->sensor_panel }}</td>
-                                        <td>{{ $sensor->sensor_compartment }}</td>
+                                        <td>{{ $sensor->panel->panel_name }}</td>
+                                        <td>{{ $sensor->compartment->compartment_name }}</td>
                                         <td>{{ $sensor->substation->substation_name }}</td>
                                         <td>{{ $sensor->sensor_date }}</td>
                                         <td><span class="badge bg-success">{{ $sensor->sensor_status }}</span></td>

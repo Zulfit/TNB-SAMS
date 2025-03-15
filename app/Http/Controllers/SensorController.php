@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Compartments;
+use App\Models\Panels;
 use App\Models\Sensor;
 use App\Models\Substation;
 use Illuminate\Http\Request;
@@ -14,9 +16,11 @@ class SensorController extends Controller
     public function index()
     {
         $substations = Substation::all();
+        $panels = Panels::all();
+        $compartments = Compartments::all();
         $sensors = Sensor::with('substation')->get();
 
-        return view('sensor.index',compact('substations','sensors'));
+        return view('sensor.index',compact('substations','sensors','panels','compartments'));
     }
 
     /**
@@ -34,8 +38,8 @@ class SensorController extends Controller
     {
         $validated = $request->validate([
             'sensor_name' => 'required|max:255|string',
-            'sensor_panel' => 'required|string',
-            'sensor_compartment' => 'required|string',
+            'sensor_panel' => 'required|exists:panels,id',
+            'sensor_compartment' => 'required|exists:compartments,id',
             'sensor_substation' => 'required|exists:substations,id',
             'sensor_date' => 'required|date',
             'sensor_status' => 'required',
@@ -69,7 +73,9 @@ class SensorController extends Controller
     {
         $sensors = Sensor::all();
         $substations = Substation::all();
-        return view('sensor.edit',compact('sensor','sensors','substations'));
+        $panels = Panels::all();
+        $compartments = Compartments::all();
+        return view('sensor.edit',compact('sensor','sensors','substations','panels','compartments'));
     }
 
     /**

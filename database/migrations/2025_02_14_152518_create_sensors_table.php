@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('sensors', function (Blueprint $table) {
             $table->id();
             $table->string('sensor_name');
-            $table->string('sensor_panel');
-            $table->string('sensor_compartment');
+            $table->string('sensor_panel')->constrained('panels')->onDelete('cascade');
+            $table->string('sensor_compartment')->constrained('compartments')->onDelete('cascade');
             $table->foreignId('sensor_substation')->constrained('substations')->onDelete('cascade');
             $table->date('sensor_date');
             $table->string('sensor_status');

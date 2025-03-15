@@ -28,7 +28,6 @@ Route::middleware('auth')->group(function () {
 Route::get('analytics',[AnalyticsController::class,'index'])->name('analytics');
 Route::get('dataset',[DatasetController::class,'index'])->name('dataset');
 
-Route::get('report',[ReportController::class,'index'])->name('report');
 Route::resource('user_management',UserManagementController::class)
 ->names([
     'index' => 'user_management.index',
@@ -37,5 +36,6 @@ Route::resource('user_management',UserManagementController::class)
 Route::resource('substation',SubstationController::class)->names(['index' => 'substation.index']);
 Route::resource('asset',AssetController::class)->names(['index' => 'asset.index']);
 Route::resource('sensor',SensorController::class)->names(['index' => 'sensor.index']);
+Route::resource('report',ReportController::class)->names(['index' => 'report.index']);
 
 require __DIR__.'/auth.php';

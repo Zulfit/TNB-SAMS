@@ -15,22 +15,46 @@
                         <h5 class="card-title">Generate New Report</h5>
 
                         <!-- Upload Form -->
-                        <form>
+                        <form action="{{ route('report.store') }}" method="POST">
+                            @csrf
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Substation</label>
-                                <input type="text" class="form-control w-75">
+                                <select name="report_substation" class="form-control w-75">
+                                    <option value=""></option>
+                                    @foreach ($substations as $substation)
+                                        <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <label class="form-label w-25">Panel</label>
+                                <select name="report_panel" class="form-control w-75">
+                                    <option value=""></option>
+                                    @foreach ($panels as $panel)
+                                        <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <label class="form-label w-25">Compartment</label>
+                                <select name="report_compartment" class="form-control w-75">
+                                    <option value=""></option>
+                                    @foreach ($compartments as $compartment)
+                                        <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Start Date</label>
-                                <input type="text" class="form-control w-75">
+                                <input name="start_date" type="date" class="form-control w-75">
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">End Date</label>
-                                <input type="text" class="form-control w-75">
+                                <input name="end_date" type="date" class="form-control w-75">
                             </div>
-                            
+
                             <div class="d-flex justify-content-end">
-                                <button class="btn btn-primary px-4">Generate</button>
+                                <button type="submit" class="btn btn-primary px-4">Generate</button>
                             </div>
 
                         </form>
@@ -45,48 +69,28 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Substation</th>
+                                    <th>Panel</th>
+                                    <th>Compartment</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                     <th>Report</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Substation Putrajaya</td>
-                                    <td>24/12/2024</td>
-                                    <td>14/1/2025</td>
-                                    <td>
-                                        <a href="#" class="text-success bi bi-download"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Substation Putrajaya</td>
-                                    <td>24/12/2024</td>
-                                    <td>14/1/2025</td>
-                                    <td>
-                                        <a href="#" class="text-success bi bi-download"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Substation Putrajaya</td>
-                                    <td>24/12/2024</td>
-                                    <td>14/1/2025</td>
-                                    <td>
-                                        <a href="#" class="text-success bi bi-download"></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Substation Putrajaya</td>
-                                    <td>24/12/2024</td>
-                                    <td>14/1/2025</td>
-                                    <td>
-                                        <a href="#" class="text-success bi bi-download"></a>
-                                    </td>
-                                </tr>
+                                @foreach ($reports as $report)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $report->substation->substation_name }}</td>
+                                        <td>{{ $report->panel->panel_name }}</td>
+                                        <td>{{ $report->compartment->compartment_name }}</td>
+                                        <td>{{ $report->start_date }}</td>
+                                        <td>{{ $report->end_date }}</td>
+                                        <td>
+                                            <a href="#" class="text-success bi bi-download"></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+
                             </tbody>
                         </table>
                     </div>

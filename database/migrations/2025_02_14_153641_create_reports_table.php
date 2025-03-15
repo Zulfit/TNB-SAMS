@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('report_substation')->constrained('substations')->onDelete('cascade');
+            $table->foreignId('report_panel')->constrained('panels')->onDelete('cascade');
+            $table->foreignId('report_compartment')->constrained('compartments')->onDelete('cascade');
+            $table->date('start_date');
+            $table->date('end_date');
             $table->timestamps();
         });
     }

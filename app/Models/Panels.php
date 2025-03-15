@@ -9,4 +9,8 @@ class Panels extends Model
     public function sensors(){
         return $this->hasMany(Sensor::class);
     }
+
+    public function report(){
+        return $this->hasOne(Report::class);
+    }
 }

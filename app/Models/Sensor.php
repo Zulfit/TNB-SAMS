@@ -22,4 +22,12 @@ class Sensor extends Model
     public function substation(){
         return $this->belongsTo(Substation::class,'sensor_substation');
     }
+
+    public function panel(){
+        return $this->belongsTo(Panels::class,'sensor_panel');
+    }
+
+    public function compartment(){
+        return $this->belongsTo(Compartments::class,'sensor_compartment');
+    }
 }

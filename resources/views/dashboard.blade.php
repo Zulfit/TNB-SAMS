@@ -157,13 +157,13 @@
                                         <div>
                                             <span class="d-flex align-items-center"><span
                                                     class="rounded-circle bg-danger d-inline-block me-2"
-                                                    style="width: 10px; height: 10px;"></span> Wire Red</span>
+                                                    style="width: 10px; height: 10px;"></span> Red Phase</span>
                                             <span class="d-flex align-items-center"><span
                                                     class="rounded-circle bg-warning d-inline-block me-2"
-                                                    style="width: 10px; height: 10px;"></span> Wire Yellow</span>
+                                                    style="width: 10px; height: 10px;"></span> Yellow Phase</span>
                                             <span class="d-flex align-items-center"><span
                                                     class="rounded-circle bg-primary d-inline-block me-2"
-                                                    style="width: 10px; height: 10px;"></span> Wire Blue</span>
+                                                    style="width: 10px; height: 10px;"></span> Blue Phase</span>
                                         </div>
 
                                         <div>

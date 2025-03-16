@@ -24,6 +24,12 @@
         </li>
 
         <li class="nav-item">
+            <a class="nav-link" href="#">
+                <i class="bi bi-exclamation-triangle"></i><span>Error Log</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link" href="{{ route('dataset') }}">
                 <i class="bi bi-database"></i><span>Dataset</span>
             </a>

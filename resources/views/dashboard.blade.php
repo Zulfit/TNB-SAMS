@@ -64,7 +64,7 @@
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Total Substations</h5>
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <h1 class="fw-bold display-4">10</h1>
+                                        <h1 class="fw-bold display-4">{{ $total_substation }}</h1>
                                     </div>
                                 </div>
 
@@ -78,7 +78,7 @@
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Total Sensors</h5>
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <h1 class="fw-bold display-4">50</h1>
+                                        <h1 class="fw-bold display-4">{{ $total_sensor }}</h1>
                                     </div>
                                 </div>
 
@@ -124,25 +124,21 @@
                                         <div class="d-flex align-items-center flex-wrap gap-2">
                                             <span>Substation</span>
                                             <select class="form-select form-select-sm w-auto">
-                                                <option>PMU KLCC</option>
-                                                <option>PPU BTRZ</option>
-                                                <option>PPU TASIK TAMBAHAN</option>
+                                                @foreach ($substations as $substation)
+                                                    <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
+                                                @endforeach
                                             </select>
                                             <span>Panels</span>
                                             <select class="form-select form-select-sm w-auto">
-                                                <option>Bus Section 30</option>
-                                                <option>Bus Coupler 34</option>
-                                                <option>Feeder 1</option>
-                                                <option>Feeder 2</option>
-                                                <option>Feeder 3</option>
+                                                @foreach ($panels as $panel)
+                                                    <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
+                                                @endforeach
                                             </select>
                                             <span>Compartments</span>
                                             <select class="form-select form-select-sm w-auto">
-                                                <option>Main Busbar</option>
-                                                <option>Reserve Busbar</option>
-                                                <option>CB - Top</option>
-                                                <option>CB - Bottom</option>
-                                                <option>Cable Compartments</option>
+                                                @foreach ($compartments as $compartment)
+                                                    <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -207,25 +203,21 @@
                                         <div class="d-flex align-items-center flex-wrap gap-2">
                                             <span>Substation</span>
                                             <select class="form-select form-select-sm w-auto">
-                                                <option>PMU KLCC</option>
-                                                <option>PPU BTRZ</option>
-                                                <option>PPU TASIK TAMBAHAN</option>
+                                                @foreach ($substations as $substation)
+                                                    <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
+                                                @endforeach
                                             </select>
                                             <span>Panels</span>
                                             <select class="form-select form-select-sm w-auto">
-                                                <option>Bus Section 30</option>
-                                                <option>Bus Coupler 34</option>
-                                                <option>Feeder 1</option>
-                                                <option>Feeder 2</option>
-                                                <option>Feeder 3</option>
+                                                @foreach ($panels as $panel)
+                                                    <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
+                                                @endforeach
                                             </select>
                                             <span>Compartments</span>
                                             <select class="form-select form-select-sm w-auto">
-                                                <option>Main Busbar</option>
-                                                <option>Reserve Busbar</option>
-                                                <option>CB - Top</option>
-                                                <option>CB - Bottom</option>
-                                                <option>Cable Compartments</option>
+                                                @foreach ($compartments as $compartment)
+                                                    <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>

@@ -23,6 +23,16 @@
                                 <input name="sensor_name" type="text" class="form-control w-75">
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
+                                <label class="form-label w-25">Assigned Substation</label>
+                                <select name="sensor_substation" class="form-control w-75">
+                                    <option value=""></option>
+
+                                    @foreach ($substations as $substation)
+                                        <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Panels</label>
                                 <select name="sensor_panel" class="form-control w-75">
                                     <option value=""></option>
@@ -42,15 +52,15 @@
                                 </select>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Assigned Substation</label>
-                                <select name="sensor_substation" class="form-control w-75">
-                                    <option value=""></option>
-
-                                    @foreach ($substations as $substation)
-                                        <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
-                                    @endforeach
-                                </select>
-
+                                <label class="form-label w-25">Measurement</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="ais" checked>
+                                    <label class="form-check-label" for="Temperature">Temperature</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="gis">
+                                    <label class="form-check-label" for="Partial Discharge">Partial Discharge</label>
+                                </div>
                             </div>
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Installation Date</label>
@@ -81,9 +91,10 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Sensor Name</th>
+                                    <th>Assigned Substation</th>
                                     <th>Panel</th>
                                     <th>Compartment</th>
-                                    <th>Assigned Substation</th>
+                                    <th>Measurement</th>
                                     <th>Installation Date</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -94,16 +105,17 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $sensor->sensor_name }}</td>
+                                        <td>{{ $sensor->substation->substation_name }}</td>
                                         <td>{{ $sensor->panel->panel_name }}</td>
                                         <td>{{ $sensor->compartment->compartment_name }}</td>
-                                        <td>{{ $sensor->substation->substation_name }}</td>
+                                        <td>{{ $sensor->sensor_measurement}}</td>
                                         <td>{{ $sensor->sensor_date }}</td>
                                         <td><span class="badge bg-success">{{ $sensor->sensor_status }}</span></td>
                                         <td>
                                             <a href="{{ route('sensor.show',$sensor->id) }}" class="text-primary bi bi-eye"></a>
                                             <a href="{{ route('sensor.edit',$sensor->id) }}"class="text-success bi bi-pencil-square"></a>
                                             <form action="{{ route(  'sensor.destroy', $sensor->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this milestone?');"
+                                                onsubmit="return confirm('Are you sure you want to delete this sensor?');"
                                                 style="display: inline;">
                                                 @csrf
                                                 @method('DELETE')
@@ -112,7 +124,6 @@
                                         </td>
                                     </tr>
                                 @endforeach
-
                             </tbody>
                         </table>
                     </div>

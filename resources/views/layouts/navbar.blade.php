@@ -24,7 +24,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{{ route('error-log.index') }}">
                 <i class="bi bi-exclamation-triangle"></i><span>Error Log</span>
             </a>
         </li>

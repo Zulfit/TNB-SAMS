@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -14,7 +15,9 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
 
     <!-- Vendor CSS Files -->
     <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -29,7 +32,8 @@
     <link href="/assets/css/style.css" rel="stylesheet">
 
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
         }
@@ -48,6 +52,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     @include('layouts.header')
@@ -55,8 +60,15 @@
     <!-- Navbar -->
     @include('layouts.navbar')
 
+    @if (session('success'))
+        <div id="flashMessage" class="alert alert-success slide-in-top-right shadow" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <!-- Main Content -->
-    <div class="container">
+    <div class="container mt-4">
         @yield('content')
     </div>
 
@@ -64,7 +76,8 @@
     @include('layouts.footer')
 
     <!-- Include scripts -->
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+            class="bi bi-arrow-up-short"></i></a>
 
     <!-- Vendor JS Files -->
     <script src="/assets/vendor/apexcharts/apexcharts.min.js"></script>
@@ -80,9 +93,12 @@
     <script src="/assets/js/main.js"></script>
     <script>
         setTimeout(function() {
-            document.getElementById('alert-success')?.remove();
-            document.getElementById('alert-error')?.remove();
-        }, 3000); // 3000ms = 3 seconds
+            const flash = document.getElementById('flashMessage');
+            if (flash) {
+                flash.classList.add('d-none');
+            }
+        }, 5000);
     </script>
 </body>
+
 </html>

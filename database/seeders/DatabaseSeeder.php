@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ErrorLog;
 use App\Models\Substation;
 use App\Models\User;
 use App\Models\UserManagement;
@@ -26,6 +27,8 @@ class DatabaseSeeder extends Seeder
         $this->call(CompartmentSeeder::class);
 
         $this->call(SensorSeeder::class);
+
+        $this->call(ErrorSeeder::class);
 
     }
 }

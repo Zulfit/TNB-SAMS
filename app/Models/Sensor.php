@@ -31,4 +31,8 @@ class Sensor extends Model
     public function compartment(){
         return $this->belongsTo(Compartments::class,'sensor_compartment');
     }
+
+    public function error(){
+        return $this->hasOne(ErrorLog::class);
+    }
 }

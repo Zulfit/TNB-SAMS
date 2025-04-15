@@ -4,12 +4,14 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DatasetController;
+use App\Http\Controllers\ErrorLogController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\SubstationController;
 use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpKernel\Controller\ErrorController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,7 +27,6 @@ Route::middleware('auth')->group(function () {
 
 // Route::resource('/analytics',AnalyticsController::class);
 Route::get('analytics',[AnalyticsController::class,'index'])->name('analytics');
-Route::get('dataset',[DatasetController::class,'index'])->name('dataset');
 
 Route::resource('user_management',UserManagementController::class)
 ->names([
@@ -36,5 +37,7 @@ Route::resource('substation',SubstationController::class)->names(['index' => 'su
 Route::resource('asset',AssetController::class)->names(['index' => 'asset.index']);
 Route::resource('sensor',SensorController::class)->names(['index' => 'sensor.index']);
 Route::resource('report',ReportController::class)->names(['index' => 'report.index']);
+Route::resource('error-log',ErrorLogController::class)->names(['index' => 'error-log.index','create' => 'error-log.create']);
+Route::resource('dataset',DatasetController::class)->names(['index' => 'dataset.index']);
 
 require __DIR__.'/auth.php';

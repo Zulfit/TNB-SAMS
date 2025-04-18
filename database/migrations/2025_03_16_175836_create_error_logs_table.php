@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('state');
             $table->string('threshold');
             $table->string('severity');
-            $table->string('pic')->default('unassigned');
+            $table->foreignId('pic')->nullable()->default(1)->constrained('users')->onDelete('cascade');
+            $table->string('desc')->nullable();
             $table->timestamps();
         });
     }

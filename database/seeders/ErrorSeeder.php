@@ -19,21 +19,18 @@ class ErrorSeeder extends Seeder
                 'state' => 'ALARM',
                 'threshold' => '>= 50 for 300s',
                 'severity' => 'CRITICAL',
-                'pic' => 'unassigned'
             ],
             [
                 'sensor_id' => 2,
                 'state' => 'NORMAL',
                 'threshold' => '>= 80 for 200s',
                 'severity' => 'SAFE',
-                'pic' => 'unassigned'
             ],
             [
                 'sensor_id' => 3,
                 'state' => 'AWAIT',
                 'threshold' => '>= 50 for 3600s',
                 'severity' => 'WARN',
-                'pic' => 'unassigned'
             ],
         ];
 

@@ -19,6 +19,11 @@ class ErrorLog extends Model
         return $this->belongsTo(Sensor::class, 'sensor_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class,'pic');
+    }
+
     public function getStateBadgeClass(): string
     {
         return match ($this->state) {

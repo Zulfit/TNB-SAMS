@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ErrorLog;
+use App\Models\Substation;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -13,8 +14,8 @@ class ErrorLogController extends Controller
      */
     public function index()
     {
-        $errors = ErrorLog::all();
-        return view('error-log.index',compact('errors'));
+        $errors = ErrorLog::with('user')->get();
+        return view('error-log.index', compact('errors'));
     }
 
     /**
@@ -22,10 +23,20 @@ class ErrorLogController extends Controller
      */
     public function create()
     {
-        $staff = User::where('position','Staff')
-        ->whereNotNull('email_verified_at')
-        ->get();
-        return view('error-log.create',compact('staff'));
+        $staff = User::where('position', 'Staff')
+            ->whereNotNull('email_verified_at')
+            ->get();
+        $substations = Substation::all();
+        return view('error-log.create', compact('staff', 'substations'));
+    }
+
+    public function assign(string $id)
+    {
+        $error = ErrorLog::where('id', $id)->first();
+        $staff = User::where('position', 'Staff')
+            ->whereNotNull('email_verified_at')
+            ->get();
+        return view('error-log.create', compact('error', 'staff'));
     }
 
     /**
@@ -57,7 +68,17 @@ class ErrorLogController extends Controller
      */
     public function update(Request $request, ErrorLog $errorLog)
     {
-        //
+        $request->validate([
+            'pic' => 'required|exists:users,id',
+            'desc' => 'nullable|string',
+        ]);
+
+        // Update the fields
+        $errorLog->pic = $request->input('pic'); // or assign to a more meaningful field name
+        $errorLog->desc = $request->input('desc');
+        $errorLog->save();
+
+        return redirect()->back()->with('success', 'Error Log updated successfully.');
     }
 
     /**

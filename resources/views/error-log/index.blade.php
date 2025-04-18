@@ -50,15 +50,15 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                @if ($error->pic === 'unassigned')
-                                                    <a href="{{ route('error-log.create', ['error' => $error->id]) }}"
+                                                @if ($error->pic === 1)
+                                                    <a href="{{ route('error-log.assign', $error->id) }}"
                                                         class="badge bg-secondary text-decoration-none">
                                                         Unassigned
                                                     </a>
                                                 @else
-                                                    <a href="{{ route('error-log.create', ['error' => $error->id]) }}"
+                                                    <a href="{{ route('error-log.assign', $error->id) }}"
                                                         class="badge bg-primary text-decoration-none">
-                                                        {{ $error->pic }}
+                                                        {{ $error->user->name }}
                                                     </a>
                                                 @endif
                                             </td>

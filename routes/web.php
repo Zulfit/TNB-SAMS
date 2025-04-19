@@ -85,6 +85,26 @@ Route::get('/chat/token', function () {
     ]);
 });
 
-Route::get('/chat/{staff_id}', [ChatController::class, 'chatWithStaff'])->name('chat.with');
+Route::get('/chat/user/{userId}', [ChatController::class, 'chatWithUser'])->name('chat.with.user');
+
+Route::get('/chat/token/header', function () {
+    if (!Auth::check()) {
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    $user = Auth::user();
+    $client = new Client(
+        env('STREAM_API_KEY'),
+        env('STREAM_API_SECRET')
+    );
+    $token = $client->createToken((string) $user->id);
+
+    return response()->json([
+        'api_key' => env('STREAM_API_KEY'),
+        'token' => $token,
+        'user_id' => (string) $user->id,
+        'user_name' => $user->name,
+    ]);
+});
 
 require __DIR__ . '/auth.php';

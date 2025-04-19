@@ -27,6 +27,8 @@
     <link href="/assets/vendor/quill/quill.bubble.css" rel="stylesheet">
     <link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="/assets/vendor/simple-datatables/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
     <!-- Template Main CSS File -->
     <link href="/assets/css/style.css" rel="stylesheet">
@@ -54,8 +56,127 @@
 </head>
 
 <body>
-    <!-- Header -->
+
+    <script type="module">
+        import {
+            StreamChat
+        } from 'https://cdn.skypack.dev/stream-chat';
+        // expose globally so old-style scripts can use it:
+        window.StreamChat = StreamChat;
+    </script>
+
     @include('layouts.header')
+
+    @auth
+        <script>
+            document.addEventListener('DOMContentLoaded', async function() {
+                const StreamChat = window.StreamChat;
+                if (!StreamChat) {
+                    return console.error('❌ StreamChat was never registered');
+                }
+
+                // Fetch a token & user data
+                let data;
+                try {
+                    const res = await fetch('/chat/token/header');
+                    data = await res.json();
+                    if (data.error) throw new Error(data.error);
+                } catch (err) {
+                    return console.error('❌ Failed to load Stream token:', err);
+                }
+
+                // Connect the client
+                let client;
+                try {
+                    client = StreamChat.getInstance(data.api_key);
+                    if (!client.userID) {
+                        await client.connectUser({
+                            id: data.user_id,
+                            name: data.user_name
+                        }, data.token);
+                    }
+                } catch (err) {
+                    return console.error('❌ StreamChat.connectUser failed:', err);
+                }
+
+                // Expose globally
+                window.streamClient = client;
+                window.streamData = data;
+                console.log('✅ Stream client initialized');
+
+                // Populate header dropdown
+                try {
+                    const channels = await client.queryChannels({
+                        members: {
+                            $in: [data.user_id]
+                        }
+                    });
+
+                    let unreadCount = 0;
+                    const list = document.getElementById('message-list');
+                    const badge = document.getElementById('message-count');
+                    const header = document.getElementById('dropdown-header');
+
+                    channels.forEach(ch => {
+                        const c = ch.countUnread();
+                        unreadCount += c;
+                        if (c > 0) {
+                            const lm = ch.state.messages.at(-1);
+                            const other = Object.keys(ch.state.members).find(id => id !== data.user_id);
+                            const li = document.createElement('li');
+                            li.className = 'message-item';
+                            li.innerHTML = `
+                        <a href="/chat/user/${other}" class="d-flex align-items-start text-dark px-2 py-2" title="${lm.text}">
+                            <img src="/assets/img/default-avatar.png" class="rounded-circle me-2" width="40" height="40" />
+                            <div>
+                                <h6 class="mb-0">${lm.user.name}</h6>
+                                <small class="text-muted">${lm.text.slice(0, 40)}…</small><br>
+                                <small class="text-muted">Unread</small>
+                            </div>
+                        </a>`;
+                            list.insertBefore(li, list.querySelector('.dropdown-footer'));
+                        }
+                    });
+
+                    badge.textContent = unreadCount;
+                    header.innerHTML = `You have ${unreadCount} new message${unreadCount === 1 ? '' : 's'} 
+                <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>`;
+                } catch (err) {
+                    console.error('❌ Error querying channels:', err);
+                }
+
+                // Auto reload if new messages arrive every 10 seconds
+                setInterval(async function() {
+                    try {
+                        const channels = await client.queryChannels({
+                            members: {
+                                $in: [data.user_id]
+                            }
+                        });
+
+                        let unread = 0;
+                        channels.forEach(ch => {
+                            unread += ch.countUnread();
+                        });
+
+                        if (unread > 0) {
+                            console.log("🔄 New messages detected! Reloading...");
+                            location.reload();
+                        } else {
+                            console.log("✅ No new messages.");
+                        }
+                    } catch (err) {
+                        console.error('🔴 Error checking for new messages:', err);
+                    }
+                }, 10000); // every 10s
+            });
+        </script>
+    @endauth
+
+
+
+
+
 
     <!-- Navbar -->
     @include('layouts.navbar')
@@ -70,6 +191,8 @@
     <!-- Main Content -->
     <div class="container mt-4">
         @yield('content')
+        @stack('scripts')
+        @stack('styles')
     </div>
 
     <!-- Footer (optional) -->
@@ -99,6 +222,9 @@
             }
         }, 5000);
     </script>
+
+    @stack('streamchat')
+
 </body>
 
 </html>

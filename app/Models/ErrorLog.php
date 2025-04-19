@@ -24,6 +24,11 @@ class ErrorLog extends Model
         return $this->belongsTo(User::class,'pic');
     }
 
+    public function assignBy()
+    {
+        return $this->belongsTo(User::class,'assigned_by');
+    }
+
     public function getStateBadgeClass(): string
     {
         return match ($this->state) {

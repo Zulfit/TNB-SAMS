@@ -6,6 +6,7 @@ use App\Models\ErrorLog;
 use App\Models\Substation;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ErrorLogController extends Controller
 {
@@ -27,6 +28,7 @@ class ErrorLogController extends Controller
             ->whereNotNull('email_verified_at')
             ->get();
         $substations = Substation::all();
+
         return view('error-log.create', compact('staff', 'substations'));
     }
 
@@ -75,6 +77,7 @@ class ErrorLogController extends Controller
 
         // Update the fields
         $errorLog->pic = $request->input('pic'); // or assign to a more meaningful field name
+        $errorLog->assigned_by = Auth::user()->id;
         $errorLog->desc = $request->input('desc');
         $errorLog->save();
 

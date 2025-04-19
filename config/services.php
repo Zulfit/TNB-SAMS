@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'stream' => [
+        'key' => env('STREAM_API_KEY'),
+        'secret' => env('STREAM_API_SECRET'),
+    ],
+
+
+
 ];

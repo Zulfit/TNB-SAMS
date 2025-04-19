@@ -6,14 +6,24 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use GetStream\StreamChat\Client;
 use Illuminate\Support\Facades\Auth;
+use GetStream\StreamChat\StreamChat;
 
 class ChatController extends Controller
 {
-    public function chatWithStaff($staff_id)
+    public function chatWithUser($userId)
     {
-        $staff = User::findOrFail($staff_id); // or Staff::findOrFail($staff_id)
-        $currentUser = Auth::user(); // make sure user is authenticated
+        // dd($userId);
+        $targetUser = User::findOrFail($userId);
 
-        return view('chat', compact('staff', 'currentUser'));
+        $user = Auth::user();
+        $client = new Client(
+            env('STREAM_API_KEY'),
+            env('STREAM_API_SECRET')
+        );        $token = $client->createToken($user->id);
+
+        return view('chat', [
+            'streamToken' => $token
+        ], compact('targetUser'));
     }
+
 }

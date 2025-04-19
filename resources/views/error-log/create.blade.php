@@ -89,12 +89,21 @@
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">
-                                @if ($error->pic && $error->pic != 1)
-                                    <a href="{{ route('chat.with', ['staff_id' => $error->pic]) }}"
+                                {{-- @dd(auth()->id()) --}}
+                                @if (auth()->id() == $error->pic && $error->assigned_by)
+                                    {{-- PIC wants to chat with assigner --}}
+                                    <a href="{{ route('chat.with.user', ['userId' => $error->assigned_by]) }}"
+                                        class="btn btn-secondary" title="Message Admin">
+                                        <i class="fas fa-comment-dots"></i>
+                                    </a>
+                                @elseif (auth()->id() == $error->assigned_by && $error->pic)
+                                    {{-- Assigner wants to chat with PIC --}}
+                                    <a href="{{ route('chat.with.user', ['userId' => $error->pic]) }}"
                                         class="btn btn-secondary" title="Message Staff">
                                         <i class="fas fa-comment-dots"></i>
                                     </a>
                                 @endif
+
                                 <button name="submit" type="submit" class="btn btn-primary px-4">
                                     {{ $error->pic && $error->pic != 1 ? 'Update' : 'Assign' }}
                                 </button>

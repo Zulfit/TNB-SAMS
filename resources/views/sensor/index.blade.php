@@ -54,11 +54,11 @@
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">Measurement</label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="ais" checked>
+                                    <input class="form-check-input" type="radio" name="sensor_measurement" value="Temperature" checked>
                                     <label class="form-check-label" for="Temperature">Temperature</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="gis">
+                                    <input class="form-check-input" type="radio" name="sensor_measurement" value="Partial Discharge">
                                     <label class="form-check-label" for="Partial Discharge">Partial Discharge</label>
                                 </div>
                             </div>

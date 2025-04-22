@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('sensor_name');
             $table->foreignId('sensor_substation')->constrained('substations')->onDelete('cascade');
-            $table->string('sensor_panel')->constrained('panels')->onDelete('cascade');
-            $table->string('sensor_compartment')->constrained('compartments')->onDelete('cascade');
+            $table->foreignId('sensor_panel')->constrained('panels')->onDelete('cascade');
+            $table->foreignId('sensor_compartment')->constrained('compartments')->onDelete('cascade');
             $table->string('sensor_measurement')->nullable();
             $table->date('sensor_date');
             $table->string('sensor_status');

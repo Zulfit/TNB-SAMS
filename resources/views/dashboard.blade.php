@@ -123,21 +123,23 @@
                                         <h5 class="card-title mb-0">Sensor Temperature °C</h5>
                                         <div class="d-flex align-items-center flex-wrap gap-2">
                                             <span>Substation</span>
-                                            <select class="form-select form-select-sm w-auto">
+                                            <select name="substation" class="form-select form-select-sm w-auto">
                                                 @foreach ($substations as $substation)
-                                                    <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
+                                                    <option value="{{ $substation->id }}">{{ $substation->substation_name }}
+                                                    </option>
                                                 @endforeach
                                             </select>
                                             <span>Panels</span>
-                                            <select class="form-select form-select-sm w-auto">
+                                            <select name="panel" class="form-select form-select-sm w-auto">
                                                 @foreach ($panels as $panel)
                                                     <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
                                                 @endforeach
                                             </select>
                                             <span>Compartments</span>
-                                            <select class="form-select form-select-sm w-auto">
+                                            <select name="compartment" class="form-select form-select-sm w-auto">
                                                 @foreach ($compartments as $compartment)
-                                                    <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
+                                                    <option value="{{ $compartment->id }}">
+                                                        {{ $compartment->compartment_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -165,25 +167,21 @@
                                         <div>
                                             <div class="d-flex justify-content-between align-items-center mb-1">
                                                 <span>Variance between wires</span>
-                                                <input type="text" class="form-control text-center w-25" value="10.56 %"
-                                                    readonly>
+                                                <input id="variance_avg" class="form-control text-center w-25" readonly>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center mb-1">
                                                 <span>Maximum variances</span>
-                                                <input type="text" class="form-control text-center w-25" value="12 %"
-                                                    readonly>
+                                                <input id="variance_max" class="form-control text-center w-25" readonly>
                                             </div>
                                         </div>
                                         <div>
                                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span>Difference max & min variances</span>
-                                                <input type="text" class="form-control text-center w-25" value="2 %"
-                                                    readonly>
+                                                <span>Difference max & min temperature</span>
+                                                <input id="temp_diff" class="form-control text-center w-25" readonly>
                                             </div>
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <span>Maximum temperature</span>
-                                                <input type="text" class="form-control text-center w-25" value="50°C"
-                                                    readonly>
+                                                <input id="temp_max" class="form-control text-center w-25" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -204,7 +202,8 @@
                                             <span>Substation</span>
                                             <select class="form-select form-select-sm w-auto">
                                                 @foreach ($substations as $substation)
-                                                    <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
+                                                    <option value="{{ $substation->id }}">
+                                                        {{ $substation->substation_name }}</option>
                                                 @endforeach
                                             </select>
                                             <span>Panels</span>
@@ -216,7 +215,8 @@
                                             <span>Compartments</span>
                                             <select class="form-select form-select-sm w-auto">
                                                 @foreach ($compartments as $compartment)
-                                                    <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
+                                                    <option value="{{ $compartment->id }}">
+                                                        {{ $compartment->compartment_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -236,64 +236,153 @@
                         <script>
                             document.addEventListener("DOMContentLoaded", function() {
                                 const ctx = document.getElementById('tempChart').getContext('2d');
+                                let chartInstance;
 
-                                new Chart(ctx, {
-                                    type: 'line',
-                                    data: {
-                                        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
-                                        datasets: [{
-                                                label: 'Wire Red',
-                                                data: [22, 24, 23, 26, 25, 23, 22],
-                                                borderColor: 'red',
-                                                borderWidth: 2,
-                                                fill: false,
-                                                tension: 0.3
+                                async function fetchData() {
+                                    try {
+                                        const substationId = document.querySelector('select[name=substation]').value;
+                                        const panelId = document.querySelector('select[name=panel]').value;
+                                        const compartmentId = document.querySelector('select[name=compartment]').value;
+
+                                        const res = await fetch('/dashboard/sensor-temperature', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                                    .getAttribute('content')
                                             },
-                                            {
-                                                label: 'Wire Yellow',
-                                                data: [28, 30, 29, 32, 31, 30, 28],
-                                                borderColor: 'yellow',
-                                                borderWidth: 2,
-                                                fill: false,
-                                                tension: 0.3
-                                            },
-                                            {
-                                                label: 'Wire Blue',
-                                                data: [18, 20, 19, 22, 21, 20, 18],
-                                                borderColor: 'blue',
-                                                borderWidth: 2,
-                                                fill: false,
-                                                tension: 0.3
-                                            }
-                                        ]
-                                    },
-                                    options: {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        scales: {
-                                            y: {
-                                                beginAtZero: false,
-                                                grid: {
-                                                    color: '#ddd',
-                                                    drawBorder: false,
-                                                    borderDash: [5, 5]
+                                            body: JSON.stringify({
+                                                substation: substationId,
+                                                panel: panelId,
+                                                compartment: compartmentId
+                                            })
+                                        });
+
+                                        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+                                        const data = await res.json();
+                                        if (data.length === 0) throw new Error("No data available");
+
+                                        const chartData = [...data].reverse();
+
+                                        const labels = chartData.map(d => d.created_at);
+                                        const red = chartData.map(d => parseFloat(d.red_phase_temp));
+                                        const yellow = chartData.map(d => parseFloat(d.yellow_phase_temp));
+                                        const blue = chartData.map(d => parseFloat(d.blue_phase_temp));
+
+                                        const latest = data[0];
+                                        const avgVariance = parseFloat(latest.variance_percent).toFixed(2);
+                                        const maxVariance = 12;
+                                        const maxTemp = parseFloat(latest.max_temp).toFixed(2);
+                                        const minTemp = parseFloat(latest.min_temp).toFixed(2);
+                                        const diffTemp = (maxTemp - minTemp).toFixed(2);
+
+                                        return {
+                                            labels,
+                                            red,
+                                            yellow,
+                                            blue,
+                                            avgVariance,
+                                            maxVariance,
+                                            maxTemp,
+                                            diffTemp
+                                        };
+                                    } catch (err) {
+                                        console.error('Error fetching data:', err);
+                                        return {
+                                            labels: [],
+                                            red: [],
+                                            yellow: [],
+                                            blue: [],
+                                            avgVariance: "0.00",
+                                            maxVariance: "0.00",
+                                            maxTemp: "0.00",
+                                            diffTemp: "0.00"
+                                        };
+                                    }
+                                }
+
+                                async function renderChart() {
+                                    const chartData = await fetchData();
+
+                                    if (chartInstance) {
+                                        chartInstance.destroy();
+                                    }
+
+                                    chartInstance = new Chart(ctx, {
+                                        type: 'line',
+                                        data: {
+                                            labels: chartData.labels,
+                                            datasets: [{
+                                                    label: 'Wire Red',
+                                                    data: chartData.red,
+                                                    borderColor: 'red',
+                                                    borderWidth: 2,
+                                                    fill: false,
+                                                    tension: 0.3
                                                 },
-                                                ticks: {
-                                                    stepSize: 10
+                                                {
+                                                    label: 'Wire Yellow',
+                                                    data: chartData.yellow,
+                                                    borderColor: 'yellow',
+                                                    borderWidth: 2,
+                                                    fill: false,
+                                                    tension: 0.3
+                                                },
+                                                {
+                                                    label: 'Wire Blue',
+                                                    data: chartData.blue,
+                                                    borderColor: 'blue',
+                                                    borderWidth: 2,
+                                                    fill: false,
+                                                    tension: 0.3
+                                                }
+                                            ]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            maintainAspectRatio: false,
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: false,
+                                                    grid: {
+                                                        color: '#ddd',
+                                                        drawBorder: false,
+                                                        borderDash: [5, 5]
+                                                    },
+                                                    ticks: {
+                                                        stepSize: 10
+                                                    }
+                                                },
+                                                x: {
+                                                    grid: {
+                                                        display: false
+                                                    }
                                                 }
                                             },
-                                            x: {
-                                                grid: {
+                                            plugins: {
+                                                legend: {
                                                     display: false
                                                 }
                                             }
-                                        },
-                                        plugins: {
-                                            legend: {
-                                                display: false // Hide the default legend (we use a custom one above)
-                                            }
                                         }
-                                    }
+                                    });
+
+                                    document.getElementById("variance_avg").value = `${chartData.avgVariance} %`;
+                                    document.getElementById("variance_max").value = `${chartData.maxVariance} %`;
+                                    document.getElementById("temp_diff").value = `${chartData.diffTemp} °C`;
+                                    document.getElementById("temp_max").value = `${chartData.maxTemp} °C`;
+                                }
+
+                                // Initial chart render
+                                renderChart();
+
+                                // Reload chart every 5 minutes
+                                setInterval(renderChart, 300000);
+
+                                // Re-render chart on dropdown change
+                                document.querySelectorAll('select').forEach(select => {
+                                    select.addEventListener('change', renderChart);
                                 });
                             });
                         </script>

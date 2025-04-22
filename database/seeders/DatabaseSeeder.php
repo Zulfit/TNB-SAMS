@@ -30,5 +30,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(ErrorSeeder::class);
 
+        $this->call(SensorTempSeeder::class);
+
     }
 }

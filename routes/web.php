@@ -22,6 +22,8 @@ Route::get('/', function () {
 });
 
 Route::resource('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->names(['index' => 'dashboard']);
+Route::post('/dashboard/sensor-temperature', [DashboardController::class, 'getSensorTemperature'])->middleware(['auth', 'verified']);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

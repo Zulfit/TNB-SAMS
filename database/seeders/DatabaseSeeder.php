@@ -32,5 +32,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(SensorTempSeeder::class);
 
+        $this->call(SensorPDSedder::class);
+
     }
 }

@@ -200,34 +200,31 @@
                                         <h5 class="card-title mb-0">Sensor Partial Discharge</h5>
                                         <div class="d-flex align-items-center flex-wrap gap-2">
                                             <span>Substation</span>
-                                            <select class="form-select form-select-sm w-auto">
+                                            <select name="pd_substation" class="form-select form-select-sm w-auto">
                                                 @foreach ($substations as $substation)
-                                                    <option value="{{ $substation->id }}">
-                                                        {{ $substation->substation_name }}</option>
+                                                    <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
                                                 @endforeach
                                             </select>
                                             <span>Panels</span>
-                                            <select class="form-select form-select-sm w-auto">
+                                            <select name="pd_panel" class="form-select form-select-sm w-auto">
                                                 @foreach ($panels as $panel)
                                                     <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
                                                 @endforeach
                                             </select>
                                             <span>Compartments</span>
-                                            <select class="form-select form-select-sm w-auto">
+                                            <select name="pd_compartment" class="form-select form-select-sm w-auto">
                                                 @foreach ($compartments as $compartment)
-                                                    <option value="{{ $compartment->id }}">
-                                                        {{ $compartment->compartment_name }}</option>
+                                                    <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-
+                        
                                     <!-- Chart -->
                                     <canvas id="pdChart" style="max-height: 400px;"></canvas>
-
                                 </div>
                             </div>
-                        </div>
+                        </div>                        
 
 
                         <!-- Chart.js Script -->
@@ -389,54 +386,120 @@
 
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                         <script>
-                            document.addEventListener("DOMContentLoaded", function() {
-                                const ctx = document.getElementById('pdChart').getContext('2d');
-
-                                new Chart(ctx, {
-                                    type: 'line',
-                                    data: {
-                                        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
-                                        datasets: [{
-                                            label: '',
-                                            data: [0, 0, 0, 0, 0, 0, 0, 15, 20, 0],
-                                            borderColor: '#2563eb',
-                                            borderWidth: 2,
-                                            fill: false,
-                                            tension: 0.2
-                                        }]
-                                    },
-                                    options: {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        scales: {
-                                            y: {
-                                                beginAtZero: true,
-                                                grid: {
-                                                    color: '#ddd',
-                                                    drawBorder: false,
-                                                    borderDash: [5, 5]
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const pdCtx = document.getElementById('pdChart').getContext('2d');
+                                let pdChartInstance;
+                            
+                                async function fetchPDData() {
+                                    try {
+                                        const substationId = document.querySelector('select[name=substation]').value;
+                                        const panelId = document.querySelector('select[name=panel]').value;
+                                        const compartmentId = document.querySelector('select[name=compartment]').value;
+                            
+                                        const res = await fetch('/dashboard/sensor-partial-discharge', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                            },
+                                            body: JSON.stringify({
+                                                substation: substationId,
+                                                panel: panelId,
+                                                compartment: compartmentId
+                                            })
+                                        });
+                            
+                                        const data = await res.json();
+                                        const reversed = [...data].reverse();
+                            
+                                        return {
+                                            labels: reversed.map(d => d.created_at),
+                                            indicators: reversed.map(d => parseFloat(d.Indicator)),
+                                            meanRatios: reversed.map(d => parseFloat(d.Mean_Ratio)),
+                                            meanEPPCs: reversed.map(d => parseFloat(d.Mean_EPPC))
+                                        };
+                                    } catch (err) {
+                                        console.error('Error loading PD data:', err);
+                                        return { labels: [], indicators: [], meanRatios: [], meanEPPCs: [] };
+                                    }
+                                }
+                            
+                                async function renderPDChart() {
+                                    const pdData = await fetchPDData();
+                            
+                                    if (pdChartInstance) {
+                                        pdChartInstance.destroy();
+                                    }
+                            
+                                    pdChartInstance = new Chart(pdCtx, {
+                                        type: 'line',
+                                        data: {
+                                            labels: pdData.labels,
+                                            datasets: [
+                                                {
+                                                    label: 'Indicator',
+                                                    data: pdData.indicators,
+                                                    borderColor: '#2563eb',
+                                                    borderWidth: 2,
+                                                    fill: false,
+                                                    tension: 0.3
                                                 },
-                                                ticks: {
-                                                    stepSize: 10
+                                                {
+                                                    label: 'Mean Ratio (dB)',
+                                                    data: pdData.meanRatios,
+                                                    borderColor: '#f59e0b',
+                                                    borderWidth: 2,
+                                                    fill: false,
+                                                    tension: 0.3
+                                                },
+                                                {
+                                                    label: 'Mean EPPC',
+                                                    data: pdData.meanEPPCs,
+                                                    borderColor: '#ef4444',
+                                                    borderWidth: 2,
+                                                    fill: false,
+                                                    tension: 0.3
+                                                }
+                                            ]
+                                        },
+                                        options: {
+                                            responsive: true,
+                                            maintainAspectRatio: false,
+                                            scales: {
+                                                y: {
+                                                    beginAtZero: true,
+                                                    grid: {
+                                                        color: '#ddd',
+                                                        drawBorder: false,
+                                                        borderDash: [5, 5]
+                                                    },
+                                                    ticks: {
+                                                        stepSize: 1
+                                                    }
+                                                },
+                                                x: {
+                                                    grid: {
+                                                        display: false
+                                                    }
                                                 }
                                             },
-                                            x: {
-                                                grid: {
-                                                    display: false
+                                            plugins: {
+                                                legend: {
+                                                    display: true
                                                 }
                                             }
-                                        },
-                                        plugins: {
-                                            legend: {
-                                                display: false
-                                            }
                                         }
-                                    }
+                                    });
+                                }
+                            
+                                renderPDChart();
+                                setInterval(renderPDChart, 300000);
+                                document.querySelectorAll('select').forEach(select => {
+                                    select.addEventListener('change', renderPDChart);
                                 });
                             });
-                        </script>
-
-
+                            </script>
+                            
                     </div>
                 </div>
 

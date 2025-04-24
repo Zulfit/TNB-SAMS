@@ -13,7 +13,7 @@ class InsertDummyDataSensorTemp extends Command
      *
      * @var string
      */
-    protected $signature = 'dummy:sensor-data';
+    protected $signature = 'insert:dummy-sensor-temp';
 
     /**
      * The console command description.

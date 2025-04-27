@@ -148,6 +148,19 @@
 
                                     <!-- Chart -->
                                     <canvas id="tempChart" style="max-height: 400px;"></canvas>
+                                    <div id="alert-toast" class="toast" style="display: none;">
+                                        <div class="toast-card">
+                                            <div id="toast-icon">⚠️</div>
+                                            <div id="toast-message">
+                                                <!-- Dynamic message will be injected here -->
+                                            </div>
+                                            <div class="toast-buttons">
+                                                <button class="toast-btn primary" onclick="handleTakeAction()">Take
+                                                    Action</button>
+                                                <button class="toast-btn secondary" onclick="dismissToast()">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <!-- Legend & Info -->
                                     <div class="d-flex justify-content-between align-items-center mt-3">
@@ -200,32 +213,33 @@
                                         <h5 class="card-title mb-0">Sensor Partial Discharge</h5>
                                         <div class="d-flex align-items-center flex-wrap gap-2">
                                             <span>Substation</span>
-                                            <select name="pd_substation" class="form-select form-select-sm w-auto">
+                                            <select name="substation_pd" class="form-select form-select-sm w-auto">
                                                 @foreach ($substations as $substation)
-                                                    <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
+                                                    <option value="{{ $substation->id }}">
+                                                        {{ $substation->substation_name }}</option>
                                                 @endforeach
                                             </select>
                                             <span>Panels</span>
-                                            <select name="pd_panel" class="form-select form-select-sm w-auto">
+                                            <select name="panel_pd" class="form-select form-select-sm w-auto">
                                                 @foreach ($panels as $panel)
                                                     <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
                                                 @endforeach
                                             </select>
                                             <span>Compartments</span>
-                                            <select name="pd_compartment" class="form-select form-select-sm w-auto">
+                                            <select name="compartment_pd" class="form-select form-select-sm w-auto">
                                                 @foreach ($compartments as $compartment)
-                                                    <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
+                                                    <option value="{{ $compartment->id }}">
+                                                        {{ $compartment->compartment_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
-                        
+
                                     <!-- Chart -->
                                     <canvas id="pdChart" style="max-height: 400px;"></canvas>
                                 </div>
                             </div>
-                        </div>                        
-
+                        </div>
 
                         <!-- Chart.js Script -->
 
@@ -234,6 +248,13 @@
                             document.addEventListener("DOMContentLoaded", function() {
                                 const ctx = document.getElementById('tempChart').getContext('2d');
                                 let chartInstance;
+
+                                const TOAST_DISPLAY_TIME = 7000; // 5 seconds
+                                const RELOAD_INTERVAL_MS = 300000; // 5 minutes
+
+                                let lastAlertState = null;
+                                let lastSensorId = null;
+
 
                                 async function fetchData() {
                                     try {
@@ -258,35 +279,32 @@
                                         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
                                         const data = await res.json();
-                                        if (data.length === 0) throw new Error("No data available");
+                                        if (!data.readings || data.readings.length === 0) throw new Error("No data available");
 
-                                        const chartData = [...data].reverse();
+                                        const chartData = [...data.readings].reverse();
 
-                                        const labels = chartData.map(d => d.created_at);
-                                        const red = chartData.map(d => parseFloat(d.red_phase_temp));
-                                        const yellow = chartData.map(d => parseFloat(d.yellow_phase_temp));
-                                        const blue = chartData.map(d => parseFloat(d.blue_phase_temp));
-
-                                        const latest = data[0];
-                                        const avgVariance = parseFloat(latest.variance_percent).toFixed(2);
-                                        const maxVariance = 12;
-                                        const maxTemp = parseFloat(latest.max_temp).toFixed(2);
-                                        const minTemp = parseFloat(latest.min_temp).toFixed(2);
-                                        const diffTemp = (maxTemp - minTemp).toFixed(2);
+                                        const latest = chartData[chartData.length - 1] || {};
 
                                         return {
-                                            labels,
-                                            red,
-                                            yellow,
-                                            blue,
-                                            avgVariance,
-                                            maxVariance,
-                                            maxTemp,
-                                            diffTemp
+                                            sensorId: data.sensor_id,
+                                            sensorName: data.sensor_name,
+                                            labels: chartData.map(d => d.created_at),
+                                            red: chartData.map(d => parseFloat(d.red_phase_temp)),
+                                            yellow: chartData.map(d => parseFloat(d.yellow_phase_temp)),
+                                            blue: chartData.map(d => parseFloat(d.blue_phase_temp)),
+                                            avgVariance: parseFloat(latest.variance_percent || 0).toFixed(2),
+                                            maxVariance: 12,
+                                            maxTemp: parseFloat(latest.max_temp || 0).toFixed(2),
+                                            minTemp: parseFloat(latest.min_temp || 0).toFixed(2),
+                                            diffTemp: (parseFloat(latest.max_temp || 0) - parseFloat(latest.min_temp || 0)).toFixed(
+                                                2),
+                                            alertTriggered: latest.alert_triggered
                                         };
                                     } catch (err) {
                                         console.error('Error fetching data:', err);
                                         return {
+                                            sensorId: "N/A",
+                                            sensorName: "N/A",
                                             labels: [],
                                             red: [],
                                             yellow: [],
@@ -299,8 +317,90 @@
                                     }
                                 }
 
+                                async function logError(sensorState, sensorId) {
+                                    try {
+                                        const res = await fetch('/dashboard/log-error', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                                    .getAttribute('content')
+                                            },
+                                            body: JSON.stringify({
+                                                sensorId,
+                                                alertTriggered: sensorState
+                                            })
+                                        });
+
+                                        if (!res.ok) throw new Error(`Failed to log error: ${res.status}`);
+                                        console.log('Error logged successfully.');
+                                    } catch (err) {
+                                        console.error('Error logging to the server:', err);
+                                    }
+                                }
+
+                                function showToast(type, sensorName, sensorId) {
+                                    const toastEl = document.getElementById('alert-toast');
+                                    const toastCard = toastEl.querySelector('.toast-card');
+                                    const toastIcon = document.getElementById('toast-icon');
+                                    const toastMessage = document.getElementById('toast-message');
+                                    const primaryButton = toastEl.querySelector('.toast-btn.primary');
+
+                                    let levelText = '';
+                                    let color = '';
+
+                                    if (type === 'warn') {
+                                        levelText = 'Warning';
+                                        color = 'orange';
+                                        toastCard.classList.remove('toast-critical');
+                                        primaryButton.classList.remove('critical');
+                                    } else if (type === 'critical') {
+                                        levelText = 'Critical';
+                                        color = 'red';
+                                        toastCard.classList.add('toast-critical');
+                                        primaryButton.classList.add('critical');
+                                    } else {
+                                        levelText = 'Notice';
+                                        color = 'gray';
+                                        toastCard.classList.remove('toast-critical');
+                                        primaryButton.classList.remove('critical');
+                                    }
+
+                                    toastIcon.textContent = '⚠️';
+                                    toastMessage.innerHTML = `
+                                        <strong style="color: ${color};">${levelText}:</strong> 
+                                        Temperature variance in <strong>${sensorName}</strong> 
+                                        (Sensor ID: <strong>${sensorId}</strong>) is at <strong>${levelText.toLowerCase()}</strong> level.
+                                    `;
+
+                                    toastEl.style.display = 'block';
+
+                                    setTimeout(() => {
+                                        dismissToast();
+                                    }, TOAST_DISPLAY_TIME);
+                                }
+
+
+                                function dismissToast() {
+                                    document.getElementById('alert-toast').style.display = 'none';
+                                }
+
+
                                 async function renderChart() {
                                     const chartData = await fetchData();
+
+                                    const isNewAlert =
+                                        chartData.alertTriggered &&
+                                        (chartData.alertTriggered !== lastAlertState || chartData.sensorId !== lastSensorId);
+
+                                    if (isNewAlert) {
+                                        showToast(chartData.alertTriggered, chartData.sensorName, chartData.sensorId);
+                                        logError(chartData.alertTriggered, chartData.sensorId);
+
+                                        // Update last known state
+                                        lastAlertState = chartData.alertTriggered;
+                                        lastSensorId = chartData.sensorId;
+                                    }
 
                                     if (chartInstance) {
                                         chartInstance.destroy();
@@ -371,36 +471,40 @@
                                     document.getElementById("temp_max").value = `${chartData.maxTemp} °C`;
                                 }
 
-                                // Initial chart render
+
+                                // Initialize chart and setup event listeners
                                 renderChart();
+                                setInterval(renderChart, RELOAD_INTERVAL_MS);
 
-                                // Reload chart every 5 minutes
-                                setInterval(renderChart, 300000);
-
-                                // Re-render chart on dropdown change
                                 document.querySelectorAll('select').forEach(select => {
                                     select.addEventListener('change', renderChart);
                                 });
                             });
+
+                            function handleTakeAction() {
+                                alert("Redirecting to incident response page...");
+                                dismissToast();
+                            }
                         </script>
 
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                         <script>
-                            document.addEventListener("DOMContentLoaded", function () {
+                            document.addEventListener("DOMContentLoaded", function() {
                                 const pdCtx = document.getElementById('pdChart').getContext('2d');
                                 let pdChartInstance;
-                            
+
                                 async function fetchPDData() {
                                     try {
-                                        const substationId = document.querySelector('select[name=substation]').value;
-                                        const panelId = document.querySelector('select[name=panel]').value;
-                                        const compartmentId = document.querySelector('select[name=compartment]').value;
-                            
+                                        const substationId = document.querySelector('select[name=substation_pd]').value;
+                                        const panelId = document.querySelector('select[name=panel_pd]').value;
+                                        const compartmentId = document.querySelector('select[name=compartment_pd]').value;
+
                                         const res = await fetch('/dashboard/sensor-partial-discharge', {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                                    .getAttribute('content')
                                             },
                                             body: JSON.stringify({
                                                 substation: substationId,
@@ -408,10 +512,10 @@
                                                 compartment: compartmentId
                                             })
                                         });
-                            
+
                                         const data = await res.json();
                                         const reversed = [...data].reverse();
-                            
+
                                         return {
                                             labels: reversed.map(d => d.created_at),
                                             indicators: reversed.map(d => parseFloat(d.Indicator)),
@@ -420,23 +524,27 @@
                                         };
                                     } catch (err) {
                                         console.error('Error loading PD data:', err);
-                                        return { labels: [], indicators: [], meanRatios: [], meanEPPCs: [] };
+                                        return {
+                                            labels: [],
+                                            indicators: [],
+                                            meanRatios: [],
+                                            meanEPPCs: []
+                                        };
                                     }
                                 }
-                            
+
                                 async function renderPDChart() {
                                     const pdData = await fetchPDData();
-                            
+
                                     if (pdChartInstance) {
                                         pdChartInstance.destroy();
                                     }
-                            
+
                                     pdChartInstance = new Chart(pdCtx, {
                                         type: 'line',
                                         data: {
                                             labels: pdData.labels,
-                                            datasets: [
-                                                {
+                                            datasets: [{
                                                     label: 'Indicator',
                                                     data: pdData.indicators,
                                                     borderColor: '#2563eb',
@@ -491,15 +599,15 @@
                                         }
                                     });
                                 }
-                            
+
                                 renderPDChart();
                                 setInterval(renderPDChart, 300000);
                                 document.querySelectorAll('select').forEach(select => {
                                     select.addEventListener('change', renderPDChart);
                                 });
                             });
-                            </script>
-                            
+                        </script>
+
                     </div>
                 </div>
 

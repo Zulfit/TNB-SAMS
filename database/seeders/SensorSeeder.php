@@ -15,7 +15,7 @@ class SensorSeeder extends Seeder
     {
         $sensors = [
             [
-                'sensor_name' => '30004257_TH_BBM_Y_IS',
+                'sensor_name' => '10004001_TH_BBM_Y_IS',
                 'sensor_substation' => 1,
                 'sensor_panel' => 1,
                 'sensor_compartment' => 1,
@@ -24,7 +24,16 @@ class SensorSeeder extends Seeder
                 'sensor_status' => 'Active'
             ],
             [
-                'sensor_name' => '30004257_TH_BBM_IS',
+                'sensor_name' => '10004002_TH_BBM_Y_IS',
+                'sensor_substation' => 1,
+                'sensor_panel' => 2,
+                'sensor_compartment' => 2,
+                'sensor_measurement' => 'Temperature',
+                'sensor_date' => now(),
+                'sensor_status' => 'Active'
+            ],
+            [
+                'sensor_name' => '20004001_TH_BBM_IS',
                 'sensor_substation' => 2,
                 'sensor_panel' => 2,
                 'sensor_compartment' => 2,
@@ -33,10 +42,10 @@ class SensorSeeder extends Seeder
                 'sensor_status' => 'Active'
             ],
             [
-                'sensor_name' => '30004257_TH_BBM_B_IS',
-                'sensor_substation' => 3,
-                'sensor_panel' => 3,
-                'sensor_compartment' => 3,
+                'sensor_name' => '30004001_TH_BBM_B_IS',
+                'sensor_substation' => 1,
+                'sensor_panel' => 1,
+                'sensor_compartment' => 1,
                 'sensor_measurement' => 'Partial Discharge',
                 'sensor_date' => now(),
                 'sensor_status' => 'Active'

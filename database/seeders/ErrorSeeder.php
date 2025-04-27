@@ -16,15 +16,15 @@ class ErrorSeeder extends Seeder
         $errors = [
             [
                 'sensor_id' => 1,
-                'state' => 'ALARM',
-                'threshold' => '>= 50 for 300s',
-                'severity' => 'CRITICAL',
+                'state' => 'AWAIT',
+                'threshold' => '>= 50 for 3600s',
+                'severity' => 'WARN',
             ],
             [
                 'sensor_id' => 2,
-                'state' => 'NORMAL',
-                'threshold' => '>= 80 for 200s',
-                'severity' => 'SAFE',
+                'state' => 'ALARM',
+                'threshold' => '>= 50 for 300s',
+                'severity' => 'CRITICAL',
             ],
             [
                 'sensor_id' => 3,

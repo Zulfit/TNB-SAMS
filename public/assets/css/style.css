@@ -1284,3 +1284,83 @@ h6 {
       transform: translateX(50px);
   }
 }
+
+#alert-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1055;
+  display: none;
+  animation: slideUpFadeIn 0.4s ease forwards;
+}
+
+@keyframes slideUpFadeIn {
+  from {
+      opacity: 0;
+      transform: translateY(20px);
+  }
+  to {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Default Toast Card */
+.toast-card {
+  background-color: #fff3cd; /* Light yellow */
+  border-left: 6px solid #ffc107; /* Yellow border */
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Text inside toast */
+.toast-card strong {
+  color: #856404; /* Brownish for warn */
+}
+
+/* Buttons */
+.toast-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.toast-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* Primary (action) button for warn */
+.toast-btn.primary {
+  background-color: #ffc107; /* Yellow */
+  color: #212529;
+}
+
+/* Secondary button */
+.toast-btn.secondary {
+  background-color: #e2e3e5;
+  color: #343a40;
+}
+
+/* CRITICAL Toast Styles */
+.toast-critical {
+  background-color: #f8d7da; /* Light red/pink */
+  border-left: 6px solid #dc3545; /* Red border */
+}
+
+.toast-critical strong {
+  color: #721c24; /* Dark red text */
+}
+
+.toast-btn.primary.critical {
+  background-color: #dc3545; /* Red button */
+  color: #fff;
+}

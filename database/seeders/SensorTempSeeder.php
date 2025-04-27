@@ -13,7 +13,7 @@ class SensorTempSeeder extends Seeder
      */
     public function run(): void
     {
-        $startTime = Carbon::create(now()->year, 3, 1)->startOfDay(); // Start from Jan 1
+        $startTime = Carbon::create(now()->year, 4, 1)->startOfDay(); // Start from Jan 1
         $endTime = now(); // Until now
         $data = [];
 
@@ -53,8 +53,8 @@ class SensorTempSeeder extends Seeder
             $min = min($temps);
 
             // Calculate variance percentage
-            $variance = ($max - $min) / $max * 100;
-            if ($variance >= 15) {
+            $variance = round(($max - $min) / $max * 100,2);
+            if ($variance >= 12) {
                 $alertLevel = 'critical';
             } elseif ($variance >= 10) {
                 $alertLevel = 'warn';
@@ -70,7 +70,7 @@ class SensorTempSeeder extends Seeder
                 'blue_phase_temp' => $blue,
                 'max_temp' => $max,
                 'min_temp' => $min,
-                'variance_percent' => round($variance, 2),
+                'variance_percent' => $variance,
                 'alert_triggered' => $alertLevel,
                 'created_at' => $startTime->copy(),
                 'updated_at' => $startTime->copy(),
@@ -78,8 +78,9 @@ class SensorTempSeeder extends Seeder
         }
 
             // Insert in chunks of 1000
-            if (count($data) === 1000) {
+            if (count($data) >= 1000) {
                 DB::table('sensor_temperature')->insert($data);
+                unset($data);
                 $data = [];
             }
 

@@ -14,7 +14,7 @@ class SensorPDSedder extends Seeder
      */
     public function run(): void
     {
-        $startTime = Carbon::create(now()->year, 3, 1)->startOfDay();
+        $startTime = Carbon::create(now()->year, 4, 1)->startOfDay();
         $endTime = now(); // Until now
         $data = [];
 
@@ -84,8 +84,9 @@ class SensorPDSedder extends Seeder
                 ];
             }
 
-            if (count($data) >= 1000) {
+            if (count($data) >= 500) {
                 DB::table('sensor_partial_discharge')->insert($data);
+                unset($data);
                 $data = [];
             }
 

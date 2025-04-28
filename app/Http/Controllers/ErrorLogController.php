@@ -70,18 +70,26 @@ class ErrorLogController extends Controller
      */
     public function update(Request $request, ErrorLog $errorLog)
     {
-        $request->validate([
-            'pic' => 'required|exists:users,id',
-            'desc' => 'nullable|string',
-        ]);
+        if ($request->input('action') == 'complete') {
+            // Complete the error
+            $errorLog->state = 'NORMAL';
+            $errorLog->threshold = '>= 50 for 3600s';
+            $errorLog->severity = 'SAFE';
+        } elseif ($request->input('action') == 'assign') {
+            // Assign staff
+            $request->validate([
+                'pic' => 'required|exists:users,id',
+                'desc' => 'nullable|string',
+            ]);
 
-        // Update the fields
-        $errorLog->pic = $request->input('pic'); // or assign to a more meaningful field name
-        $errorLog->assigned_by = Auth::user()->id;
-        $errorLog->desc = $request->input('desc');
+            $errorLog->pic = $request->input('pic');
+            $errorLog->assigned_by = Auth::user()->id;
+            $errorLog->desc = $request->input('desc');
+        }
+
         $errorLog->save();
 
-        return redirect()->back()->with('success', 'Error Log updated successfully.');
+        return redirect()->route('error-log.index')->with('success', 'Error Log updated successfully.');
     }
 
     /**

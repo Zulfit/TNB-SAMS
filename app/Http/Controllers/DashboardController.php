@@ -166,6 +166,11 @@ class DashboardController extends Controller
             $sensorId = $request->input('sensorId');
             $alertTriggered = $request->input('alertTriggered');
 
+            session()->put('alert', [
+                'type' => $alertTriggered,  
+                'sensorId' => $sensorId
+            ]);
+
             if ($alertTriggered === 'warn') {
                 $state = 'AWAIT';
                 $threshold = '>= 50 for 3600s';

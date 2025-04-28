@@ -16,7 +16,7 @@
                         <table class="table table-borderless">
                             <tr>
                                 <th>Timestamp:</th>
-                                <td>{{ $error->updated_at }}</td>
+                                <td>{{ $error->created_at }}</td>
                             </tr>
                             <tr>
                                 <th>Sensor Name:</th>
@@ -104,9 +104,26 @@
                                     </a>
                                 @endif
 
-                                <button name="submit" type="submit" class="btn btn-primary px-4">
-                                    {{ $error->pic && $error->pic != 1 ? 'Update' : 'Assign' }}
-                                </button>
+                                @if (Auth::user()->position == 'Staff')
+                                    <form action="{{ route('error-log.update', $error->id) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="action" value="complete">
+                                        <button type="submit" class="btn btn-primary px-4">
+                                            Complete
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('error-log.update', $error->id) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="action" value="assign">
+                                        <button type="submit" class="btn btn-primary px-4">
+                                            {{ $error->pic && $error->pic != 1 ? 'Update' : 'Assign' }}
+                                        </button>
+                                    </form>
+                                @endif
+
                             </div>
                         </form>
                     </div>

@@ -47,6 +47,12 @@ Route::resource('report', ReportController::class)->names(['index' => 'report.in
 Route::resource('error-log', ErrorLogController::class)->names(['index' => 'error-log.index', 'create' => 'error-log.create']);
 Route::get('error-log/assign/{id}', [ErrorLogController::class, 'assign'])->name('error-log.assign');
 Route::resource('dataset', DatasetController::class)->names(['index' => 'dataset.index']);
+Route::post('/dashboard/log-error', [DashboardController::class, 'logError']);
+Route::post('/clear-toast', function () {
+    session()->forget('alert');
+    return response()->json(['success' => true]);
+});
+
 
 Route::get('/chat/token', function () {
     $client = new Client(

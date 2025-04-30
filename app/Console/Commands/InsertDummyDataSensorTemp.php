@@ -2,9 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Models\User;
+use App\Notifications\SensorAlertNotification; // Make sure to import the notification
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class InsertDummyDataSensorTemp extends Command
 {
@@ -27,15 +30,26 @@ class InsertDummyDataSensorTemp extends Command
      */
     public function handle()
     {
-        $sensorIds = DB::table('sensors')
-            ->where('sensor_measurement', 'Temperature')
-            ->pluck('id')
-            ->toArray();
+        $sensors = DB::table('sensors')
+            ->join('substations', 'sensors.sensor_substation', '=', 'substations.id')
+            ->join('panels', 'sensors.sensor_panel', '=', 'panels.id')
+            ->join('compartments', 'sensors.sensor_compartment', '=', 'compartments.id')
+            ->select(
+                'sensors.id as sensor_id',
+                'sensors.sensor_name',
+                'sensors.sensor_measurement',
+                'substations.substation_name as substation_name',
+                'panels.panel_name as panel_name',
+                'compartments.compartment_name as compartment_name'
+            )
+            ->where('sensors.sensor_measurement', 'Temperature')
+            ->get();
 
         $now = now();
         $data = [];
+        $alertsToNotify = [];
 
-        foreach ($sensorIds as $sensorId) {
+        foreach ($sensors as $sensor) {
             // Biased temperature generation for more 'normal' data
             $levelRoll = rand(1, 100);
 
@@ -60,15 +74,32 @@ class InsertDummyDataSensorTemp extends Command
             $max = max($temps);
             $min = min($temps);
             $variance = ($max - $min) / $max * 100;
+            // $variance = 10;
 
+            // Determine the alert level
             $alertLevel = match (true) {
                 $variance >= 15 => 'critical',
                 $variance >= 10 => 'warn',
                 default => 'normal',
             };
 
+            // If critical or warn, add to the alert list for notification
+            if (in_array($alertLevel, ['critical', 'warn'])) {
+                $alertsToNotify[] = [
+                    'sensor_id' => $sensor->sensor_id,
+                    'sensor_name' => $sensor->sensor_name,
+                    'measurement' => $sensor->sensor_measurement,
+                    'substation' => $sensor->substation_name,
+                    'panel' => $sensor->panel_name,
+                    'compartment' => $sensor->compartment_name,
+                    'alert_level' => $alertLevel,
+                    'max_temp' => $max,
+                    'variance_percent' => round($variance, 2),
+                ];
+            }
+
             $data[] = [
-                'sensor_id' => $sensorId,
+                'sensor_id' => $sensor->sensor_id,
                 'red_phase_temp' => $red,
                 'yellow_phase_temp' => $yellow,
                 'blue_phase_temp' => $blue,
@@ -83,6 +114,18 @@ class InsertDummyDataSensorTemp extends Command
 
         DB::table('sensor_temperature')->insert($data);
 
+        // Send notifications for critical or warn alerts
+        if ($alertsToNotify) {
+            $users = User::whereNotNull('chat_id')->get();
+
+            foreach ($users as $user) {
+                foreach ($alertsToNotify as $alert) {
+                    $user->notify(new SensorAlertNotification($alert, 'Temperature'));
+                }
+            }
+        }
+
         $this->info('Inserted dummy data for ' . count($data) . ' sensors at ' . $now);
     }
 }
+

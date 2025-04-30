@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\User;
+use App\Notifications\SensorAlertNotification;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -27,15 +29,25 @@ class InsertDummyDataSensorPD extends Command
      */
     public function handle()
     {
-        $sensorIds = DB::table('sensors')
-            ->where('sensor_measurement', 'Partial Discharge')
-            ->pluck('id')
-            ->toArray();
+        $sensors = DB::table('sensors')
+            ->join('substations', 'sensors.sensor_substation', '=', 'substations.id')
+            ->join('panels', 'sensors.sensor_panel', '=', 'panels.id')
+            ->join('compartments', 'sensors.sensor_compartment', '=', 'compartments.id')
+            ->select(
+                'sensors.id as sensor_id',
+                'sensors.sensor_name',
+                'sensors.sensor_measurement',
+                'substations.name as substation_name',
+                'panels.name as panel_name',
+                'compartments.name as compartment_name'
+            )
+            ->where('sensors.sensor_measurement', 'Partial Discharge')
+            ->get();
 
         $now = now();
         $data = [];
 
-        foreach ($sensorIds as $sensorId) {
+        foreach ($sensors as $sensor) {
             $levelRoll = rand(1, 100);
 
             if ($levelRoll <= 85) {
@@ -74,8 +86,21 @@ class InsertDummyDataSensorPD extends Command
                 $alert = 'critical';
             }
 
+            if (in_array($alert, ['critical', 'warn'])) {
+                $alertsToNotify[] = [
+                    'sensor_id' => $sensor->sensor_id,
+                    'sensor_name' => $sensor->sensor_name,
+                    'measurement' => $sensor->sensor_measurement,
+                    'substation' => $sensor->substation_name,
+                    'panel' => $sensor->panel_name,
+                    'compartment' => $sensor->compartment_name,
+                    'alert_level' => $alert,
+                    'indicator' => $indicator,
+                ];
+            }
+
             $data[] = [
-                'sensor_id' => $sensorId,
+                'sensor_id' => $sensor,
                 'LFB_Ratio' => $lfbRatio,
                 'LFB_Ratio_Linear' => $lfbLinear,
                 'MFB_Ratio' => $mfbRatio,
@@ -95,6 +120,15 @@ class InsertDummyDataSensorPD extends Command
         }
 
         DB::table('sensor_partial_discharge')->insert($data);
+
+        if ($alertsToNotify) {
+            $users = User::whereNotNull('chat_id')->get();
+
+            foreach ($users as $user) {
+                $user->notify(new SensorAlertNotification($alertsToNotify,'Partial Dicharge'));
+            }
+
+        }
 
         $this->info('Inserted dummy data for ' . count($data) . ' sensors at ' . $now);
     }

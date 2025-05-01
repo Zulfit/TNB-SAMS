@@ -37,9 +37,9 @@ class InsertDummyDataSensorPD extends Command
                 'sensors.id as sensor_id',
                 'sensors.sensor_name',
                 'sensors.sensor_measurement',
-                'substations.name as substation_name',
-                'panels.name as panel_name',
-                'compartments.name as compartment_name'
+                'substations.substation_name as substation_name',
+                'panels.panel_name as panel_name',
+                'compartments.compartment_name as compartment_name'
             )
             ->where('sensors.sensor_measurement', 'Partial Discharge')
             ->get();

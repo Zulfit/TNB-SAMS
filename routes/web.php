@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\Controller\ErrorController;
 use GetStream\StreamChat\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
+use App\Events\SensorAlertTriggered;
 
 Route::get('/', function () {
     return view('welcome');
@@ -52,7 +53,6 @@ Route::post('/clear-toast', function () {
     session()->forget('alert');
     return response()->json(['success' => true]);
 });
-
 
 Route::get('/chat/token', function () {
     $client = new Client(

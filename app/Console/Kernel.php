@@ -17,8 +17,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('insert:dummy-sensor-pd')->everyFiveMinutes();
         $schedule->command('insert:dummy-sensor-temp')->everyFiveMinutes();
-        $schedule->command('insert:dummy-warn')->now();
-        $schedule->command('insert:dummy-critical')->now();
+        // $schedule->command('insert:dummy-warn')->now();
+        // $schedule->command('insert:dummy-critical')->now();
     }
 
     protected function commands(): void

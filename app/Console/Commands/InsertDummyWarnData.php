@@ -4,30 +4,15 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Notifications\SensorAlertNotification;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use SensorAlertTriggered;
+use Carbon\Carbon;
 
 class InsertDummyWarnData extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'insert:dummy-warn';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Insert dummy warn sensor data';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $sensor = DB::table('sensors')
@@ -46,7 +31,6 @@ class InsertDummyWarnData extends Command
             ->first();
 
         $now = now();
-        $data = [];
 
         $red = 30.0;
         $yellow = 33.5;
@@ -55,13 +39,28 @@ class InsertDummyWarnData extends Command
         $max = max($temps);
         $min = min($temps);
         $variance = round(($max - $min) / $max * 100, 2);
-        // $variance = 15;
 
         $alertLevel = match (true) {
             $variance >= 12 => 'critical',
             $variance >= 10 => 'warn',
             default => 'normal',
         };
+
+        // Prepare dummy temperature insert
+        DB::table('sensor_temperature')->insert([[
+            'sensor_id' => 1,
+            'red_phase_temp' => $red,
+            'yellow_phase_temp' => $yellow,
+            'blue_phase_temp' => $blue,
+            'max_temp' => $max,
+            'min_temp' => $min,
+            'variance_percent' => $variance,
+            'alert_triggered' => $alertLevel,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]]);
+
+        $alertsToNotify = [];
 
         if (in_array($alertLevel, ['critical', 'warn'])) {
             $alertsToNotify[] = [
@@ -73,149 +72,109 @@ class InsertDummyWarnData extends Command
                 'compartment' => $sensor->compartment_name,
                 'alert_level' => $alertLevel,
                 'max_temp' => $max,
-                'variance_percent' => round($variance, 2),
+                'variance_percent' => $variance,
             ];
         }
 
-        $data[] = [
-            'sensor_id' => 1,
-            'red_phase_temp' => $red,
-            'yellow_phase_temp' => $yellow,
-            'blue_phase_temp' => $blue,
-            'max_temp' => $max,
-            'min_temp' => $min,
-            'variance_percent' => $variance,
-            'alert_triggered' => $alertLevel,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ];
-
-
-        DB::table('sensor_temperature')->insert($data);
-
-        if ($alertsToNotify) {
-            $users = User::whereNotNull('chat_id')->get();
+        // Send notifications
+        if (!empty($alertsToNotify)) {
+            $users = \App\Models\User::whereNotNull('chat_id')->get();
 
             foreach ($users as $user) {
                 foreach ($alertsToNotify as $alert) {
-                    $user->notify(new SensorAlertNotification($alert, 'Temperature'));
+                    $user->notify(new \App\Notifications\SensorAlertNotification($alert, 'Temperature'));
                 }
             }
         }
 
+        // Log error state changes
         if (in_array($alertLevel, ['warn', 'critical'])) {
-            $sensorId = 1; // since hardcoded
-            $now = now();
-        
+            $sensorId = 1;
+
             if ($alertLevel === 'warn') {
-                // 1. Check if a 'warn' log exists
                 $warnLog = DB::table('error_logs')
                     ->where('sensor_id', $sensorId)
                     ->where('state', 'AWAIT')
                     ->first();
-        
+
                 if ($warnLog) {
-                    DB::table('error_logs')
-                        ->where('id', $warnLog->id)
-                        ->update(['updated_at' => $now]);
-        
+                    DB::table('error_logs')->where('id', $warnLog->id)->update(['updated_at' => $now]);
                     $this->info('Updated existing WARN log timestamp.');
-                    return;
-                }
-        
-                // 2. If a 'critical' log exists, downgrade to 'warn'
-                $criticalLog = DB::table('error_logs')
-                    ->where('sensor_id', $sensorId)
-                    ->where('state', 'ALARM')
-                    ->first();
-        
-                if ($criticalLog) {
-                    DB::table('error_logs')
-                        ->where('id', $criticalLog->id)
-                        ->update([
+                } else {
+                    $criticalLog = DB::table('error_logs')
+                        ->where('sensor_id', $sensorId)
+                        ->where('state', 'ALARM')
+                        ->first();
+
+                    if ($criticalLog) {
+                        DB::table('error_logs')->where('id', $criticalLog->id)->update([
                             'state' => 'AWAIT',
                             'threshold' => '>= 50 for 3600s',
                             'severity' => 'WARN',
                             'updated_at' => $now,
                         ]);
-        
-                    $this->info('Downgraded CRITICAL to WARN.');
-                    return;
+                        $this->info('Downgraded CRITICAL to WARN.');
+                    } else {
+                        DB::table('error_logs')->insert([
+                            'sensor_id' => $sensorId,
+                            'state' => 'AWAIT',
+                            'threshold' => '>= 50 for 3600s',
+                            'severity' => 'WARN',
+                            'pic' => 1,
+                            'assigned_by' => null,
+                            'desc' => null,
+                            'created_at' => $now,
+                            'updated_at' => $now
+                        ]);
+                        $this->info('Inserted new WARN log.');
+                    }
                 }
-        
-                // 3. No logs exist — insert new WARN log
-                DB::table('error_logs')->insert([
-                    'sensor_id' => $sensorId,
-                    'state' => 'AWAIT',
-                    'threshold' => '>= 50 for 3600s',
-                    'severity' => 'WARN',
-                    'pic' => 1,
-                    'assigned_by' => null,
-                    'desc' => null,
-                    'created_at' => $now,
-                    'updated_at' => $now
-                ]);
-        
-                $this->info('Inserted new WARN log.');
-                return;
-        
+
             } elseif ($alertLevel === 'critical') {
-                // Check if warn exists first — upgrade
                 $warnLog = DB::table('error_logs')
                     ->where('sensor_id', $sensorId)
                     ->where('state', 'AWAIT')
                     ->first();
-        
+
                 if ($warnLog) {
-                    DB::table('error_logs')
-                        ->where('id', $warnLog->id)
-                        ->update([
+                    DB::table('error_logs')->where('id', $warnLog->id)->update([
+                        'state' => 'ALARM',
+                        'threshold' => '>= 50 for 300s',
+                        'severity' => 'CRITICAL',
+                        'updated_at' => $now,
+                    ]);
+                    $this->info('Upgraded WARN to CRITICAL.');
+                } else {
+                    $criticalLog = DB::table('error_logs')
+                        ->where('sensor_id', $sensorId)
+                        ->where('state', 'ALARM')
+                        ->first();
+
+                    if ($criticalLog) {
+                        DB::table('error_logs')->where('id', $criticalLog->id)->update(['updated_at' => $now]);
+                        $this->info('Updated existing CRITICAL log timestamp.');
+                    } else {
+                        DB::table('error_logs')->insert([
+                            'sensor_id' => $sensorId,
                             'state' => 'ALARM',
                             'threshold' => '>= 50 for 300s',
                             'severity' => 'CRITICAL',
-                            'updated_at' => $now,
+                            'pic' => 1,
+                            'assigned_by' => null,
+                            'desc' => null,
+                            'created_at' => $now,
+                            'updated_at' => $now
                         ]);
-        
-                    $this->info('Upgraded WARN to CRITICAL.');
-                    return;
+                        $this->info('Inserted new CRITICAL log.');
+                    }
                 }
-        
-                // Else update timestamp if critical log already exists
-                $criticalLog = DB::table('error_logs')
-                    ->where('sensor_id', $sensorId)
-                    ->where('state', 'ALARM')
-                    ->first();
-        
-                if ($criticalLog) {
-                    DB::table('error_logs')
-                        ->where('id', $criticalLog->id)
-                        ->update(['updated_at' => $now]);
-        
-                    $this->info('Updated existing CRITICAL log timestamp.');
-                    return;
-                }
-        
-                // Else insert new critical log
-                DB::table('error_logs')->insert([
-                    'sensor_id' => $sensorId,
-                    'state' => 'ALARM',
-                    'threshold' => '>= 50 for 300s',
-                    'severity' => 'CRITICAL',
-                    'pic' => 1,
-                    'assigned_by' => null,
-                    'desc' => null,
-                    'created_at' => $now,
-                    'updated_at' => $now
-                ]);
-        
-                $this->info('Inserted new CRITICAL log.');
-                return;
             }
 
-            event(new SensorAlertTriggered($sensor));
-            
-        }        
+            // 🔔 Broadcast the event LAST
+            $this->info('Broadcasting event...');
+            event(new \App\Events\SensorAlertTriggered(1, $sensor->sensor_name, $alertLevel));
+        }
 
-        $this->info('Inserted dummy data for ' . count($data) . ' sensors at ' . $now);
+        $this->info('Inserted dummy data at ' . $now);
     }
 }

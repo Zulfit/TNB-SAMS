@@ -40,6 +40,9 @@ return [
         'secret' => env('STREAM_API_SECRET'),
     ],
 
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+    ],
 
 
 ];

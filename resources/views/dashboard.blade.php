@@ -148,19 +148,6 @@
 
                                     <!-- Chart -->
                                     <canvas id="tempChart" style="max-height: 400px;"></canvas>
-                                    <div id="alert-toast" class="toast" style="display: none;">
-                                        <div class="toast-card">
-                                            <div id="toast-icon">⚠️</div>
-                                            <div id="toast-message">
-                                                <!-- Dynamic message will be injected here -->
-                                            </div>
-                                            <div class="toast-buttons">
-                                                <button class="toast-btn primary" onclick="handleTakeAction()">Take
-                                                    Action</button>
-                                                <button class="toast-btn secondary" onclick="dismissToast()">Close</button>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     <!-- Legend & Info -->
                                     <div class="d-flex justify-content-between align-items-center mt-3">
@@ -255,7 +242,6 @@
                                 let lastAlertState = null;
                                 let lastSensorId = null;
 
-
                                 async function fetchData() {
                                     try {
                                         const substationId = document.querySelector('select[name=substation]').value;
@@ -317,90 +303,8 @@
                                     }
                                 }
 
-                                async function logError(sensorState, sensorId) {
-                                    try {
-                                        const res = await fetch('/dashboard/log-error', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                                    .getAttribute('content')
-                                            },
-                                            body: JSON.stringify({
-                                                sensorId,
-                                                alertTriggered: sensorState
-                                            })
-                                        });
-
-                                        if (!res.ok) throw new Error(`Failed to log error: ${res.status}`);
-                                        console.log('Error logged successfully.');
-                                    } catch (err) {
-                                        console.error('Error logging to the server:', err);
-                                    }
-                                }
-
-                                function showToast(type, sensorName, sensorId) {
-                                    const toastEl = document.getElementById('alert-toast');
-                                    const toastCard = toastEl.querySelector('.toast-card');
-                                    const toastIcon = document.getElementById('toast-icon');
-                                    const toastMessage = document.getElementById('toast-message');
-                                    const primaryButton = toastEl.querySelector('.toast-btn.primary');
-
-                                    let levelText = '';
-                                    let color = '';
-
-                                    if (type === 'warn') {
-                                        levelText = 'Warning';
-                                        color = 'orange';
-                                        toastCard.classList.remove('toast-critical');
-                                        primaryButton.classList.remove('critical');
-                                    } else if (type === 'critical') {
-                                        levelText = 'Critical';
-                                        color = 'red';
-                                        toastCard.classList.add('toast-critical');
-                                        primaryButton.classList.add('critical');
-                                    } else {
-                                        levelText = 'Notice';
-                                        color = 'gray';
-                                        toastCard.classList.remove('toast-critical');
-                                        primaryButton.classList.remove('critical');
-                                    }
-
-                                    toastIcon.textContent = '⚠️';
-                                    toastMessage.innerHTML = `
-                                        <strong style="color: ${color};">${levelText}:</strong> 
-                                        Temperature variance in <strong>${sensorName}</strong> 
-                                        (Sensor ID: <strong>${sensorId}</strong>) is at <strong>${levelText.toLowerCase()}</strong> level.
-                                    `;
-
-                                    toastEl.style.display = 'block';
-
-                                    setTimeout(() => {
-                                        dismissToast();
-                                    }, TOAST_DISPLAY_TIME);
-                                }
-
-
-                                function dismissToast() {
-                                    document.getElementById('alert-toast').style.display = 'none';
-                                }
-
-
                                 async function renderChart() {
                                     const chartData = await fetchData();
-
-                                    const isNewAlert =
-                                        chartData.alertTriggered &&
-                                        (chartData.alertTriggered !== lastAlertState || chartData.sensorId !== lastSensorId);
-
-                                    if (isNewAlert) {
-                                        showToast(chartData.alertTriggered, chartData.sensorName, chartData.sensorId);
-                                        logError(chartData.alertTriggered, chartData.sensorId);
-
-                                        // Update last known state
-                                        lastAlertState = chartData.alertTriggered;
-                                        lastSensorId = chartData.sensorId;
-                                    }
 
                                     if (chartInstance) {
                                         chartInstance.destroy();
@@ -470,7 +374,6 @@
                                     document.getElementById("temp_diff").value = `${chartData.diffTemp} °C`;
                                     document.getElementById("temp_max").value = `${chartData.maxTemp} °C`;
                                 }
-
 
                                 // Initialize chart and setup event listeners
                                 renderChart();

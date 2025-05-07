@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Log;
 
 class SensorAlertNotification extends Notification
 {
@@ -71,10 +72,27 @@ class SensorAlertNotification extends Notification
             $text .= "Status: *" . strtoupper($this->sensorData['alert_level']) . "*";
         }
 
-        Http::post('https://api.telegram.org/bot' . env('TELEGRAM_BOT_TOKEN') . '/sendMessage', [
-            'chat_id' => $notifiable->chat_id,
-            'text' => $text,
-            'parse_mode' => 'Markdown',
+        $url = 'https://api.telegram.org/bot' . config('services.telegram.bot_token') . '/sendMessage';
+        Log::info('Telegram POST URL: ' . $url);
+
+        try {
+            $response = Http::post('https://api.telegram.org/bot' . config('services.telegram.bot_token') . '/sendMessage', [
+                'chat_id' => $notifiable->chat_id,
+                'text' => $text,
+                'parse_mode' => 'Markdown',
+            ]);
+
+            if (!$response->successful()) {
+                throw new \Exception('Failed to send message to Telegram');
+            }
+        } catch (\Exception $e) {
+            Log::error('Telegram message error: ' . $e->getMessage());
+        }
+
+        Log::info('Telegram response:', [
+            'status' => $response->status(),
+            'body' => $response->body(),
         ]);
+
     }
 }

@@ -167,7 +167,7 @@ class DashboardController extends Controller
             $alertTriggered = $request->input('alertTriggered');
 
             session()->put('alert', [
-                'type' => $alertTriggered,  
+                'type' => $alertTriggered,      
                 'sensorId' => $sensorId
             ]);
 

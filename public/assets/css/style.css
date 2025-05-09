@@ -764,7 +764,7 @@ h6 {
   background: #f6f9ff;
 }
 
-.nav-link.active i{
+.nav-link.active i {
   color: #4154f1;
   background: #f6f9ff;
 }
@@ -1249,8 +1249,10 @@ h6 {
 # read-only
 --------------------------------------------------------------*/
 .readonly-field {
-  background-color: #e9ecef; /* Light grey background */
-  cursor: not-allowed; /* Show disabled cursor */
+  background-color: #e9ecef;
+  /* Light grey background */
+  cursor: not-allowed;
+  /* Show disabled cursor */
 }
 
 /*--------------------------------------------------------------
@@ -1258,7 +1260,8 @@ h6 {
 --------------------------------------------------------------*/
 #flashMessage {
   position: fixed;
-  top: 70px; /* Adjust based on header height */
+  top: 70px;
+  /* Adjust based on header height */
   right: 20px;
   z-index: 1050;
   width: auto;
@@ -1269,19 +1272,20 @@ h6 {
 
 @keyframes slideIn {
   from {
-      opacity: 0;
-      transform: translateX(50px);
+    opacity: 0;
+    transform: translateX(50px);
   }
+
   to {
-      opacity: 1;
-      transform: translateX(0);
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
 @keyframes fadeOut {
   to {
-      opacity: 0;
-      transform: translateX(50px);
+    opacity: 0;
+    transform: translateX(50px);
   }
 }
 
@@ -1296,19 +1300,22 @@ h6 {
 
 @keyframes slideUpFadeIn {
   from {
-      opacity: 0;
-      transform: translateY(20px);
+    opacity: 0;
+    transform: translateY(20px);
   }
+
   to {
-      opacity: 1;
-      transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 /* Default Toast Card */
 .toast-card {
-  background-color: #fff3cd; /* Light yellow */
-  border-left: 6px solid #ffc107; /* Yellow border */
+  background-color: #fff3cd;
+  /* Light yellow */
+  border-left: 6px solid #ffc107;
+  /* Yellow border */
   border-radius: 12px;
   padding: 16px 20px;
   min-width: 300px;
@@ -1319,7 +1326,8 @@ h6 {
 
 /* Text inside toast */
 .toast-card strong {
-  color: #856404; /* Brownish for warn */
+  color: #856404;
+  /* Brownish for warn */
 }
 
 /* Buttons */
@@ -1340,7 +1348,8 @@ h6 {
 
 /* Primary (action) button for warn */
 .toast-btn.primary {
-  background-color: #ffc107; /* Yellow */
+  background-color: #ffc107;
+  /* Yellow */
   color: #212529;
 }
 
@@ -1352,15 +1361,46 @@ h6 {
 
 /* CRITICAL Toast Styles */
 .toast-critical {
-  background-color: #f8d7da; /* Light red/pink */
-  border-left: 6px solid #dc3545; /* Red border */
+  background-color: #f8d7da;
+  /* Light red/pink */
+  border-left: 6px solid #dc3545;
+  /* Red border */
 }
 
 .toast-critical strong {
-  color: #721c24; /* Dark red text */
+  color: #721c24;
+  /* Dark red text */
 }
 
 .toast-btn.primary.critical {
-  background-color: #dc3545; /* Red button */
+  background-color: #dc3545;
+  /* Red button */
   color: #fff;
+}
+
+.sensor-container {
+  max-height: 400px;
+  /* Adjust height as needed */
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  /* Optional: match Bootstrap border */
+}
+
+.sensor-container table {
+  margin-bottom: 0;
+  /* Remove extra spacing if any */
+}
+
+.chart-container {
+  max-height: 400px;
+  /* Adjust height as needed */
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  /* Optional: match Bootstrap border */
+}
+
+.chart {
+  width: 100% !important;
+  max-height: 300px;
+  height: 300px !important;
 }

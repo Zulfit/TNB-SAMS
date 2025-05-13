@@ -52,9 +52,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserManagement::class,'user_id'); 
     }
-
+ 
     public function errors()
     {
         return $this->hasMany(ErrorLog::class);
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
     }
 }

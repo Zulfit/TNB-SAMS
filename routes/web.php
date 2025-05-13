@@ -33,8 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route::resource('/analytics',AnalyticsController::class);
-Route::get('analytics', [AnalyticsController::class, 'index'])->name('analytics');
+Route::resource('analytics', AnalyticsController::class)->names(['index' => 'analytics']);
+Route::get('/sensor-table', [AnalyticsController::class, 'sensorTable'])->name('sensorTable');
+Route::get('/sensor-chart', [AnalyticsController::class, 'sensorChartData'])->name('sensorChart');
 
 Route::resource('user_management', UserManagementController::class)
     ->names([
@@ -44,7 +45,14 @@ Route::resource('user_management', UserManagementController::class)
 Route::resource('substation', SubstationController::class)->names(['index' => 'substation.index']);
 Route::resource('asset', AssetController::class)->names(['index' => 'asset.index']);
 Route::resource('sensor', SensorController::class)->names(['index' => 'sensor.index']);
-Route::resource('report', ReportController::class)->names(['index' => 'report.index']);
+
+Route::resource('report', ReportController::class)->names([
+    'index' => 'report.index',
+    'store' => 'report.store',
+    'destroy' => 'report.destroy',
+]);
+Route::get('/reports/download/{id}', [ReportController::class, 'download'])->name('report.download');
+
 Route::resource('error-log', ErrorLogController::class)->names(['index' => 'error-log.index', 'create' => 'error-log.create']);
 Route::get('error-log/assign/{id}', [ErrorLogController::class, 'assign'])->name('error-log.assign');
 Route::resource('dataset', DatasetController::class)->names(['index' => 'dataset.index']);

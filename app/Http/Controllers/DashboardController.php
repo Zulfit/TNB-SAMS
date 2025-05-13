@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Compartments;
+use App\Models\ErrorLog;
 use App\Models\Panels;
 use App\Models\Sensor;
 use App\Models\Substation;
@@ -21,10 +22,11 @@ class DashboardController extends Controller
         $compartments = Compartments::all();
         $total_substation = Substation::count();
         $total_sensor = Sensor::count();
+        $total_failure = ErrorLog::count();
         $sensor_temps = Sensor::where('sensor_measurement', 'Temperature')->get();
         // dd($sensor_temps->substation);
 
-        return view('dashboard', compact('substations', 'panels', 'compartments', 'total_substation', 'total_sensor', 'sensor_temps'));
+        return view('dashboard', compact('substations', 'panels', 'compartments', 'total_substation', 'total_sensor', 'sensor_temps','total_failure'));
     }
 
     /**

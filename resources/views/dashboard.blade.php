@@ -92,7 +92,7 @@
                                 <div class="card-body text-center">
                                     <h5 class="card-title">Total Failure</h5>
                                     <div class="d-flex justify-content-center align-items-center">
-                                        <h1 class="fw-bold display-4">20</h1>
+                                        <h1 class="fw-bold display-4">{{ $total_failure }}</h1>
                                     </div>
                                 </div>
 

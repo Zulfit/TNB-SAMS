@@ -7,6 +7,7 @@ use App\Models\Panels;
 use App\Models\Sensor;
 use App\Models\Substation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SensorController extends Controller
 {
@@ -20,7 +21,7 @@ class SensorController extends Controller
         $compartments = Compartments::all();
         $sensors = Sensor::with('substation')->get();
 
-        return view('sensor.index',compact('substations','sensors','panels','compartments'));
+        return view('sensor.index', compact('substations', 'sensors', 'panels', 'compartments'));
     }
 
     /**
@@ -54,7 +55,7 @@ class SensorController extends Controller
             'sensor_status' => $validated['sensor_status'],
         ]);
 
-        return redirect()->route('sensor.index')->with('success','Sensor created successfully!');
+        return redirect()->route('sensor.index')->with('success', 'Sensor created successfully!');
     }
 
     /**
@@ -63,7 +64,7 @@ class SensorController extends Controller
     public function show(Sensor $sensor)
     {
         $sensors = Sensor::all();
-        return view('sensor.show',compact('sensor','sensors'));
+        return view('sensor.show', compact('sensor', 'sensors'));
     }
 
     /**
@@ -75,7 +76,7 @@ class SensorController extends Controller
         $substations = Substation::all();
         $panels = Panels::all();
         $compartments = Compartments::all();
-        return view('sensor.edit',compact('sensor','sensors','substations','panels','compartments'));
+        return view('sensor.edit', compact('sensor', 'sensors', 'substations', 'panels', 'compartments'));
     }
 
     /**
@@ -86,13 +87,13 @@ class SensorController extends Controller
         $sensor->sensor_name = $request->sensor_name;
         $sensor->sensor_panel = $request->sensor_panel;
         $sensor->sensor_compartment = $request->sensor_compartment;
-        $sensor->sensor_substation  = $request->sensor_substation;
+        $sensor->sensor_substation = $request->sensor_substation;
         $sensor->sensor_date = $request->sensor_date;
         $sensor->sensor_status = $request->sensor_status;
 
         $sensor->save();
 
-        return redirect()->route('sensor.index')->with('success','Sensor successfully updated!');
+        return redirect()->route('sensor.index')->with('success', 'Sensor successfully updated!');
 
     }
 
@@ -102,6 +103,7 @@ class SensorController extends Controller
     public function destroy(Sensor $sensor)
     {
         $sensor->delete();
-        return redirect()->route('sensor.index')->with('success','Sensor successfully deleted!');
+        return redirect()->route('sensor.index')->with('success', 'Sensor successfully deleted!');
     }
+
 }

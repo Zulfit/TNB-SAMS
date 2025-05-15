@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\DatasetImport;
 use App\Models\Dataset;
 use App\Models\Sensor;
 use App\Models\SensorPartialDischarge;
@@ -41,28 +42,29 @@ class DatasetController extends Controller
             'dataset_measurement' => 'required|in:Temperature,Partial Discharge',
             'dataset_sensor' => 'required|exists:sensors,id',
         ]);
-    
+
         $file = $request->file('dataset_file');
         $path = $file->storeAs('datasets', $file->getClientOriginalName(), 'public');
-    
+
         // Save to 'datasets' table
         $dataset = Dataset::create([
             'dataset_file' => $file->getClientOriginalName(),
             'dataset_measurement' => $request->dataset_measurement,
             'dataset_sensor' => $request->dataset_sensor,
         ]);
-    
+
         // Load Excel and insert sensor_temperature rows
-        $rows = Excel::toArray([], $file);
-    
-        // Assuming data is in the first sheet
+        $rows = Excel::toArray(new DatasetImport, $file);
+
         foreach ($rows[0] as $index => $row) {
             // Skip header
-            if ($index === 0 || count($row) < 8) continue;
-
-            if ($request->dataset_measurement == 'Temperature'){
+            if ($index === 0) continue;
+    
+            if ($request->dataset_measurement == 'Temperature') {
+                if (count($row) < 9) continue;
+    
                 SensorTemperature::create([
-                    'sensor_id' => $request->dataset_sensor, 
+                    'sensor_id' => $request->dataset_sensor,
                     'red_phase_temp' => $row[1],
                     'yellow_phase_temp' => $row[2],
                     'blue_phase_temp' => $row[3],
@@ -74,9 +76,12 @@ class DatasetController extends Controller
                     'updated_at' => now(),
                 ]);
             }
-            else {
+    
+            if ($request->dataset_measurement == 'Partial Discharge') {
+                if (count($row) < 15) continue;
+    
                 SensorPartialDischarge::create([
-                    'sensor_id' => $request->dataset_sensor, 
+                    'sensor_id' => $request->dataset_sensor,
                     'LFB_Ratio' => $row[1],
                     'LFB_Ratio_Linear' => $row[2],
                     'MFB_Ratio' => $row[3],
@@ -93,9 +98,9 @@ class DatasetController extends Controller
                     'created_at' => $row[14],
                     'updated_at' => now(),
                 ]);
-            }   
+            }
         }
-    
+
         return redirect()->back()->with('success', 'Dataset uploaded and data stored successfully.');
     }
 

@@ -26,4 +26,8 @@ class Substation extends Model
     public function report(){
         return $this->hasOne(Report::class);
     }
+
+    public function datasets(){
+        return $this->hasMany(Dataset::class);
+    }
 }

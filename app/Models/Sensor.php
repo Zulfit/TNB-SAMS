@@ -35,4 +35,8 @@ class Sensor extends Model
     public function error(){
         return $this->hasOne(ErrorLog::class);
     }
+
+    public function dataset(){
+        return $this->hasMany(Dataset::class);
+    }
 }

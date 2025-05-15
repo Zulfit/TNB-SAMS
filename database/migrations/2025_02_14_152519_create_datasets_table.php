@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('datasets', function (Blueprint $table) {
             $table->id();
+            $table->string('dataset_file');
+            $table->string('dataset_measurement')->nullable();
+            $table->foreignId('dataset_sensor')->constrained('sensors')->onDelete('cascade');
             $table->timestamps();
         });
     }

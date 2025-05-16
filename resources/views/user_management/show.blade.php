@@ -65,9 +65,9 @@
                                             $screens = [
                                                 'dashboard_access',
                                                 'analytics_access',
+                                                'error_log_access',
                                                 'dataset_access',
                                                 'substation_access',
-                                                'asset_access',
                                                 'sensor_access',
                                                 'report_access',
                                                 'user_management_access',
@@ -127,19 +127,30 @@
                                         <td> {{ $user->user->position }} </td>
                                         <td><span class="badge bg-success">Success</span></td>
                                         <td>
-                                            <a href="{{ route('user_management.show', $user->id) }}"
-                                                class="text-primary bi bi-eye"></a>
-                                            <a
-                                                href="{{ route('user_management.edit', $user->id) }}"class="text-success bi bi-pencil-square"></a>
-                                            <form action="{{ route('user_management.destroy', $user->id) }}"
-                                                method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this user?');"
-                                                style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                            </form>
+                                            @if (in_array('view', $global_permissions['user_management_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                <a href="{{ route('user_management.show', $user->id) }}"
+                                                    class="text-primary bi bi-eye"></a>
+                                            @endif
+
+                                            @if (in_array('edit', $global_permissions['user_management_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                <a
+                                                    href="{{ route('user_management.edit', $user->id) }}"class="text-success bi bi-pencil-square"></a>
+                                            @endif
+
+                                            @if (in_array('delete', $global_permissions['user_management_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                <form action="{{ route('user_management.destroy', $user->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                                    style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

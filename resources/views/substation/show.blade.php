@@ -60,15 +60,28 @@
                                         <td>{{ $substation->substation_location }}</td>
                                         <td>{{ $substation->substation_date }}</td>
                                         <td>
-                                            <a href="{{ route('substation.show',$substation->id) }}" class="text-primary bi bi-eye"></a>
-                                            <a href="{{ route('substation.edit',$substation->id) }}"class="text-success bi bi-pencil-square"></a>
-                                            <form action="{{ route(  'substation.destroy', $substation->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this milestone?');"
-                                                style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                            </form>
+                                            @if (in_array('view', $global_permissions['substation_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['substation_access'] ?? []))
+                                                <a href="{{ route('substation.show', $substation->id) }}"
+                                                    class="text-primary bi bi-eye"></a>
+                                            @endif
+                                            @if (in_array('edit', $global_permissions['substation_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['substation_access'] ?? []))
+                                                <a
+                                                    href="{{ route('substation.edit', $substation->id) }}"class="text-success bi bi-pencil-square"></a>
+                                            @endif
+                                            @if (in_array('delete', $global_permissions['substation_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['substation_access'] ?? []))
+                                                <form action="{{ route('substation.destroy', $substation->id) }}"
+                                                    method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this substation?');"
+                                                    style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

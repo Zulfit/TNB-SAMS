@@ -10,48 +10,51 @@
         <section class="section dashboard">
             <div class="container mt-4">
                 <!-- Upload Dataset Card -->
-                <div class="card shadow-lg border-0 rounded-4 p-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Upload Dataset</h5>
+                @if (in_array('create', $global_permissions['dataset_access'] ?? []) ||
+                in_array('full', $global_permissions['dataset_access'] ?? []) )
+                    <div class="card shadow-lg border-0 rounded-4 p-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Upload Dataset</h5>
 
-                        <!-- Upload Form -->
-                        <form action="{{ route('dataset.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">File</label>
-                                <input name="dataset_file" type="file" class="form-control w-75">
-                            </div>
-
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Type</label>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="dataset_measurement"
-                                        id="Temperature" value="Temperature" checked>
-                                    <label class="form-check-label" for="Temperature">Temperature</label>
+                            <!-- Upload Form -->
+                            <form action="{{ route('dataset.store') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">File</label>
+                                    <input name="dataset_file" type="file" class="form-control w-75">
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="dataset_measurement"
-                                        id="Partial Discharge" value="Partial Discharge">
-                                    <label class="form-check-label" for="Partial Discharge">Partial Discharge</label>
+
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">Type</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="dataset_measurement"
+                                            id="Temperature" value="Temperature" checked>
+                                        <label class="form-check-label" for="Temperature">Temperature</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="dataset_measurement"
+                                            id="Partial Discharge" value="Partial Discharge">
+                                        <label class="form-check-label" for="Partial Discharge">Partial Discharge</label>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Sensor</label>
-                                <select name="dataset_sensor" class="form-select w-25">
-                                    <option value="">Select Sensor</option>
-                                    @foreach ($sensors as $sensor)
-                                        <option value="{{ $sensor->id }}">{{ $sensor->sensor_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary px-4">Upload</button>
-                            </div>
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">Sensor</label>
+                                    <select name="dataset_sensor" class="form-select w-25">
+                                        <option value="">Select Sensor</option>
+                                        @foreach ($sensors as $sensor)
+                                            <option value="{{ $sensor->id }}">{{ $sensor->sensor_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary px-4">Upload</button>
+                                </div>
 
-                        </form>
+                            </form>
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Dataset Table -->
                 @if ($datasets->count() > 0)
@@ -78,8 +81,17 @@
                                             <td>{{ $dataset->sensor->sensor_name }}</td>
                                             <td>{{ $dataset->created_at }}</td>
                                             <td><span class="badge bg-success">Success</span></td>
-                                            {{-- <td><span class="badge bg-warning text-dark">Loading</span></td> --}}
-                                            <td><a href="#" class="bi bi-trash text-danger"></a></td>
+                                            @if (in_array('delete', $global_permissions['dataset_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['dataset_access'] ?? []))
+                                                <form action="{{ route('dataset.destroy', $dataset->id) }}" method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this dataset?');"
+                                                    style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                </form>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

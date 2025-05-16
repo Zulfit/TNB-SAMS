@@ -92,15 +92,27 @@
                                         <td>{{ $sensor->sensor_date }}</td>
                                         <td><span class="badge bg-success">{{ $sensor->sensor_status }}</span></td>
                                         <td>
-                                            <a href="{{ route('sensor.show',$sensor->id) }}" class="text-primary bi bi-eye"></a>
-                                            <a href="{{ route('sensor.edit',$sensor->id) }}"class="text-success bi bi-pencil-square"></a>
-                                            <form action="{{ route(  'sensor.destroy', $sensor->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this sensor?');"
-                                                style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                            </form>
+                                            @if (in_array('view', $global_permissions['sensor_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['sensor_access'] ?? []))
+                                                <a href="{{ route('sensor.show', $sensor->id) }}"
+                                                    class="text-primary bi bi-eye"></a>
+                                            @endif
+                                            @if (in_array('edit', $global_permissions['sensor_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['sensor_access'] ?? []))
+                                                <a
+                                                    href="{{ route('sensor.edit', $sensor->id) }}"class="text-success bi bi-pencil-square"></a>
+                                            @endif
+                                            @if (in_array('delete', $global_permissions['sensor_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['sensor_access'] ?? []))
+                                                <form action="{{ route('sensor.destroy', $sensor->id) }}" method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this sensor?');"
+                                                    style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

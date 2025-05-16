@@ -113,14 +113,18 @@
                                         </button>
                                     </form>
                                 @else
-                                    <form action="{{ route('error-log.update', $error->id) }}" method="POST">
-                                        @csrf
-                                        @method('PATCH')
-                                        <input type="hidden" name="action" value="assign">
-                                        <button type="submit" class="btn btn-primary px-4">
-                                            {{ $error->pic && $error->pic != 1 ? 'Update' : 'Assign' }}
-                                        </button>
-                                    </form>
+                                    @if (in_array('full', $global_permissions['error_log_access'] ?? []) ||
+                                            in_array('edit', $global_permissions['error_log_access'] ?? []) ||
+                                            in_array('create', $global_permissions['error_log_access'] ?? []))
+                                        <form action="{{ route('error-log.update', $error->id) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="hidden" name="action" value="assign">
+                                            <button type="submit" class="btn btn-primary px-4">
+                                                {{ $error->pic && $error->pic != 1 ? 'Update' : 'Assign' }}
+                                            </button>
+                                        </form>
+                                    @endif
                                 @endif
 
                             </div>

@@ -10,78 +10,85 @@
         <section class="section dashboard">
             <div class="container mt-4">
                 <!-- Upload Dataset Card -->
-                <div class="card shadow-lg border-0 rounded-4 p-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Create New Sensor</h5>
+                @if (in_array('create', $global_permissions['sensor_access'] ?? []) ||
+                        in_array('full', $global_permissions['sensor_access'] ?? []))
+                    <div class="card shadow-lg border-0 rounded-4 p-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Create New Sensor</h5>
 
-                        <!-- Upload Form -->
-                        <form action="{{ route('sensor.store') }}" method="POST">
-                            @csrf
+                            <!-- Upload Form -->
+                            <form action="{{ route('sensor.store') }}" method="POST">
+                                @csrf
 
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Sensor Name</label>
-                                <input name="sensor_name" type="text" class="form-control w-75">
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Assigned Substation</label>
-                                <select name="sensor_substation" class="form-control w-75">
-                                    <option value=""></option>
-
-                                    @foreach ($substations as $substation)
-                                        <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Panels</label>
-                                <select name="sensor_panel" class="form-control w-75">
-                                    <option value=""></option>
-
-                                    @foreach ($panels as $panel)
-                                        <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Compartments</label>
-                                <select name="sensor_compartment" class="form-control w-75">
-                                    <option value=""></option>
-                                    @foreach ($compartments as $compartment)
-                                        <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Measurement</label>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sensor_measurement" value="Temperature" checked>
-                                    <label class="form-check-label" for="Temperature">Temperature</label>
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">Sensor Name</label>
+                                    <input name="sensor_name" type="text" class="form-control w-75">
                                 </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sensor_measurement" value="Partial Discharge">
-                                    <label class="form-check-label" for="Partial Discharge">Partial Discharge</label>
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">Assigned Substation</label>
+                                    <select name="sensor_substation" class="form-control w-75">
+                                        <option value=""></option>
+
+                                        @foreach ($substations as $substation)
+                                            <option value="{{ $substation->id }}">{{ $substation->substation_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Installation Date</label>
-                                <input name="sensor_date" type="date" class="form-control w-75">
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Status</label>
-                                <select name="sensor_status" class="form-control w-75">
-                                    <option value=""></option>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-                            </div>
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">Panels</label>
+                                    <select name="sensor_panel" class="form-control w-75">
+                                        <option value=""></option>
 
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary px-4">Create New</button>
-                            </div>
+                                        @foreach ($panels as $panel)
+                                            <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">Compartments</label>
+                                    <select name="sensor_compartment" class="form-control w-75">
+                                        <option value=""></option>
+                                        @foreach ($compartments as $compartment)
+                                            <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">Measurement</label>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sensor_measurement"
+                                            value="Temperature" checked>
+                                        <label class="form-check-label" for="Temperature">Temperature</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="sensor_measurement"
+                                            value="Partial Discharge">
+                                        <label class="form-check-label" for="Partial Discharge">Partial Discharge</label>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">Installation Date</label>
+                                    <input name="sensor_date" type="date" class="form-control w-75">
+                                </div>
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <label class="form-label w-25">Status</label>
+                                    <select name="sensor_status" class="form-control w-75">
+                                        <option value=""></option>
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
 
-                        </form>
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary px-4">Create New</button>
+                                </div>
+
+                            </form>
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Dataset Table -->
                 <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
@@ -108,19 +115,31 @@
                                         <td>{{ $sensor->substation->substation_name }}</td>
                                         <td>{{ $sensor->panel->panel_name }}</td>
                                         <td>{{ $sensor->compartment->compartment_name }}</td>
-                                        <td>{{ $sensor->sensor_measurement}}</td>
+                                        <td>{{ $sensor->sensor_measurement }}</td>
                                         <td>{{ $sensor->sensor_date }}</td>
                                         <td><span class="badge bg-success">{{ $sensor->sensor_status }}</span></td>
                                         <td>
-                                            <a href="{{ route('sensor.show',$sensor->id) }}" class="text-primary bi bi-eye"></a>
-                                            <a href="{{ route('sensor.edit',$sensor->id) }}"class="text-success bi bi-pencil-square"></a>
-                                            <form action="{{ route(  'sensor.destroy', $sensor->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this sensor?');"
-                                                style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                            </form>
+                                            @if (in_array('view', $global_permissions['sensor_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['sensor_access'] ?? []))
+                                                <a href="{{ route('sensor.show', $sensor->id) }}"
+                                                    class="text-primary bi bi-eye"></a>
+                                            @endif
+                                            @if (in_array('edit', $global_permissions['sensor_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['sensor_access'] ?? []))
+                                                <a
+                                                    href="{{ route('sensor.edit', $sensor->id) }}"class="text-success bi bi-pencil-square"></a>
+                                            @endif
+                                            @if (in_array('delete', $global_permissions['sensor_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['sensor_access'] ?? []))
+                                                <form action="{{ route('sensor.destroy', $sensor->id) }}" method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this sensor?');"
+                                                    style="display: inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

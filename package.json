@@ -17,6 +17,8 @@
         "vite": "^6.0.11"
     },
     "dependencies": {
+        "laravel-echo": "^2.0.2",
+        "pusher-js": "^8.4.0",
         "stream-chat": "^8.60.0"
     }
 }

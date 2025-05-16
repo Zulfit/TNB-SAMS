@@ -29,7 +29,7 @@
     <link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="/assets/vendor/simple-datatables/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+    <script src="https://unpkg.com/stream-chat@latest/dist/browser/index.js"></script>
 
     <!-- Template Main CSS File -->
     <link href="/assets/css/style.css" rel="stylesheet">
@@ -98,7 +98,6 @@
     <!-- Scripts -->
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     @vite(['resources/js/app.js'])
-    <script src="https://unpkg.com/stream-chat@latest/dist/browser/index.js"></script>
 
     @auth
         <script>

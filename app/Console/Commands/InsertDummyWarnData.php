@@ -46,7 +46,6 @@ class InsertDummyWarnData extends Command
             default => 'normal',
         };
 
-        // Prepare dummy temperature insert
         DB::table('sensor_temperature')->insert([[
             'sensor_id' => 1,
             'red_phase_temp' => $red,
@@ -78,11 +77,11 @@ class InsertDummyWarnData extends Command
 
         // Send notifications
         if (!empty($alertsToNotify)) {
-            $users = \App\Models\User::whereNotNull('chat_id')->get();
+            $users = User::whereNotNull('chat_id')->get();
 
             foreach ($users as $user) {
                 foreach ($alertsToNotify as $alert) {
-                    $user->notify(new \App\Notifications\SensorAlertNotification($alert, 'Temperature'));
+                    $user->notify(new SensorAlertNotification($alert, 'Temperature'));
                 }
             }
         }

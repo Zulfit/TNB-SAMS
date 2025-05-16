@@ -17,8 +17,8 @@ window.Pusher.logToConsole = true;
 
 window.Pusher = Pusher;
 
-console.log(import.meta.env.VITE_PUSHER_APP_KEY);
-console.log(import.meta.env.VITE_PUSHER_APP_CLUSTER);
+// console.log(import.meta.env.VITE_PUSHER_APP_KEY);
+// console.log(import.meta.env.VITE_PUSHER_APP_CLUSTER);
 
 window.Echo = new Echo({
     broadcaster: 'pusher',
@@ -30,7 +30,7 @@ window.Echo = new Echo({
 // Subscribe to the channel and listen for the event
 window.Echo.channel('sensor-alerts')
     .listen('.SensorAlertTriggered', (event) => {
-        console.log('Received event:', event);
+        // console.log('Received event:', event);
 
         // Ensure that showToast is accessible
         if (typeof showToast === 'function') {

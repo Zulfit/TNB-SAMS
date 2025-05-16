@@ -4,29 +4,15 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Notifications\SensorAlertNotification;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class InsertDummyDataSensorPD extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'insert:dummy-sensor-pd';
+    protected $description = 'Insert dummy Partial Discharge sensor data every 5 minutes';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Insert dummy sensor data every 5 minutes';
-
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $sensors = DB::table('sensors')
@@ -44,63 +30,38 @@ class InsertDummyDataSensorPD extends Command
             ->where('sensors.sensor_measurement', 'Partial Discharge')
             ->get();
 
-        $now = now();
+        $now = Carbon::now();
         $data = [];
 
         foreach ($sensors as $sensor) {
             $levelRoll = rand(1, 100);
 
             if ($levelRoll <= 85) {
-                // Normal: 85% of time
-                $lfbRatio = 0;
-                $mfbRatio = 0;
-                $hfbRatio = 0;
-                $lfbEPPC = 0;
-                $mfbEPPC = 0;
-                $hfbEPPC = 0;
+                $lfbRatio = $mfbRatio = $hfbRatio = 0;
+                $lfbEPPC = $mfbEPPC = $hfbEPPC = 0;
             } else {
-                // Force values to generate an indicator between 1–3 (Critical)
-                $lfbRatio = rand(0, 5);  // dB
+                $lfbRatio = rand(0, 5);
                 $mfbRatio = rand(0, 5);
                 $hfbRatio = rand(0, 5);
                 $lfbEPPC = rand(0, 5);
                 $mfbEPPC = rand(0, 5);
                 $hfbEPPC = rand(0, 5);
-            }                
+            }
 
-            // Convert ratios to linear
             $lfbLinear = pow(10, $lfbRatio / 10);
             $mfbLinear = pow(10, $mfbRatio / 10);
             $hfbLinear = pow(10, $hfbRatio / 10);
 
             $meanLinear = ($lfbLinear + $mfbLinear + $hfbLinear) / 3;
             $meanRatio = $meanLinear > 0 ? 10 * log10($meanLinear) : 0;
-
             $meanEPPC = ($lfbEPPC + $mfbEPPC + $hfbEPPC) / 3;
 
             $indicator = round($meanRatio * $meanEPPC, 2);
 
-            if ($indicator == 0) {
-                $alert = 'normal';
-            } else {
-                $alert = 'critical';
-            }
-
-            if (in_array($alert, ['critical', 'warn'])) {
-                $alertsToNotify[] = [
-                    'sensor_id' => $sensor->sensor_id,
-                    'sensor_name' => $sensor->sensor_name,
-                    'measurement' => $sensor->sensor_measurement,
-                    'substation' => $sensor->substation_name,
-                    'panel' => $sensor->panel_name,
-                    'compartment' => $sensor->compartment_name,
-                    'alert_level' => $alert,
-                    'indicator' => $indicator,
-                ];
-            }
+            $alert = $indicator == 0 ? 'normal' : 'critical';
 
             $data[] = [
-                'sensor_id' => $sensor,
+                'sensor_id' => $sensor->sensor_id,
                 'LFB_Ratio' => $lfbRatio,
                 'LFB_Ratio_Linear' => $lfbLinear,
                 'MFB_Ratio' => $mfbRatio,
@@ -117,17 +78,48 @@ class InsertDummyDataSensorPD extends Command
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
+
+            if (in_array($alert, ['critical'])) {
+                $alertData = [
+                    'sensor_id' => $sensor->sensor_id,
+                    'sensor_name' => $sensor->sensor_name,
+                    'measurement' => $sensor->sensor_measurement,
+                    'substation' => $sensor->substation_name,
+                    'panel' => $sensor->panel_name,
+                    'compartment' => $sensor->compartment_name,
+                    'alert_level' => $alert,
+                    'indicator' => $indicator,
+                ];
+
+                // Broadcast event
+                event(new \App\Events\SensorAlertTriggered(
+                    $sensor->sensor_id, $sensor->sensor_name, $alert
+                ));
+
+                // Notify users
+                $users = User::whereNotNull('chat_id')->get();
+                foreach ($users as $user) {
+                    $user->notify(new SensorAlertNotification($alertData, 'Partial Discharge'));
+                }
+
+                // Insert into error logs
+                DB::table('error_logs')->insert([
+                    'sensor_id' => $sensor->sensor_id,
+                    'sensor_name' => $sensor->sensor_name,
+                    'substation_name' => $sensor->substation_name,
+                    'panel_name' => $sensor->panel_name,
+                    'compartment_name' => $sensor->compartment_name,
+                    'alert_level' => $alert,
+                    'indicator' => $indicator,
+                    'measurement' => 'Partial Discharge',
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ]);
+            }
         }
 
-        DB::table('sensor_partial_discharge')->insert($data);
-
-        if ($alertsToNotify) {
-            $users = User::whereNotNull('chat_id')->get();
-
-            foreach ($users as $user) {
-                $user->notify(new SensorAlertNotification($alertsToNotify,'Partial Dicharge'));
-            }
-
+        if (!empty($data)) {
+            DB::table('sensor_partial_discharge')->insert($data);
         }
 
         $this->info('Inserted dummy data for ' . count($data) . ' sensors at ' . $now);

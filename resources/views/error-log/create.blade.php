@@ -89,7 +89,6 @@
                             </div>
 
                             <div class="d-flex justify-content-end gap-2">
-                                {{-- @dd(auth()->id()) --}}
                                 @if (auth()->id() == $error->pic && $error->assigned_by)
                                     {{-- PIC wants to chat with assigner --}}
                                     <a href="{{ route('chat.with.user', ['userId' => $error->assigned_by]) }}"

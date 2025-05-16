@@ -32,38 +32,38 @@ class UserManagementController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        // Validate request
+        $request->validate([
             'user_id' => 'required|exists:users,id',
-            'dashboard_access' => 'integer',
-            'analytics_access' => 'integer',
-            'dataset_access' => 'integer',
-            'substation_access' => 'integer',
-            'asset_access' => 'integer',
-            'sensor_access' => 'integer',
-            'report_access' => 'integer',
-            'user_management_access' => 'integer',
         ]);
 
-        // dd($validated);
+        // Define all your screens
+        $screens = [
+            'dashboard',
+            'analytics',
+            'dataset',
+            'substation',
+            'asset',
+            'sensor',
+            'report',
+            'user_management'
+        ];
 
-        UserManagement::create([
-            'user_id' => $validated['user_id'],
-            'dashboard_access' => $validated['dashboard_access'] ?? 0,
-            'analytics_access' => $validated['analytics_access'] ?? 0,
-            'dataset_access' => $validated['dataset_access'] ?? 0,
-            'substation_access' => $validated['substation_access'] ?? 0,
-            'asset_access' => $validated['asset_access'] ?? 0,
-            'sensor_access' => $validated['sensor_access'] ?? 0,
-            'report_access' => $validated['report_access'] ?? 0,
-            'user_management_access' => $validated['user_management_access'] ?? 0,
-        ]);
+        $permissions = [];
 
-        User::where('id', $validated['user_id'])->update([
-            'email_verified_at' => now()
-        ]);
+        // Loop through each screen and collect permissions
+        foreach ($screens as $screen) {
+            $key = $screen . '_access';
+            $permissions[$screen] = $request->input($key, []);
+        }
 
-        return redirect()->route('user_management.index')->with('success', 'User permissions updated successfully!');
+        // Store in DB
+        UserManagement::updateOrCreate(
+            ['user_id' => $request->user_id],
+            ['permissions' => $permissions]
+        );
 
+        return redirect()->back()->with('success', 'User verified successfully.');
     }
 
     /**
@@ -71,14 +71,15 @@ class UserManagementController extends Controller
      */
     public function show(UserManagement $userManagement)
     {
-        // retrieve user that have been clicked
         $user = User::find($userManagement->user_id);
-        // retrieve user's access control
-        $user_management = $userManagement;
-        // retrieve all user that have user access
-        $users = UserManagement::with('user')->get();
+        $userPermission = UserManagement::where('user_id', $userManagement->user_id)->first();
 
-        return view('user_management.show', compact( 'user','user_management','users'));
+        $permissions = $userPermission ? $userPermission->permissions : [];
+
+        $users = UserManagement::with('user')->get();
+        // dd($permissions);
+
+        return view('user_management.show', compact('user', 'permissions', 'users'));
     }
 
     /**
@@ -86,34 +87,37 @@ class UserManagementController extends Controller
      */
     public function edit(UserManagement $userManagement)
     {
-        // retrieve user that have been clicked
         $user = User::find($userManagement->user_id);
-        // retrieve user's access control
-        $user_management = $userManagement;
-        // retrieve all user that have user access
+        $userPermission = UserManagement::where('user_id', $userManagement->user_id)->first();
+
+        $permissions = $userPermission ? $userPermission->permissions : [];
         $users = UserManagement::with('user')->get();
 
-        return view('user_management.edit', compact( 'user','user_management','users'));
+
+        return view('user_management.edit', compact('user', 'permissions', 'users'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, UserManagement $userManagement)
+    public function update(Request $request, $userId)
     {
-        $userManagement->dashboard_access = $request->dashboard_access;
-        $userManagement->analytics_access = $request->analytics_access;
-        $userManagement->dataset_access = $request->dataset_access;
-        $userManagement->substation_access = $request->substation_access;
-        $userManagement->asset_access = $request->asset_access;
-        $userManagement->sensor_access = $request->sensor_access;
-        $userManagement->report_access = $request->report_access;
-        $userManagement->user_management_access = $request->user_management_access;
+        $permissionId = UserManagement::where('user_id', $userId)->first();
+        $userManagement = UserManagement::findOrFail($permissionId->id);
 
-        $userManagement->save();
+        $validated = $request->validate([
+            'permissions' => 'required|array',
+        ]);
+        // dd($validated['permissions']);
 
-        return redirect()->route('user_management.index')->with('success','User access control successfully updated!');
+        $userManagement->update([
+            'permissions' => $validated['permissions'],
+        ]);
+
+        return redirect()->back()->with('success', 'Permissions updated.');
     }
+
+
 
     /**
      * Remove the specified resource from storage.

@@ -16,30 +16,37 @@ class UserManagementSeeder extends Seeder
         $user_managements = [
             [
                 'user_id' => 2,
-                'dashboard_access' => 1,
-                'analytics_access' => 1,
-                'dataset_access' => 2,
-                'substation_access' => 2,
-                'asset_access' => 3,
-                'sensor_access' => 4,
-                'report_access' => 4,
-                'user_management_access' => 5,
+                'permissions' => [
+                    'dashboard_access' => ['full', 'view'],
+                    'analytics_access' => ['view', 'create'],
+                    'dataset_access' => ['view', 'create', 'edit'],
+                    'substation_access' => ['full', 'view', 'create'],
+                    'asset_access' => ['edit', 'delete'],
+                    'sensor_access' => ['full'],
+                    'report_access' => ['view', 'create', 'edit'],
+                    'user_management_access' => ['full', 'view', 'create', 'edit', 'delete'],
+                ],
             ],
             [
                 'user_id' => 3,
-                'dashboard_access' => 2,
-                'analytics_access' => 1,
-                'dataset_access' => 3,
-                'substation_access' => 4,
-                'asset_access' => 5,
-                'sensor_access' => 2,
-                'report_access' => 4,
-                'user_management_access' => 1,
+                'permissions' => [
+                    'dashboard_access' => ['view', 'create', 'edit'],
+                    'analytics_access' => ['full'],
+                    'dataset_access' => ['view'],
+                    'substation_access' => ['create', 'edit', 'delete'],
+                    'asset_access' => ['full', 'view'],
+                    'sensor_access' => ['view', 'create', 'delete'],
+                    'report_access' => ['full', 'delete'],
+                    'user_management_access' => ['view', 'edit'],
+                ],
             ],
         ];
 
-        foreach ($user_managements as $user_management){
-            UserManagement::create($user_management);
+        foreach ($user_managements as $user_management) {
+            UserManagement::create([
+                'user_id' => $user_management['user_id'],
+                'permissions' => $user_management['permissions'], // no json_encode here
+            ]);
         }
     }
 }

@@ -67,68 +67,60 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td class="text-start">Dashboard Admin</td>
-                                            <td><input name="dashboard_access" type="checkbox" value="1"></td>
-                                            <td><input name="dashboard_access" type="checkbox" value="2"></td>
-                                            <td><input name="dashboard_access" type="checkbox" value="3"></td>
-                                            <td><input name="dashboard_access" type="checkbox" value="4"></td>
-                                            <td><input name="dashboard_access" type="checkbox" value="5"></td>
+                                            <td class="text-start">Dashboard</td>
+                                            <td><input name="dashboard_access[]" type="checkbox" value="full"></td>
+                                            <td><input name="dashboard_access[]" type="checkbox" value="view"></td>
+                                            <td><input name="dashboard_access[]" type="checkbox" value="create"></td>
+                                            <td><input name="dashboard_access[]" type="checkbox" value="edit"></td>
+                                            <td><input name="dashboard_access[]" type="checkbox" value="delete"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Analytics</td>
-                                            <td><input name="analytics_access" type="checkbox" value="1"></td>
-                                            <td><input name="analytics_access" type="checkbox" value="2"></td>
-                                            <td><input name="analytics_access" type="checkbox" value="3"></td>
-                                            <td><input name="analytics_access" type="checkbox" value="4"></td>
-                                            <td><input name="analytics_access" type="checkbox" value="5"></td>
+                                            <td><input name="analytics_access[]" type="checkbox" value="full"></td>
+                                            <td><input name="analytics_access[]" type="checkbox" value="view"></td>
+                                            <td><input name="analytics_access[]" type="checkbox" value="create"></td>
+                                            <td><input name="analytics_access[]" type="checkbox" value="edit"></td>
+                                            <td><input name="analytics_access[]" type="checkbox" value="delete"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Dataset</td>
-                                            <td><input name="dataset_access" type="checkbox" value="1"></td>
-                                            <td><input name="dataset_access" type="checkbox" value="2"></td>
-                                            <td><input name="dataset_access" type="checkbox" value="3"></td>
-                                            <td><input name="dataset_access" type="checkbox" value="4"></td>
-                                            <td><input name="dataset_access" type="checkbox" value="5"></td>
+                                            <td><input name="dataset_access[]" type="checkbox" value="full"></td>
+                                            <td><input name="dataset_access[]" type="checkbox" value="view"></td>
+                                            <td><input name="dataset_access[]" type="checkbox" value="create"></td>
+                                            <td><input name="dataset_access[]" type="checkbox" value="edit"></td>
+                                            <td><input name="dataset_access[]" type="checkbox" value="delete"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Substation</td>
-                                            <td><input name="substation_access" type="checkbox" value="1"></td>
-                                            <td><input name="substation_access" type="checkbox" value="2"></td>
-                                            <td><input name="substation_access" type="checkbox" value="3"></td>
-                                            <td><input name="substation_access" type="checkbox" value="4"></td>
-                                            <td><input name="substation_access" type="checkbox" value="5"></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-start">Asset</td>
-                                            <td><input name="asset_access" type="checkbox" value="1"></td>
-                                            <td><input name="asset_access" type="checkbox" value="2"></td>
-                                            <td><input name="asset_access" type="checkbox" value="3"></td>
-                                            <td><input name="asset_access" type="checkbox" value="4"></td>
-                                            <td><input name="asset_access" type="checkbox" value="5"></td>
+                                            <td><input name="substation_access[]" type="checkbox" value="full"></td>
+                                            <td><input name="substation_access[]" type="checkbox" value="view"></td>
+                                            <td><input name="substation_access[]" type="checkbox" value="create"></td>
+                                            <td><input name="substation_access[]" type="checkbox" value="edit"></td>
+                                            <td><input name="substation_access[]" type="checkbox" value="delete"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Sensor</td>
-                                            <td><input name="sensor_access" type="checkbox" value="1"></td>
-                                            <td><input name="sensor_access" type="checkbox" value="2"></td>
-                                            <td><input name="sensor_access" type="checkbox" value="3"></td>
-                                            <td><input name="sensor_access" type="checkbox" value="4"></td>
-                                            <td><input name="sensor_access" type="checkbox" value="5"></td>
+                                            <td><input name="sensor_access[]" type="checkbox" value="full"></td>
+                                            <td><input name="sensor_access[]" type="checkbox" value="view"></td>
+                                            <td><input name="sensor_access[]" type="checkbox" value="create"></td>
+                                            <td><input name="sensor_access[]" type="checkbox" value="edit"></td>
+                                            <td><input name="sensor_access[]" type="checkbox" value="delete"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">Report Log</td>
-                                            <td><input name="report_access" type="checkbox" value="1"></td>
-                                            <td><input name="report_access" type="checkbox" value="2"></td>
-                                            <td><input name="report_access" type="checkbox" value="3"></td>
-                                            <td><input name="report_access" type="checkbox" value="4"></td>
-                                            <td><input name="report_access" type="checkbox" value="5"></td>
+                                            <td><input name="report_access[]" type="checkbox" value="full"></td>
+                                            <td><input name="report_access[]" type="checkbox" value="view"></td>
+                                            <td><input name="report_access[]" type="checkbox" value="create"></td>
+                                            <td><input name="report_access[]" type="checkbox" value="edit"></td>
+                                            <td><input name="report_access[]" type="checkbox" value="delete"></td>
                                         </tr>
                                         <tr>
                                             <td class="text-start">User Management</td>
-                                            <td><input name="user_management_access" type="checkbox" value="1"></td>
-                                            <td><input name="user_management_access" type="checkbox" value="2"></td>
-                                            <td><input name="user_management_access" type="checkbox" value="3"></td>
-                                            <td><input name="user_management_access" type="checkbox" value="4"></td>
-                                            <td><input name="user_management_access" type="checkbox" value="5"></td>
+                                            <td><input name="user_management_access[]" type="checkbox" value="full"></td>
+                                            <td><input name="user_management_access[]" type="checkbox" value="view"></td>
+                                            <td><input name="user_management_access[]" type="checkbox" value="create"></td>
+                                            <td><input name="user_management_access[]" type="checkbox" value="edit"></td>
+                                            <td><input name="user_management_access[]" type="checkbox" value="delete"></td>
                                         </tr>
                                     </tbody>
                                 </table>

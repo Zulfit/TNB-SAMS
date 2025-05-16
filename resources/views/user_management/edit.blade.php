@@ -15,9 +15,10 @@
                         <h5 class="card-title">User Access Control</h5>
 
                         <!-- User Form -->
-                        <form action="{{ route('user_management.update',$user_management->id) }}" method="POST">
+                        <form action="{{ route('user_management.update', $user->id) }}" method="POST">
                             @csrf
                             @method('PUT')
+            
                             <!-- User's Name Dropdown -->
                             <div class="d-flex align-items-center gap-3 mb-3">
                                 <label class="form-label w-25">User’s Name</label>
@@ -45,15 +46,13 @@
                                 <input value="{{ $user->position }}" type="text" class="form-control w-75 readonly-field"
                                     readonly>
                             </div>
-
-
-                            <!-- Permission Table -->
+            
                             <div class="table-responsive">
                                 <table class="table table-bordered text-center">
                                     <thead class="table-light">
                                         <tr>
                                             <th class="text-start fw-bold">List Screen</th>
-                                            <th>Full Access</th>
+                                            <th>Full</th>
                                             <th>View</th>
                                             <th>Create</th>
                                             <th>Edit</th>
@@ -61,202 +60,47 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td class="text-start">Dashboard</td> 
-                                            <td>
-                                                <input name="dashboard_access" type="checkbox" value="1"
-                                                    {{ $user_management->dashboard_access == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="dashboard_access" type="checkbox" value="2"
-                                                    {{ $user_management->dashboard_access == 2 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="dashboard_access" type="checkbox" value="3"
-                                                    {{ $user_management->dashboard_access == 3 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="dashboard_access" type="checkbox" value="4"
-                                                    {{ $user_management->dashboard_access == 4 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="dashboard_access" type="checkbox" value="5"
-                                                    {{ $user_management->dashboard_access == 5 ? 'checked' : '' }}>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-start">Analytics</td> 
-                                            <td>
-                                                <input name="analytics_access" type="checkbox" value="1"
-                                                    {{ $user_management->analytics_access == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="analytics_access" type="checkbox" value="2"
-                                                    {{ $user_management->analytics_access == 2 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="analytics_access" type="checkbox" value="3"
-                                                    {{ $user_management->analytics_access == 3 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="analytics_access" type="checkbox" value="4"
-                                                    {{ $user_management->analytics_access == 4 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="analytics_access" type="checkbox" value="5"
-                                                    {{ $user_management->analytics_access == 5 ? 'checked' : '' }}>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-start">Dataset</td> 
-                                            <td>
-                                                <input name="dataset_access" type="checkbox" value="1"
-                                                    {{ $user_management->dataset_access == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="dataset_access" type="checkbox" value="2"
-                                                    {{ $user_management->dataset_access == 2 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="dataset_access" type="checkbox" value="3"
-                                                    {{ $user_management->dataset_access == 3 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="dataset_access" type="checkbox" value="4"
-                                                    {{ $user_management->dataset_access == 4 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="dataset_access" type="checkbox" value="5"
-                                                    {{ $user_management->dataset_access == 5 ? 'checked' : '' }}>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-start">Substation</td> 
-                                            <td>
-                                                <input name="substation_access" type="checkbox" value="1"
-                                                    {{ $user_management->substation_access == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="substation_access" type="checkbox" value="2"
-                                                    {{ $user_management->substation_access == 2 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="substation_access" type="checkbox" value="3"
-                                                    {{ $user_management->substation_access == 3 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="substation_access" type="checkbox" value="4"
-                                                    {{ $user_management->substation_access == 4 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="substation_access" type="checkbox" value="5"
-                                                    {{ $user_management->substation_access == 5 ? 'checked' : '' }}>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-start">Asset</td> 
-                                            <td>
-                                                <input name="asset_access" type="checkbox" value="1"
-                                                    {{ $user_management->asset_access == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="asset_access" type="checkbox" value="2"
-                                                    {{ $user_management->asset_access == 2 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="asset_access" type="checkbox" value="3"
-                                                    {{ $user_management->asset_access == 3 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="asset_access" type="checkbox" value="4"
-                                                    {{ $user_management->asset_access == 4 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="asset_access" type="checkbox" value="5"
-                                                    {{ $user_management->asset_access == 5 ? 'checked' : '' }}>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-start">Sensor</td> 
-                                            <td>
-                                                <input name="sensor_access" type="checkbox" value="1"
-                                                    {{ $user_management->sensor_access == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="sensor_access" type="checkbox" value="2"
-                                                    {{ $user_management->sensor_access == 2 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="sensor_access" type="checkbox" value="3"
-                                                    {{ $user_management->sensor_access == 3 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="sensor_access" type="checkbox" value="4"
-                                                    {{ $user_management->sensor_access == 4 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="sensor_access" type="checkbox" value="5"
-                                                    {{ $user_management->sensor_access == 5 ? 'checked' : '' }}>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-start">Report Log</td> 
-                                            <td>
-                                                <input name="report_access" type="checkbox" value="1"
-                                                    {{ $user_management->report_access == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="report_access" type="checkbox" value="2"
-                                                    {{ $user_management->report_access == 2 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="report_access" type="checkbox" value="3"
-                                                    {{ $user_management->report_access == 3 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="report_access" type="checkbox" value="4"
-                                                    {{ $user_management->report_access == 4 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="report_access" type="checkbox" value="5"
-                                                    {{ $user_management->report_access == 5 ? 'checked' : '' }}>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td class="text-start">User Management</td> 
-                                            <td>
-                                                <input name="user_management_access" type="checkbox" value="1"
-                                                    {{ $user_management->user_management_access == 1 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="user_management_access" type="checkbox" value="2"
-                                                    {{ $user_management->user_management_access == 2 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="user_management_access" type="checkbox" value="3"
-                                                    {{ $user_management->user_management_access == 3 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="user_management_access" type="checkbox" value="4"
-                                                    {{ $user_management->user_management_access == 4 ? 'checked' : '' }}>
-                                            </td>
-                                            <td>
-                                                <input name="user_management_access" type="checkbox" value="5"
-                                                    {{ $user_management->user_management_access == 5 ? 'checked' : '' }}>
-                                            </td>
-                                        </tr>
+                                        @php
+                                            $actions = ['full', 'view', 'create', 'edit', 'delete'];
+                                            $screens = [
+                                                'dashboard_access',
+                                                'analytics_access',
+                                                'dataset_access',
+                                                'substation_access',
+                                                'asset_access',
+                                                'sensor_access',
+                                                'report_access',
+                                                'user_management_access',
+                                            ];
+                                        @endphp
+
+                                        @foreach ($screens as $screen)
+                                            <tr>
+                                                <td class="text-start text-capitalize">{{ str_replace('_', ' ', $screen) }}
+                                                </td>
+                                                @foreach ($actions as $action)
+                                                    @php
+                                                        $checked = in_array($action, $permissions[$screen] ?? []);
+                                                        $name = "permissions[{$screen}][]";
+                                                    @endphp
+                                                    <td>
+                                                        <input type="checkbox" name="{{ $name }}"
+                                                            value="{{ $action }}" {{ $checked ? 'checked' : '' }}>
+                                                    </td>
+                                                @endforeach
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
-
-                            <!-- Generate Button -->
+            
                             <div class="d-flex justify-content-end mt-3">
+                                <a href="{{ route('user_management.index') }}" class="btn btn-secondary me-2">Back</a>
                                 <button type="submit" class="btn btn-primary px-4">Update</button>
                             </div>
                         </form>
                     </div>
                 </div>
-
 
                 <!-- Dataset Table -->
                 <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">

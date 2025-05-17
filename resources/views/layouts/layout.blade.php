@@ -29,7 +29,6 @@
     <link href="/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="/assets/vendor/simple-datatables/style.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://unpkg.com/stream-chat@latest/dist/browser/index.js"></script>
 
     <!-- Template Main CSS File -->
     <link href="/assets/css/style.css" rel="stylesheet">
@@ -58,13 +57,10 @@
 
 <body>
 
-    {{-- <script type="module">
-        import {
-            StreamChat
-        } from 'https://cdn.skypack.dev/stream-chat';
-        // expose globally so old-style scripts can use it:
+    <script type="module">
+        import { StreamChat } from 'https://cdn.skypack.dev/stream-chat';
         window.StreamChat = StreamChat;
-    </script> --}}
+    </script>
 
     @include('layouts.header')
 

@@ -3,7 +3,7 @@
 
     <div class="d-flex align-items-center justify-content-start pb-3">
         <a href="/dashboard" class="logo d-flex align-items-center">
-            <img src="assets/img/logo.png" class="me-2" alt="">
+            <img src="{{ asset('images/logo.png') }}"  class="me-2" alt="">
             <span class="d-none d-lg-block me-2">TNB-SAMS</span>
         </a>
     </div><!-- End Logo -->
@@ -82,7 +82,7 @@
     </ul>
 
     <div class="d-flex align-items-center">
-        <img src="assets/img/logo_tnb.jpeg" alt="" style="width: 90%">
+        <img src="{{ asset('images/logo_tnb.jpeg') }}" alt="Logo TNB" style="width: 90%">
     </div>
 
     <script>

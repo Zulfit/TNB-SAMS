@@ -11,7 +11,11 @@ class ErrorLog extends Model
         'state',
         'threshold',
         'severity',
-        'pic'
+        'pic',
+        'assigned_by',
+        'desc',
+        'status',
+        'report',
     ];
 
     public function sensor()

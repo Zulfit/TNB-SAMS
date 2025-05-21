@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignId('pic')->nullable()->default(1)->constrained('users')->onDelete('cascade');
             $table->foreignId('assigned_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('desc')->nullable();
+            $table->string('status')->nullable();
+            $table->string('report')->nullable();
             $table->timestamps();
         });
     }

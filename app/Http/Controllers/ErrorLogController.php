@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Compartments;
 use App\Models\ErrorLog;
+use App\Models\Panels;
+use App\Models\Sensor;
 use App\Models\Substation;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,11 +16,70 @@ class ErrorLogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $errors = ErrorLog::with('user')->get();
-        return view('error-log.index', compact('errors'));
+        $user = Auth::user();
+
+        $errors = ErrorLog::with(['user', 'sensor.substation', 'sensor.panel', 'sensor.compartment'])
+            ->when(
+                $request->substation,
+                fn($q) =>
+                $q->whereHas(
+                    'sensor',
+                    fn($q2) =>
+                    $q2->where('sensor_substation', $request->substation)
+                )
+            )
+            ->when(
+                $request->panel,
+                fn($q) =>
+                $q->whereHas(
+                    'sensor',
+                    fn($q2) =>
+                    $q2->where('sensor_panel', $request->panel)
+                )
+            )
+            ->when(
+                $request->compartment,
+                fn($q) =>
+                $q->whereHas(
+                    'sensor',
+                    fn($q2) =>
+                    $q2->where('sensor_compartment', $request->compartment)
+                )
+            )
+            ->when(
+                $request->measurement,
+                fn($q) =>
+                $q->whereHas(
+                    'sensor',
+                    fn($q2) =>
+                    $q2->where('sensor_measurement', $request->measurement)
+                )
+            )
+            ->when($request->state, fn($q) => $q->where('state', $request->state))
+
+            // 👉 Restrict to only own errors if position is Staff
+            ->when(
+                $user->position === 'Staff',
+                fn($q) => $q->where('pic', $user->id)
+            )
+
+            ->orderByDesc('updated_at')
+            ->get();
+
+        return view('error-log.index', [
+            'errors' => $errors,
+            'substations' => Substation::all(),
+            'panels' => Panels::all(),
+            'compartments' => Compartments::all(),
+            'measurements' => Sensor::distinct()->pluck('sensor_measurement'),
+            'states' => ErrorLog::distinct()->pluck('state'),
+            'user'
+        ]);
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -71,10 +133,21 @@ class ErrorLogController extends Controller
     public function update(Request $request, ErrorLog $errorLog)
     {
         if ($request->input('action') == 'complete') {
-            // Complete the error
+            $validated = $request->validate([
+                'report' => 'required|string'
+            ]);
+
             $errorLog->state = 'NORMAL';
             $errorLog->threshold = '>= 50 for 3600s';
             $errorLog->severity = 'SAFE';
+            $errorLog->report = $validated['report'];
+            $errorLog->status = 'Completed';
+
+        } elseif ($request->action === 'acknowledge') {
+            $errorLog->update([
+                'status' => 'Acknowledged',
+            ]);
+            
         } elseif ($request->input('action') == 'assign') {
             // Assign staff
             $request->validate([
@@ -85,6 +158,7 @@ class ErrorLogController extends Controller
             $errorLog->pic = $request->input('pic');
             $errorLog->assigned_by = Auth::user()->id;
             $errorLog->desc = $request->input('desc');
+            $errorLog->status = 'New';
         }
 
         $errorLog->save();

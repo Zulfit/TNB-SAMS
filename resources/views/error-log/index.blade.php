@@ -2,74 +2,289 @@
 
 @section('content')
     <main id="main" class="main">
-
-        <div class="pagetitle">
-            <h1>Error Log</h1>
+        <div class="pagetitle d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="mb-0">Error Log</h1>
+            </div>
         </div>
 
         <section class="section dashboard">
-            <div class="container mt-4">
-                <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
-                    <div class="card-body">
+            <div class="container-fluid p-0">
+                <div class="card shadow-sm border-0 rounded-3 mb-4 pb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Filter Options</h5>
+                    </div>
+                    <div class="card-body pt-4">
+                        <form method="GET" action="{{ route('error-log.index') }}" class="row g-3">
+                            <div class="col-md-4 col-lg-2">
+                                <label for="substation" class="form-label small text-muted">Substation</label>
+                                <select id="substation" name="substation" class="form-select form-select-sm">
+                                    <option value="">All Substations</option>
+                                    @foreach ($substations as $substation)
+                                        <option value="{{ $substation->id }}"
+                                            {{ request('substation') == $substation->id ? 'selected' : '' }}>
+                                            {{ $substation->substation_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-lg-2">
+                                <label for="panel" class="form-label small text-muted">Panel</label>
+                                <select id="panel" name="panel" class="form-select form-select-sm">
+                                    <option value="">All Panels</option>
+                                    @foreach ($panels as $panel)
+                                        <option value="{{ $panel->id }}"
+                                            {{ request('panel') == $panel->id ? 'selected' : '' }}>
+                                            {{ $panel->panel_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-lg-2">
+                                <label for="compartment" class="form-label small text-muted">Compartment</label>
+                                <select id="compartment" name="compartment" class="form-select form-select-sm">
+                                    <option value="">All Compartments</option>
+                                    @foreach ($compartments as $compartment)
+                                        <option value="{{ $compartment->id }}"
+                                            {{ request('compartment') == $compartment->id ? 'selected' : '' }}>
+                                            {{ $compartment->compartment_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-lg-2">
+                                <label for="measurement" class="form-label small text-muted">Measurement</label>
+                                <select id="measurement" name="measurement" class="form-select form-select-sm">
+                                    <option value="">All Measurements</option>
+                                    @foreach ($measurements as $measurement)
+                                        <option value="{{ $measurement }}"
+                                            {{ request('measurement') == $measurement ? 'selected' : '' }}>
+                                            {{ $measurement }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-lg-2">
+                                <label for="state" class="form-label small text-muted">State</label>
+                                <select id="state" name="state" class="form-select form-select-sm">
+                                    <option value="">All States</option>
+                                    @foreach ($states as $state)
+                                        <option value="{{ $state }}"
+                                            {{ request('state') == $state ? 'selected' : '' }}>
+                                            {{ $state }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-lg-2 d-flex align-items-end">
+                                <div class="d-flex gap-2 w-100">
+                                    <button type="submit" class="btn btn-primary" title="Apply Filters">
+                                        <i class="bi bi-funnel-fill"></i>
+                                    </button>
+                                    <a href="{{ route('error-log.index') }}" class="btn btn-outline-secondary" title="Clear Filters">
+                                        <i class="bi bi-x-circle"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Error Logs</h5>
+                        <span class="badge bg-secondary">{{ $errors->count() }} {{ Str::plural('record', $errors->count()) }}</span>
+                    </div>
+                    <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-bordered table-hover align-middle text-center">
+                            <table class="table table-hover align-middle mb-0">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>#</th>
-                                        <th>Timestamp</th>
-                                        <th>Sensor Name</th>
-                                        <th>Substation</th>
-                                        <th>Panel</th>
-                                        <th>Compartment</th>
-                                        <th>Measurement</th>
-                                        <th>State</th>
-                                        <th>Threshold</th>
-                                        <th>Severity</th>
-                                        <th>PIC</th>
+                                        <th class="py-3">#</th>
+                                        <th class="py-3">Timestamp</th>
+                                        <th class="py-3">Sensor Name</th>
+                                        <th class="py-3">Location</th>
+                                        <th class="py-3">Measurement</th>
+                                        <th class="py-3">State</th>
+                                        <th class="py-3">Threshold</th>
+                                        <th class="py-3">Severity</th>
+                                        <th class="py-3">
+                                            {{ Auth::user()->position == 'Staff' ? 'Status' : 'PIC' }}
+                                        </th>
+                                        <th class="py-3">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($errors as $error)
-                                        <tr>
+                                    @forelse ($errors as $error)
+                                        <tr class="{{ $error->severity == 'Critical' ? 'table-danger' : ($error->severity == 'Warning' ? 'table-warning' : '') }}">
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $error->updated_at }}</td>
+                                            <td>{{ $error->updated_at->format('M d, Y H:i') }}</td>
                                             <td>{{ $error->sensor->sensor_name }}</td>
-                                            <td>{{ $error->sensor->substation->substation_name }}</td>
-                                            <td>{{ $error->sensor->panel->panel_name }}</td>
-                                            <td>{{ $error->sensor->compartment->compartment_name }}</td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-bold">{{ $error->sensor->substation->substation_name }}</span>
+                                                    <small class="text-muted">
+                                                        {{ $error->sensor->panel->panel_name }} / 
+                                                        {{ $error->sensor->compartment->compartment_name }}
+                                                    </small>
+                                                </div>
+                                            </td>
                                             <td>{{ $error->sensor->sensor_measurement }}</td>
                                             <td>
-                                                <span class="badge {{ $error->getStateBadgeClass() }}">
+                                                <span class="badge rounded-pill {{ $error->getStateBadgeClass() }}" style="padding: 8px 12px; font-size: 0.8rem;">
                                                     {{ $error->state }}
                                                 </span>
                                             </td>
                                             <td>{{ $error->threshold }}</td>
                                             <td>
-                                                <span class="badge {{ $error->getSeverityBadgeClass() }}">
+                                                <span class="badge rounded-pill {{ $error->getSeverityBadgeClass() }}" style="padding: 8px 12px; font-size: 0.8rem;">
                                                     {{ $error->severity }}
                                                 </span>
                                             </td>
                                             <td>
-                                                @if ($error->pic === 1)
-                                                    <a href="{{ route('error-log.assign', $error->id) }}"
-                                                        class="badge bg-secondary text-decoration-none">
-                                                        Unassigned
-                                                    </a>
+                                                @if (Auth::user()->position == 'Staff')
+                                                    @php
+                                                        $statusColor = 'primary';
+                                                        if($error->status == 'New') {
+                                                            $statusColor = 'info';
+                                                        } elseif($error->status == 'Acknowledge') {
+                                                            $statusColor = 'warning';
+                                                        } elseif($error->status == 'Completed') {
+                                                            $statusColor = 'success';
+                                                        }
+                                                    @endphp
+                                                    <span class="badge bg-{{ $statusColor }} text-white rounded-pill px-3 py-2">
+                                                        {{ $error->status }}
+                                                    </span>
                                                 @else
-                                                    <a href="{{ route('error-log.assign', $error->id) }}"
-                                                        class="badge bg-primary text-decoration-none">
-                                                        {{ $error->user->name }}
-                                                    </a>
+                                                    @if ($error->pic === 1)
+                                                        <span class="badge bg-secondary text-white rounded-pill" style="padding: 8px 12px; font-size: 0.8rem;">
+                                                            Unassigned
+                                                        </span>
+                                                    @else
+                                                        <span class="badge bg-primary text-white rounded-pill" style="padding: 8px 12px; font-size: 0.8rem;">
+                                                            {{ $error->user->name }}
+                                                        </span>
+                                                    @endif
                                                 @endif
                                             </td>
+                                            <td>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                        Actions
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a href="{{ route('error-log.assign', $error->id) }}" class="dropdown-item">
+                                                                <i class="bi bi-person-check me-2"></i>
+                                                                {{ Auth::user()->position == 'Staff' ? 'Update Status' : 'Assign PIC' }}
+                                                            </a>
+                                                        </li>
+                                                        {{-- <li>
+                                                            <a href="#" class="dropdown-item view-details" data-id="{{ $error->id }}">
+                                                                <i class="bi bi-eye me-2"></i> View Details
+                                                            </a>
+                                                        </li> --}}
+                                                    </ul>
+                                                </div>
+                                            </td>
                                         </tr>
-                                    @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="10" class="text-center py-5">
+                                                <img src="{{ asset('images/empty-state.svg') }}" alt="No data" width="120" class="mb-3">
+                                                <h5 class="text-muted">No Error Logs Found</h5>
+                                                <p class="text-muted">
+                                                    @if (Auth::user()->position == 'Staff')
+                                                        No error logs have been assigned to you.
+                                                    @else
+                                                        There are no error logs matching your criteria.
+                                                    @endif
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
                     </div>
+                    {{-- @if($errors->count() > 0)
+                    <div class="card-footer bg-white py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted small">
+                                Showing {{ $errors->firstItem() ?? 0 }} to {{ $errors->lastItem() ?? 0 }} of {{ $errors->total() }} entries
+                            </div>
+                            {{ $errors->links() }}
+                        </div>
+                    </div>
+                    @endif --}}
                 </div>
             </div>
         </section>
     </main>
+
+    <!-- Error Details Modal -->
+    <div class="modal fade" id="errorDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Error Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="errorDetailsContent">
+                    <!-- Content will be loaded dynamically -->
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@push('scripts')
+<script>
+    // Add JavaScript to handle the View Details functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle view details click
+        const viewDetailButtons = document.querySelectorAll('.view-details');
+        viewDetailButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const errorId = this.getAttribute('data-id');
+                // Here you would fetch the details and populate the modal
+                // For now, we'll just show the modal
+                const modal = new bootstrap.Modal(document.getElementById('errorDetailsModal'));
+                modal.show();
+            });
+        });
+
+        // Add hover effect to rows
+        const tableRows = document.querySelectorAll('tbody tr');
+        tableRows.forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('no-hover')) {
+                    this.style.cursor = 'pointer';
+                    this.style.backgroundColor = '#f8f9fa';
+                }
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('no-hover')) {
+                    this.style.backgroundColor = '';
+                }
+            });
+        });
+    });
+</script>
+@endpush
 @endsection

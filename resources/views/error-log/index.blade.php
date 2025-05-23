@@ -103,9 +103,9 @@
                     <div class="card-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover align-middle mb-0">
-                                <thead class="table-light">
+                                <thead class="table-light text-center">
                                     <tr>
-                                        <th class="py-3">#</th>
+                                        <th class="py-3">ID</th>
                                         <th class="py-3">Timestamp</th>
                                         <th class="py-3">Sensor Name</th>
                                         <th class="py-3">Location</th>
@@ -119,10 +119,10 @@
                                         <th class="py-3">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="text-center">
                                     @forelse ($errors as $error)
                                         <tr class="{{ $error->severity == 'Critical' ? 'table-danger' : ($error->severity == 'Warning' ? 'table-warning' : '') }}">
-                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $error->id }}</td>
                                             <td>{{ $error->updated_at->format('M d, Y H:i') }}</td>
                                             <td>{{ $error->sensor->sensor_name }}</td>
                                             <td>
@@ -182,8 +182,12 @@
                                                         <li>
                                                             <a href="{{ route('error-log.assign', $error->id) }}" class="dropdown-item">
                                                                 <i class="bi bi-person-check me-2"></i>
-                                                                {{ Auth::user()->position == 'Staff' ? 'Update Status' : 'Assign PIC' }}
-                                                            </a>
+                                                                @if(Auth::user()->position == 'Staff')
+                                                                    Update Status
+                                                                @else
+                                                                    {{ $error->pic != 1 ? 'View Task' : 'Assign PIC' }}
+                                                                @endif
+                                                            </a>                                                            
                                                         </li>
                                                         {{-- <li>
                                                             <a href="#" class="dropdown-item view-details" data-id="{{ $error->id }}">

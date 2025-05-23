@@ -21,25 +21,41 @@
     </div>
     
     <!-- Current Status Banner -->
-    <div class="alert alert-{{ $error->status == 'New' ? 'primary' : ($error->status == 'Acknowledged' ? 'warning' : 'success') }} d-flex align-items-center mb-4">
+    <div class="alert alert-{{ 
+        $error->status == null ? 'secondary' : 
+        ($error->status == 'New' ? 'primary' : 
+        ($error->status == 'Acknowledged' ? 'warning' : 'success')) 
+    }} d-flex align-items-center mb-4">
         <div class="d-flex align-items-center flex-grow-1">
-            <i class="bi bi-{{ $error->status == 'New' ? 'exclamation-circle' : ($error->status == 'Acknowledged' ? 'clock-history' : 'check-circle') }} fs-4 me-2"></i>
+            <i class="bi bi-{{ 
+                $error->status == null ? 'person-plus' : 
+                ($error->status == 'New' ? 'exclamation-circle' : 
+                ($error->status == 'Acknowledged' ? 'clock-history' : 'check-circle')) 
+            }} fs-4 me-2"></i>
             <div>
-                <strong>Current Status: {{ $error->status }}</strong>
+                <strong>Current Status: {{ $error->status ?? 'Unassigned' }}</strong>
                 <div class="small">
-                    @if($error->status == 'New')
+                    @if(is_null($error->status))
                         This error requires assignment to a staff member.
+                    @elseif($error->status == 'New')
+                        A staff member has been assigned. Waiting for acknowledgment.
                     @elseif($error->status == 'Acknowledged')
                         This error has been acknowledged and is being worked on.
-                    @else
+                    @elseif($error->status == 'Completed')
                         This error has been resolved.
                     @endif
                 </div>
             </div>
         </div>
-        @if($error->status == 'New' && Auth::user()->position != 'Staff')
+    
+        {{-- Action Badges --}}
+        @if(is_null($error->status) && Auth::user()->position != 'Staff')
             <div class="ms-auto">
                 <span class="badge bg-danger">Action Required: Assign Staff</span>
+            </div>
+        @elseif($error->status == 'New' && Auth::user()->position == 'Staff' && auth()->id() == $error->pic)
+            <div class="ms-auto">
+                <span class="badge bg-info">Action Required: Acknowledge Task</span>
             </div>
         @elseif($error->status == 'Acknowledged' && Auth::user()->position == 'Staff' && auth()->id() == $error->pic)
             <div class="ms-auto">
@@ -47,6 +63,7 @@
             </div>
         @endif
     </div>
+    
 
     <section class="section dashboard">
         <div class="container-fluid p-0">
@@ -187,7 +204,7 @@
                                 
                                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
                                     <div>
-                                        @if($error->status !== 'New')
+                                        @if($error->status && $error->status !== 'New')
                                             <span class="badge bg-{{ $error->status == 'Acknowledged' ? 'warning' : 'success' }} fs-6 py-2 px-3">
                                                 <i class="bi bi-{{ $error->status == 'Acknowledged' ? 'clock-history' : 'check-circle' }} me-1"></i>
                                                 {{ $error->status }}
@@ -296,7 +313,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="card-body pt-2">
+                            <div class="card-body p-4">
                                 <div class="card-text bg-light rounded p-4 border">
                                     <div class="d-flex mb-3">
                                         <div class="flex-shrink-0">

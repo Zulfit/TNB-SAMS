@@ -8,6 +8,7 @@ use App\Models\Panels;
 use App\Models\Sensor;
 use App\Models\Substation;
 use App\Models\User;
+use App\Notifications\SensorAlertNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -132,6 +133,8 @@ class ErrorLogController extends Controller
      */
     public function update(Request $request, ErrorLog $errorLog)
     {
+        $alertsToNotify = [];
+
         if ($request->input('action') == 'complete') {
             $validated = $request->validate([
                 'report' => 'required|string'
@@ -147,7 +150,7 @@ class ErrorLogController extends Controller
             $errorLog->update([
                 'status' => 'Acknowledged',
             ]);
-            
+
         } elseif ($request->input('action') == 'assign') {
             // Assign staff
             $request->validate([
@@ -159,6 +162,21 @@ class ErrorLogController extends Controller
             $errorLog->assigned_by = Auth::user()->id;
             $errorLog->desc = $request->input('desc');
             $errorLog->status = 'New';
+
+            $alert = [
+                'sensor_name'   => $errorLog->sensor->sensor_name,
+                'measurement'   => $errorLog->sensor->sensor_measurement,
+                'substation'    => $errorLog->sensor->substation->substation_name,
+                'panel'         => $errorLog->sensor->panel->panel_name,
+                'compartment'   => $errorLog->sensor->compartment->compartment_name,
+                'severity'      => $errorLog->severity,
+                'error_log_id'  => $errorLog->id,
+                'pic'           => $errorLog->user->name, 
+            ];
+        
+            // Use SensorAlertNotification to send Telegram message
+            new SensorAlertNotification($alert, '')->sendAssignMessageAdmin();
+            new SensorAlertNotification($alert, '')->sendAssignMessageStaff();
         }
 
         $errorLog->save();

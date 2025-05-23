@@ -90,7 +90,7 @@
                             <div class="card info-card revenue-card">
 
                                 <div class="card-body text-center">
-                                    <h5 class="card-title">Total Failure</h5>
+                                    <h5 class="card-title">Total Alarm</h5>
                                     <div class="d-flex justify-content-center align-items-center">
                                         <h1 class="fw-bold display-4">{{ $total_failure }}</h1>
                                     </div>

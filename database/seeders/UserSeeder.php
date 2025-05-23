@@ -22,7 +22,6 @@ class UserSeeder extends Seeder
             [
                 'name' => 'Admin',
                 'email' => 'tnbsamsa@tnb.com.my',
-                'chat_id' => '391517781',
                 'email_verified_at' => now(),
                 'id_staff' => 'TNB001',
                 'position' => 'Admin',

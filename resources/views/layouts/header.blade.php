@@ -77,7 +77,16 @@
             <!-- Profile -->
             <li class="nav-item dropdown pe-3">
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <img src="/assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                    <div class="avatar-preview" id="avatarPreview"
+                        style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 3px solid #e9ecef; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                        @if (Auth::user()->profile_picture)
+                            <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Profile"
+                                style="width: 100%; height: 100%; object-fit: cover;">
+                        @else
+                            <i class="bi bi-person-fill text-white" style="font-size: 2.5rem;"></i>
+                        @endif
+                    </div>
+                    {{-- <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Profile" class="rounded-circle"> --}}
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -93,7 +102,7 @@
                             <span>My Profile</span>
                         </a>
                     </li>
-                    <li>
+                    {{-- <li>
                         <hr class="dropdown-divider">
                     </li>
                     <li>
@@ -110,7 +119,7 @@
                             <i class="bi bi-question-circle"></i>
                             <span>Need Help?</span>
                         </a>
-                    </li>
+                    </li> --}}
                     <li>
                         <hr class="dropdown-divider">
                     </li>
@@ -130,4 +139,3 @@
         </ul>
     </nav>
 </header>
-

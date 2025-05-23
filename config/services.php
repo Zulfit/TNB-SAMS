@@ -42,6 +42,7 @@ return [
 
     'telegram' => [
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'bot_admin_token' => env('GROUP_ADMIN_BOT_TOKEN'),
     ],
 
 

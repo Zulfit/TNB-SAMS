@@ -23,8 +23,11 @@ Route::get('/', function () {
 });
 
 Route::resource('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->names(['index' => 'dashboard']);
-Route::post('/dashboard/sensor-temperature', [DashboardController::class, 'getSensorTemperature'])->middleware(['auth', 'verified']);
-Route::post('/dashboard/sensor-partial-discharge', [DashboardController::class, 'getSensorPartialDischarge'])->middleware(['auth', 'verified']);
+Route::post('/dashboard/stats-by-period', [DashboardController::class, 'getStatsByPeriod']);
+Route::get('/dashboard/panels/{substationId}', [DashboardController::class, 'getPanelsBySubstation']);
+Route::get('/dashboard/compartments/{panelId}', [DashboardController::class, 'getCompartmentsByPanel']);
+Route::post('/dashboard/sensor-temperature', [DashboardController::class, 'getSensorTemperature']);
+Route::post('/dashboard/sensor-partial-discharge', [DashboardController::class, 'getSensorPartialDischarge']);
 
 
 Route::middleware('auth')->group(function () {

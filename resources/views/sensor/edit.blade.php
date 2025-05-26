@@ -5,137 +5,201 @@
 
         <div class="pagetitle">
             <h1>Sensor</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('sensor.index') }}">Sensor</a></li>
+                    <li class="breadcrumb-item active">Edit Sensor</a></li>
+                </ol>
+            </nav>
         </div>
 
         <section class="section dashboard">
             <div class="container mt-4">
                 <!-- Upload Dataset Card -->
-                <div class="card shadow-lg border-0 rounded-4 p-3">
-                    <div class="card-body">
-                        <h5 class="card-title">Sensor Details</h5>
-
-                        <!-- Upload Form -->
-                        <form action="{{ route('sensor.update',$sensor->id) }}" method="POST">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-header bg-white border-bottom py-3 px-4">
+                        <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Edit Sensor Details</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="{{ route('sensor.update', $sensor->id) }}" method="POST">
                             @csrf
                             @method('PUT')
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Sensor Name</label>
-                                <input value="{{ old('sensor_name', $sensor->sensor_name) }}" name="sensor_name" type="text" class="form-control w-75">
+                
+                            <!-- Sensor Name -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Sensor Name</label>
+                                <input name="sensor_name" type="text" class="form-control"
+                                    value="{{ old('sensor_name', $sensor->sensor_name) }}">
                             </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Assigned Substation</label>
-                                <select name="sensor_substation" class="form-control w-75">
-                                    <option value="{{ old('sensor_substation',$sensor->substation->id) }}">{{ $sensor->substation->substation_name }}</option>
+                
+                            <!-- Substation -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Assigned Substation</label>
+                                <select name="sensor_substation" class="form-select">
                                     @foreach ($substations as $substation)
-                                        <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
+                                        <option value="{{ $substation->id }}"
+                                            {{ old('sensor_substation', $sensor->substation_id) == $substation->id ? 'selected' : '' }}>
+                                            {{ $substation->substation_name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Panels</label>
-                                <select name="sensor_panel" class="form-control w-75">
-                                    <option value="{{ old('sensor_panel',$sensor->panel->id) }}">{{ $sensor->panel->panel_name }}</option>
+                
+                            <!-- Panel -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Panel</label>
+                                <select name="sensor_panel" class="form-select">
                                     @foreach ($panels as $panel)
-                                        <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
+                                        <option value="{{ $panel->id }}"
+                                            {{ old('sensor_panel', $sensor->panel_id) == $panel->id ? 'selected' : '' }}>
+                                            {{ $panel->panel_name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Compartments</label>
-                                <select name="sensor_compartment" class="form-control w-75">
-                                    <option value="{{ old('sensor_compartment',$sensor->compartment->id) }}">{{ $sensor->compartment->compartment_name }}</option>
+                
+                            <!-- Compartment -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Compartment</label>
+                                <select name="sensor_compartment" class="form-select">
                                     @foreach ($compartments as $compartment)
-                                        <option value="{{ $compartment->id }}">{{ $compartment->compartment_name }}</option>
+                                        <option value="{{ $compartment->id }}"
+                                            {{ old('sensor_compartment', $sensor->compartment_id) == $compartment->id ? 'selected' : '' }}>
+                                            {{ $compartment->compartment_name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Measurement</label>
+                
+                            <!-- Measurement -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold d-block">Measurement</label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="Temperature" value="Temperature"
-                                    {{ $sensor->sensor_measurement == 'Temperature' ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="Temperature"
+                                        value="Temperature"
+                                        {{ old('sensor_measurement', $sensor->sensor_measurement) == 'Temperature' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="Temperature">Temperature</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="Partial Discharge" value="Partial Discharge"
-                                    {{ $sensor->sensor_measurement == 'Partial Discharge' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="Partial Discharge">Partial Discharge</label>
+                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="PartialDischarge"
+                                        value="Partial Discharge"
+                                        {{ old('sensor_measurement', $sensor->sensor_measurement) == 'Partial Discharge' ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="PartialDischarge">Partial Discharge</label>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Installation Date</label>
-                                <input value="{{ old('sensor_date',$sensor->sensor_date) }}" name="sensor_date" type="date" class="form-control w-75">
+                
+                            <!-- Installation Date -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Installation Date</label>
+                                <input name="sensor_date" type="date" class="form-control"
+                                    value="{{ old('sensor_date', $sensor->sensor_date) }}">
                             </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Status</label>
-                                <select name="sensor_status" class="form-control w-75">
-                                    <option value="{{ old('sensor_status',$sensor->sensor_status) }}">{{ $sensor->sensor_status }}</option>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
+                
+                            <!-- Status -->
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Status</label>
+                                <select name="sensor_status" class="form-select">
+                                    <option value="Active" {{ old('sensor_status', $sensor->sensor_status) == 'Active' ? 'selected' : '' }}>Active</option>
+                                    <option value="Inactive" {{ old('sensor_status', $sensor->sensor_status) == 'Inactive' ? 'selected' : '' }}>Inactive</option>
                                 </select>
                             </div>
-
+                
+                            <!-- Submit -->
                             <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-primary px-4">Update</button>
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-check-circle me-2"></i>Update
+                                </button>
                             </div>
-
                         </form>
                     </div>
-                </div>
+                </div>                
 
                 <!-- Dataset Table -->
-                <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
-                    <div class="card-body">
-                        <table class="table table-bordered align-middle text-center">
-                            <thead class="table-light">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Sensor List</h5>
+                        <span class="badge bg-secondary">
+                            {{ isset($sensors) ? count($sensors) : 0 }}
+                            {{ isset($sensors) ? Str::plural('sensor', count($sensors)) : 'sensors' }}
+                        </span>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-center">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Sensor Name</th>
-                                    <th>Assigned Substation</th>
-                                    <th>Panel</th>
-                                    <th>Compartment</th>
-                                    <th>Measurement</th>
-                                    <th>Installation Date</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th class="py-3">#</th>
+                                    <th class="py-3">Sensor Name</th>
+                                    <th class="py-3">Location</th>
+                                    <th class="py-3">Measurement</th>
+                                    <th class="py-3">Installation Date</th>
+                                    <th class="py-3">Status</th>
+                                    <th class="py-3">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach ($sensors as $sensor)
+                            <tbody class="text-center">
+                                @if (isset($sensors) && count($sensors) > 0)
+                                    @foreach ($sensors as $sensor)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                                <td>
+                                                    <div class="fw-bold">{{ $sensor->sensor_name ?? 'N/A' }}</div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <span
+                                                            class="fw-bold">{{ $sensor->substation->substation_name ?? 'N/A' }}</span>
+                                                        <small class="text-muted">
+                                                            {{ $sensor->panel->panel_name ?? 'N/A' }} /
+                                                            {{ $sensor->compartment->compartment_name ?? 'N/A' }}
+                                                        </small>
+                                                    </div>
+                                                </td>
+                                                <td>{{ $sensor->sensor_measurement ?? 'N/A' }}</td>
+                                                
+                                            <td>{{ $sensor->sensor_date }}</td>
+                                            <td>
+                                                <span
+                                                    class="badge rounded-pill {{ ($sensor->sensor_status ?? '') === 'Active' ? 'bg-success' : 'bg-secondary' }}"
+                                                    style="padding: 8px 12px; font-size: 0.8rem;">
+                                                    {{ $sensor->sensor_status ?? 'Unknown' }}
+                                                </span>
+                                            </td>                                            <td>
+                                                @if (in_array('view', $global_permissions['sensor_access'] ?? []) ||
+                                                        in_array('full', $global_permissions['sensor_access'] ?? []))
+                                                    <a href="{{ route('sensor.show', $sensor->id) }}"
+                                                        class="text-primary bi bi-eye"></a>
+                                                @endif
+                                                @if (in_array('edit', $global_permissions['sensor_access'] ?? []) ||
+                                                        in_array('full', $global_permissions['sensor_access'] ?? []))
+                                                    <a
+                                                        href="{{ route('sensor.edit', $sensor->id) }}"class="text-success bi bi-pencil-square"></a>
+                                                @endif
+                                                @if (in_array('delete', $global_permissions['sensor_access'] ?? []) ||
+                                                        in_array('full', $global_permissions['sensor_access'] ?? []))
+                                                    <form action="{{ route('sensor.destroy', $sensor->id) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Are you sure you want to delete this sensor?');"
+                                                        style="display: inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                    </form>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
                                     <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $sensor->sensor_name }}</td>
-                                        <td>{{ $sensor->substation->substation_name }}</td>
-                                        <td>{{ $sensor->panel->panel_name }}</td>
-                                        <td>{{ $sensor->compartment->compartment_name }}</td>
-                                        <td>{{ $sensor->sensor_measurement}}</td>
-                                        <td>{{ $sensor->sensor_date }}</td>
-                                        <td><span class="badge bg-success">{{ $sensor->sensor_status }}</span></td>
-                                        <td>
-                                            @if (in_array('view', $global_permissions['sensor_access'] ?? []) ||
-                                                    in_array('full', $global_permissions['sensor_access'] ?? []))
-                                                <a href="{{ route('sensor.show', $sensor->id) }}"
-                                                    class="text-primary bi bi-eye"></a>
-                                            @endif
-                                            @if (in_array('edit', $global_permissions['sensor_access'] ?? []) ||
-                                                    in_array('full', $global_permissions['sensor_access'] ?? []))
-                                                <a
-                                                    href="{{ route('sensor.edit', $sensor->id) }}"class="text-success bi bi-pencil-square"></a>
-                                            @endif
-                                            @if (in_array('delete', $global_permissions['sensor_access'] ?? []) ||
-                                                    in_array('full', $global_permissions['sensor_access'] ?? []))
-                                                <form action="{{ route('sensor.destroy', $sensor->id) }}" method="POST"
-                                                    onsubmit="return confirm('Are you sure you want to delete this sensor?');"
-                                                    style="display: inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                                </form>
-                                            @endif
+                                        <td colspan="12" class="text-center py-5">
+                                            <div class="d-flex flex-column align-items-center">
+                                                <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+                                                <h5 class="text-muted">No Sensor Found</h5>
+                                            </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>

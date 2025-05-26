@@ -22,32 +22,43 @@
                         <h5 class="mb-0"><i class="bi bi-building me-2"></i>Substation Details</h5>
                     </div>
                     <div class="card-body p-4">
-
-                        <!-- Upload Form -->
                         <form action="{{ route('substation.update', $substation->id) }}" method="POST">
                             @csrf
                             @method('PUT')
 
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Substation Name</label>
-                                <input value="{{ $substation->substation_name }}" name="substation_name" type="text" class="form-control w-75">
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Substation Location</label>
-                                <input value="{{ $substation->substation_location }}" name="substation_location" type="text" class="form-control w-75">
-                            </div>
-                            <div class="d-flex align-items-center gap-3 mb-3">
-                                <label class="form-label w-25">Commisioning Date</label>
-                                <input value="{{ $substation->substation_date }}" name="substation_date" type="date" class="form-control w-75">
+                            <!-- Substation Name -->
+                            <div class="mb-4">
+                                <label for="substation_name" class="form-label fw-semibold">Substation Name</label>
+                                <input type="text" id="substation_name" name="substation_name"
+                                    value="{{ $substation->substation_name }}" class="form-control"
+                                    placeholder="Enter substation name">
                             </div>
 
-                            <div class="text-end mt-3">
-                                <button name="submit" type="submit" class="btn btn-primary px-4">Update</button>
+                            <!-- Substation Location -->
+                            <div class="mb-4">
+                                <label for="substation_location" class="form-label fw-semibold">Location</label>
+                                <input type="text" id="substation_location" name="substation_location"
+                                    value="{{ $substation->substation_location }}" class="form-control"
+                                    placeholder="Enter location">
                             </div>
 
+                            <!-- Commissioning Date -->
+                            <div class="mb-4">
+                                <label for="substation_date" class="form-label fw-semibold">Commissioning Date</label>
+                                <input type="date" id="substation_date" name="substation_date"
+                                    value="{{ $substation->substation_date }}" class="form-control">
+                            </div>
+
+                            <!-- Update Button -->
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-primary px-4">
+                                    <i class="bi bi-check-circle me-2"></i>Update
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
+
 
                 <!-- Dataset Table -->
                 <div class="card shadow-sm border-0 rounded-3">

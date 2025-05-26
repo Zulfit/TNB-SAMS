@@ -5,74 +5,95 @@
 
         <div class="pagetitle">
             <h1>Dataset</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Dataset</a></li>
+                </ol>
+            </nav>
         </div>
 
         <section class="section dashboard">
             <div class="container mt-4">
                 <!-- Upload Dataset Card -->
                 @if (in_array('create', $global_permissions['dataset_access'] ?? []) ||
-                in_array('full', $global_permissions['dataset_access'] ?? []) )
-                    <div class="card shadow-lg border-0 rounded-4 p-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Upload Dataset</h5>
-
-                            <!-- Upload Form -->
+                        in_array('full', $global_permissions['dataset_access'] ?? []))
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="mb-0"><i class="bi bi-upload me-2"></i>Upload Dataset</h5>
+                        </div>
+                        <div class="card-body p-4">
                             <form action="{{ route('dataset.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">File</label>
-                                    <input name="dataset_file" type="file" class="form-control w-75">
+
+                                <!-- File Input -->
+                                <div class="mb-4">
+                                    <label for="dataset_file" class="form-label fw-semibold">Dataset File</label>
+                                    <input name="dataset_file" type="file" id="dataset_file" class="form-control">
                                 </div>
 
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">Type</label>
+                                <!-- Type Selection -->
+                                <div class="mb-4">
+                                    <label class="form-label fw-semibold d-block">Dataset Type</label>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="dataset_measurement"
-                                            id="Temperature" value="Temperature" checked>
-                                        <label class="form-check-label" for="Temperature">Temperature</label>
+                                            id="type_temperature" value="Temperature" checked>
+                                        <label class="form-check-label" for="type_temperature">Temperature</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="radio" name="dataset_measurement"
-                                            id="Partial Discharge" value="Partial Discharge">
-                                        <label class="form-check-label" for="Partial Discharge">Partial Discharge</label>
+                                            id="type_partial_discharge" value="Partial Discharge">
+                                        <label class="form-check-label" for="type_partial_discharge">Partial
+                                            Discharge</label>
                                     </div>
                                 </div>
 
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">Sensor</label>
-                                    <select name="dataset_sensor" class="form-select w-25">
+                                <!-- Sensor Selection -->
+                                <div class="mb-4">
+                                    <label for="dataset_sensor" class="form-label fw-semibold">Sensor</label>
+                                    <select name="dataset_sensor" id="dataset_sensor" class="form-select">
                                         <option value="">Select Sensor</option>
                                         @foreach ($sensors as $sensor)
                                             <option value="{{ $sensor->id }}">{{ $sensor->sensor_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary px-4">Upload</button>
-                                </div>
 
+                                <!-- Submit Button -->
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="bi bi-cloud-upload me-2"></i>Upload
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
                 @endif
 
                 <!-- Dataset Table -->
-                @if ($datasets->count() > 0)
-                    <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
-                        <div class="card-body">
-                            <table class="table table-bordered align-middle text-center">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>File</th>
-                                        <th>Measurement</th>
-                                        <th>Sensor</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Dataset List</h5>
+                        <span class="badge bg-secondary">
+                            {{ isset($datasets) ? count($datasets) : 0 }}
+                            {{ isset($datasets) ? Str::plural('dataset', count($datasets)) : 'datasets' }}
+                        </span>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-center">
+                                <tr>
+                                    <th class="py-3">#</th>
+                                    <th class="py-3">File</th>
+                                    <th class="py-3">Measurement</th>
+                                    <th class="py-3">Sensor</th>
+                                    <th class="py-3">Date</th>
+                                    <th class="py-3">Status</th>
+                                    <th class="py-3">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-center">
+                                @if (isset($datasets) && count($datasets) > 0)
                                     @foreach ($datasets as $dataset)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
@@ -94,11 +115,20 @@
                                             @endif
                                         </tr>
                                     @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                                @else
+                                    <tr>
+                                        <td colspan="12" class="text-center py-5">
+                                            <div class="d-flex flex-column align-items-center">
+                                                <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+                                                <h5 class="text-muted">No Dataset Found</h5>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
                     </div>
-                @endif
+                </div>
             </div>
 
         </section>

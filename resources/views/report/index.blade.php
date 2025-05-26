@@ -4,96 +4,134 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>Sensor Report</h1>
+            <h1>Report Log</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Report Log</a></li>
+                </ol>
+            </nav>
         </div>
 
         <section class="section dashboard">
             <div class="container mt-4">
                 @if (in_array('create', $global_permissions['report_access'] ?? []) ||
                         in_array('full', $global_permissions['report_access'] ?? []))
-                    <div class="card shadow-lg border-0 rounded-4 p-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Generate New Report</h5>
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-white border-bottom py-3 px-4">
+                            <h5 class="mb-0"><i class="bi bi-file-earmark-bar-graph me-2"></i>Generate New Report</h5>
+                        </div>
+                        <div class="card-body p-4">
                             <form action="{{ route('report.store') }}" method="POST">
                                 @csrf
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">Substation</label>
-                                    <select name="report_substation" class="form-control w-75">
-                                        <option value=""></option>
+
+                                <!-- Substation -->
+                                <div class="mb-4">
+                                    <label for="report_substation" class="form-label fw-semibold">Substation</label>
+                                    <select id="report_substation" name="report_substation" class="form-select">
+                                        <option value="" disabled selected>Select a substation</option>
                                         @foreach ($substations as $substation)
-                                            <option value="{{ $substation->id }}">{{ $substation->substation_name }}
+                                            <option value="{{ $substation->id }}"
+                                                {{ old('report_substation') == $substation->id ? 'selected' : '' }}>
+                                                {{ $substation->substation_name }}
                                             </option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">Start Date</label>
-                                    <input name="start_date" type="date" class="form-control w-75">
-                                </div>
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">End Date</label>
-                                    <input name="end_date" type="date" class="form-control w-75">
+
+                                <!-- Start Date -->
+                                <div class="mb-4">
+                                    <label for="start_date" class="form-label fw-semibold">Start Date</label>
+                                    <input type="date" id="start_date" name="start_date" class="form-control"
+                                        value="{{ old('start_date') }}">
                                 </div>
 
+                                <!-- End Date -->
+                                <div class="mb-4">
+                                    <label for="end_date" class="form-label fw-semibold">End Date</label>
+                                    <input type="date" id="end_date" name="end_date" class="form-control"
+                                        value="{{ old('end_date') }}">
+                                </div>
+
+                                <!-- Submit Button -->
                                 <div class="d-flex justify-content-end">
-                                    <button type="submit" class="btn btn-primary px-4">Generate</button>
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="bi bi-bar-chart-line-fill me-2"></i>Generate
+                                    </button>
                                 </div>
-
                             </form>
-                            {{-- @endcan --}}
                         </div>
                     </div>
                 @endif
 
-                <div class="card shadow-lg p-4">
-                    <h5 class="card-title">Generated Reports</h5>
-                    <table class="table table-bordered align-middle text-center">
-                        <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>Substation</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Generated By</th>
-                                <th>Download</th>
-                                @if (in_array('delete', $global_permissions['report_access'] ?? []) ||
-                                        in_array('full', $global_permissions['report_access'] ?? []))
-                                    <th>Action</th>
-                                @endif
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($reports as $report)
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Report List</h5>
+                        <span class="badge bg-secondary">
+                            {{ isset($reports) ? count($reports) : 0 }}
+                            {{ isset($reports) ? Str::plural('report', count($reports)) : 'reports' }}
+                        </span>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-center">
                                 <tr>
-                                    <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $report->substation->substation_name }}</td>
-                                    <td>{{ $report->start_date }}</td>
-                                    <td>{{ $report->end_date }}</td>
-                                    <td>{{ $report->user->name }}</td>
-                                    <td>
-                                        <a href="{{ route('report.download', $report->id) }}"
-                                            class="text-success bi bi-download"></a>
-                                    </td>
+                                    <th class="py-3">#</th>
+                                    <th class="py-3">Substation</th>
+                                    <th class="py-3">Start Date</th>
+                                    <th class="py-3">End Date</th>
+                                    <th class="py-3">Generated By</th>
+                                    <th class="py-3">Download</th>
                                     @if (in_array('delete', $global_permissions['report_access'] ?? []) ||
                                             in_array('full', $global_permissions['report_access'] ?? []))
-                                        <td>
-                                            <form action="{{ route('report.destroy', $report->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this report?');"
-                                                style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                            </form>
-                                        </td>
+                                        <th>Action</th>
                                     @endif
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody class="text-center">
+                                @if (isset($reports) && count($reports) > 0)
+                                    @foreach ($reports as $report)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $report->substation->substation_name }}</td>
+                                            <td>{{ $report->start_date }}</td>
+                                            <td>{{ $report->end_date }}</td>
+                                            <td>{{ $report->user->name }}</td>
+                                            <td>
+                                                <a href="{{ route('report.download', $report->id) }}"
+                                                    class="text-success bi bi-download"></a>
+                                            </td>
+                                            @if (in_array('delete', $global_permissions['report_access'] ?? []) ||
+                                                    in_array('full', $global_permissions['report_access'] ?? []))
+                                                <td>
+                                                    <form action="{{ route('report.destroy', $report->id) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Are you sure you want to delete this report?');"
+                                                        style="display: inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                    </form>
+                                                </td>
+                                            @endif
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="12" class="text-center py-5">
+                                            <div class="d-flex flex-column align-items-center">
+                                                <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+                                                <h5 class="text-muted">No Report Found</h5>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
 
-            </div>
+                </div>
         </section>
     </main>
 @endsection

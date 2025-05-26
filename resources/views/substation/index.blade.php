@@ -26,24 +26,35 @@
                         <div class="card-body p-4">
                             <form action="{{ route('substation.store') }}" method="POST">
                                 @csrf
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">Substation Name</label>
-                                    <input name="substation_name" type="text" class="form-control w-75">
+                    
+                                <!-- Substation Name -->
+                                <div class="mb-4">
+                                    <label for="substation_name" class="form-label fw-semibold">Substation Name</label>
+                                    <input type="text" name="substation_name" id="substation_name" class="form-control" placeholder="Enter substation name">
                                 </div>
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">Substation Location</label>
-                                    <input name="substation_location" type="text" class="form-control w-75">
+                    
+                                <!-- Substation Location -->
+                                <div class="mb-4">
+                                    <label for="substation_location" class="form-label fw-semibold">Location</label>
+                                    <input type="text" name="substation_location" id="substation_location" class="form-control" placeholder="Enter location">
                                 </div>
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">Commisioning Date</label>
-                                    <input name="substation_date" type="date" class="form-control w-75">
+                    
+                                <!-- Commissioning Date -->
+                                <div class="mb-4">
+                                    <label for="substation_date" class="form-label fw-semibold">Commissioning Date</label>
+                                    <input type="date" name="substation_date" id="substation_date" class="form-control">
                                 </div>
-                                <div class="text-end mt-3">
-                                    <button type="submit" class="btn btn-primary px-4">Create</button>
+                    
+                                <!-- Submit Button -->
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="bi bi-plus-circle me-2"></i>Create
+                                    </button>
                                 </div>
                             </form>
                         </div>
                     </div>
+                    
                 @endif
 
                 <!-- Substation Table -->
@@ -102,7 +113,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="6" class="text-center py-5">
+                                        <td colspan="12" class="text-center py-5">
                                             <div class="d-flex flex-column align-items-center">
                                                 <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
                                                 <h5 class="text-muted">No Substation Found</h5>

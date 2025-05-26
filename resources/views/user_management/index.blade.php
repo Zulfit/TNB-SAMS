@@ -5,6 +5,14 @@
 
         <div class="pagetitle">
             <h1>User Management</h1>
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">User Management</a></li>
+                    {{-- <li class="breadcrumb-item active"><a href="{{ route('sub.index') }}">Substation</a></li>
+                    <li class="breadcrumb-item active">Error Details</li> --}}
+                </ol>
+            </nav>
         </div>
 
         <section class="section dashboard">
@@ -12,17 +20,18 @@
                 <!-- Upload Dataset Card -->
                 @if (in_array('create', $global_permissions['user_management_access'] ?? []) ||
                         in_array('full', $global_permissions['user_management_access'] ?? []))
-                    <div class="card shadow-lg border-0 rounded-4 p-4">
-                        <div class="card-body">
-                            <h5 class="card-title">User Access Control</h5>
-
-                            <!-- User Form -->
-                            <form action= "{{ route('user_management.store') }}" method="POST">
+                    <div class="card shadow-sm border-0 rounded-4">
+                        <div class="card-header bg-white border-bottom py-3 px-4">
+                            <h5 class="mb-0"><i class="bi bi-person-gear me-2"></i>User Access Control</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form action="{{ route('user_management.store') }}" method="POST">
                                 @csrf
-                                <!-- User's Name Dropdown -->
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">User’s Name</label>
-                                    <select name="user_id" id="user-select" class="form-control w-75">
+
+                                <!-- User Selection -->
+                                <div class="mb-4">
+                                    <label for="user-select" class="form-label fw-semibold">User’s Name</label>
+                                    <select name="user_id" id="user-select" class="form-select">
                                         <option value="" selected disabled>Select a user</option>
                                         @foreach ($unverified_users as $unverified_user)
                                             <option value="{{ $unverified_user->id }}"
@@ -35,32 +44,29 @@
                                     </select>
                                 </div>
 
-                                <!-- User’s Email (Auto-filled) -->
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">User’s Email</label>
-                                    <input type="text" id="user-email" class="form-control w-75 readonly-field" readonly>
+                                <!-- User Details (Auto-filled) -->
+                                <div class="row mb-4">
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold">User’s Email</label>
+                                        <input type="text" id="user-email" class="form-control readonly-field" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold">User’s ID</label>
+                                        <input type="text" id="user-id" class="form-control readonly-field" readonly>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-semibold">User’s Role</label>
+                                        <input type="text" id="user-role" class="form-control readonly-field" readonly>
+                                    </div>
                                 </div>
-
-                                <!-- User’s ID (Auto-filled) -->
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">User’s ID</label>
-                                    <input type="text" id="user-id" class="form-control w-75 readonly-field" readonly>
-                                </div>
-
-                                <!-- User’s Role (Auto-filled) -->
-                                <div class="d-flex align-items-center gap-3 mb-3">
-                                    <label class="form-label w-25">User’s Role</label>
-                                    <input type="text" id="user-role" class="form-control w-75 readonly-field" readonly>
-                                </div>
-
 
                                 <!-- Permission Table -->
-                                <div class="table-responsive">
-                                    <table class="table table-bordered text-center">
+                                <div class="table-responsive mb-4">
+                                    <table class="table table-bordered text-center align-middle">
                                         <thead class="table-light">
                                             <tr>
                                                 <th class="text-start fw-bold">List Screen</th>
-                                                <th>Full Access</th>
+                                                <th>Full</th>
                                                 <th>View</th>
                                                 <th>Create</th>
                                                 <th>Edit</th>
@@ -68,87 +74,44 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr>
-                                                <td class="text-start">Dashboard</td>
-                                                <td><input name="dashboard_access[]" type="checkbox" value="full"></td>
-                                                <td><input name="dashboard_access[]" type="checkbox" value="view"></td>
-                                                <td><input name="dashboard_access[]" type="checkbox" value="create"></td>
-                                                <td><input name="dashboard_access[]" type="checkbox" value="edit"></td>
-                                                <td><input name="dashboard_access[]" type="checkbox" value="delete"></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-start">Analytics</td>
-                                                <td><input name="analytics_access[]" type="checkbox" value="full"></td>
-                                                <td><input name="analytics_access[]" type="checkbox" value="view"></td>
-                                                <td><input name="analytics_access[]" type="checkbox" value="create"></td>
-                                                <td><input name="analytics_access[]" type="checkbox" value="edit"></td>
-                                                <td><input name="analytics_access[]" type="checkbox" value="delete"></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-start">Error Log</td>
-                                                <td><input name="error_log_access[]" type="checkbox" value="full"></td>
-                                                <td><input name="error_log_access[]" type="checkbox" value="view"></td>
-                                                <td><input name="error_log_access[]" type="checkbox" value="create"></td>
-                                                <td><input name="error_log_access[]" type="checkbox" value="edit"></td>
-                                                <td><input name="error_log_access[]" type="checkbox" value="delete"></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-start">Dataset</td>
-                                                <td><input name="dataset_access[]" type="checkbox" value="full"></td>
-                                                <td><input name="dataset_access[]" type="checkbox" value="view"></td>
-                                                <td><input name="dataset_access[]" type="checkbox" value="create"></td>
-                                                <td><input name="dataset_access[]" type="checkbox" value="edit"></td>
-                                                <td><input name="dataset_access[]" type="checkbox" value="delete"></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-start">Substation</td>
-                                                <td><input name="substation_access[]" type="checkbox" value="full">
-                                                </td>
-                                                <td><input name="substation_access[]" type="checkbox" value="view">
-                                                </td>
-                                                <td><input name="substation_access[]" type="checkbox" value="create">
-                                                </td>
-                                                <td><input name="substation_access[]" type="checkbox" value="edit">
-                                                </td>
-                                                <td><input name="substation_access[]" type="checkbox" value="delete">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-start">Sensor</td>
-                                                <td><input name="sensor_access[]" type="checkbox" value="full"></td>
-                                                <td><input name="sensor_access[]" type="checkbox" value="view"></td>
-                                                <td><input name="sensor_access[]" type="checkbox" value="create"></td>
-                                                <td><input name="sensor_access[]" type="checkbox" value="edit"></td>
-                                                <td><input name="sensor_access[]" type="checkbox" value="delete"></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-start">Report Log</td>
-                                                <td><input name="report_access[]" type="checkbox" value="full"></td>
-                                                <td><input name="report_access[]" type="checkbox" value="view"></td>
-                                                <td><input name="report_access[]" type="checkbox" value="create"></td>
-                                                <td><input name="report_access[]" type="checkbox" value="edit"></td>
-                                                <td><input name="report_access[]" type="checkbox" value="delete"></td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-start">User Management</td>
-                                                <td><input name="user_management_access[]" type="checkbox"
-                                                        value="full"></td>
-                                                <td><input name="user_management_access[]" type="checkbox"
-                                                        value="view"></td>
-                                                <td><input name="user_management_access[]" type="checkbox"
-                                                        value="create"></td>
-                                                <td><input name="user_management_access[]" type="checkbox"
-                                                        value="edit"></td>
-                                                <td><input name="user_management_access[]" type="checkbox"
-                                                        value="delete"></td>
-                                            </tr>
+                                            @php
+                                                $modules = [
+                                                    'Dashboard',
+                                                    'Analytics',
+                                                    'Error Log',
+                                                    'Dataset',
+                                                    'Substation',
+                                                    'Sensor',
+                                                    'Report Log',
+                                                    'User Management',
+                                                ];
+                                            @endphp
+
+                                            @foreach ($modules as $module)
+                                                @php $key = strtolower(str_replace(' ', '_', $module)) . '_access'; @endphp
+                                                <tr>
+                                                    <td class="text-start">{{ $module }}</td>
+                                                    <td><input name="{{ $key }}[]" type="checkbox" value="full">
+                                                    </td>
+                                                    <td><input name="{{ $key }}[]" type="checkbox" value="view">
+                                                    </td>
+                                                    <td><input name="{{ $key }}[]" type="checkbox" value="create">
+                                                    </td>
+                                                    <td><input name="{{ $key }}[]" type="checkbox" value="edit">
+                                                    </td>
+                                                    <td><input name="{{ $key }}[]" type="checkbox" value="delete">
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         </tbody>
                                     </table>
                                 </div>
 
-                                <!-- Generate Button -->
-                                <div class="d-flex justify-content-end mt-3">
-                                    <button type="submit" class="btn btn-primary px-4">Generate</button>
+                                <!-- Submit Button -->
+                                <div class="d-flex justify-content-end">
+                                    <button type="submit" class="btn btn-primary px-4">
+                                        <i class="bi bi-shield-check me-2"></i>Assign Access
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -156,54 +119,71 @@
                 @endif
 
                 <!-- Dataset Table -->
-                <div class="card mt-4 shadow-lg border-0 rounded-4 p-3">
-                    <div class="card-body">
-                        <table class="table table-bordered align-middle text-center">
-                            <thead class="table-light">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>User List</h5>
+                        <span class="badge bg-secondary">
+                            {{ isset($users) ? count($users) : 0 }}
+                            {{ isset($users) ? Str::plural('user', count($users)) : 'users' }}
+                        </span>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light text-center">
                                 <tr>
-                                    <th>#</th>
-                                    <th>User's Name</th>
-                                    <th>User's Position</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th class="py-3">#</th>
+                                    <th class="py-3">User's Name</th>
+                                    <th class="py-3">User's Position</th>
+                                    <th class="py-3">Status</th>
+                                    <th class="py-3">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @php $i = 1; @endphp
-                                @foreach ($users as $user)
+                            <tbody class="text-center">
+                                @if (isset($users) && count($users) > 0)
+                                    @foreach ($users as $user)
+                                        <tr>
+                                            <td> {{ $loop->iteration }} </td>
+                                            <td> {{ $user->user->name }} </td>
+                                            <td> {{ $user->user->position }} </td>
+                                            <td><span class="badge bg-success">Success</span></td>
+                                            <td>
+                                                @if (in_array('view', $global_permissions['user_management_access'] ?? []) ||
+                                                        in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                    <a href="{{ route('user_management.show', $user->id) }}"
+                                                        class="text-primary bi bi-eye me-2"></a>
+                                                @endif
+
+                                                @if (in_array('edit', $global_permissions['user_management_access'] ?? []) ||
+                                                        in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                    <a
+                                                        href="{{ route('user_management.edit', $user->id) }}"class="text-success bi bi-pencil-square"></a>
+                                                @endif
+
+                                                @if (in_array('delete', $global_permissions['user_management_access'] ?? []) ||
+                                                        in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                    <form action="{{ route('user_management.destroy', $user->id) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                                        style="display: inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                    </form>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
                                     <tr>
-                                        <td> {{ $i++ }} </td>
-                                        <td> {{ $user->user->name }} </td>
-                                        <td> {{ $user->user->position }} </td>
-                                        <td><span class="badge bg-success">Success</span></td>
-                                        <td>
-                                            @if (in_array('view', $global_permissions['user_management_access'] ?? []) ||
-                                                    in_array('full', $global_permissions['user_management_access'] ?? []))
-                                                <a href="{{ route('user_management.show', $user->id) }}"
-                                                    class="text-primary bi bi-eye"></a>
-                                            @endif
-
-                                            @if (in_array('edit', $global_permissions['user_management_access'] ?? []) ||
-                                                    in_array('full', $global_permissions['user_management_access'] ?? []))
-                                                <a
-                                                    href="{{ route('user_management.edit', $user->id) }}"class="text-success bi bi-pencil-square"></a>
-                                            @endif
-
-                                            @if (in_array('delete', $global_permissions['user_management_access'] ?? []) ||
-                                                    in_array('full', $global_permissions['user_management_access'] ?? []))
-                                                <form action="{{ route('user_management.destroy', $user->id) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Are you sure you want to delete this user?');"
-                                                    style="display: inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                                </form>
-                                            @endif
+                                        <td colspan="12" class="text-center py-5">
+                                            <div class="d-flex flex-column align-items-center">
+                                                <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
+                                                <h5 class="text-muted">No User Found</h5>
+                                            </div>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @endif
                             </tbody>
                         </table>
                     </div>

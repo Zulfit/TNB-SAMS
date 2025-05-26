@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Events\NotificationEvent;
 use App\Models\User;
 use App\Notifications\SensorAlertNotification;
 use Illuminate\Console\Command;
@@ -46,45 +47,20 @@ class InsertDummyWarnData extends Command
             default => 'normal',
         };
 
-        DB::table('sensor_temperature')->insert([[
-            'sensor_id' => 1,
-            'red_phase_temp' => $red,
-            'yellow_phase_temp' => $yellow,
-            'blue_phase_temp' => $blue,
-            'max_temp' => $max,
-            'min_temp' => $min,
-            'variance_percent' => $variance,
-            'alert_triggered' => $alertLevel,
-            'created_at' => $now,
-            'updated_at' => $now,
-        ]]);
-
-        $alertsToNotify = [];
-
-        if (in_array($alertLevel, ['critical', 'warn'])) {
-            $alertsToNotify[] = [
+        DB::table('sensor_temperature')->insert([
+            [
                 'sensor_id' => 1,
-                'sensor_name' => $sensor->sensor_name,
-                'measurement' => $sensor->sensor_measurement,
-                'substation' => $sensor->substation_name,
-                'panel' => $sensor->panel_name,
-                'compartment' => $sensor->compartment_name,
-                'alert_level' => $alertLevel,
+                'red_phase_temp' => $red,
+                'yellow_phase_temp' => $yellow,
+                'blue_phase_temp' => $blue,
                 'max_temp' => $max,
+                'min_temp' => $min,
                 'variance_percent' => $variance,
-            ];
-        }
-
-        // Send notifications
-        if (!empty($alertsToNotify)) {
-            $users = User::whereNotNull('chat_id')->get();
-
-            foreach ($users as $user) {
-                foreach ($alertsToNotify as $alert) {
-                    $user->notify(new SensorAlertNotification($alert, 'Temperature'));
-                }
-            }
-        }
+                'alert_triggered' => $alertLevel,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]
+        ]);
 
         // Log error state changes
         if (in_array($alertLevel, ['warn', 'critical'])) {
@@ -98,7 +74,9 @@ class InsertDummyWarnData extends Command
 
                 if ($warnLog) {
                     DB::table('error_logs')->where('id', $warnLog->id)->update(['updated_at' => $now]);
+                    $errorLogId = $warnLog->id;
                     $this->info('Updated existing WARN log timestamp.');
+
                 } else {
                     $criticalLog = DB::table('error_logs')
                         ->where('sensor_id', $sensorId)
@@ -112,6 +90,7 @@ class InsertDummyWarnData extends Command
                             'severity' => 'WARN',
                             'updated_at' => $now,
                         ]);
+                        $errorLogId = $criticalLog->id;
                         $this->info('Downgraded CRITICAL to WARN.');
                     } else {
                         DB::table('error_logs')->insert([
@@ -142,6 +121,7 @@ class InsertDummyWarnData extends Command
                         'severity' => 'CRITICAL',
                         'updated_at' => $now,
                     ]);
+                    $errorLogId = $warnLog->id;
                     $this->info('Upgraded WARN to CRITICAL.');
                 } else {
                     $criticalLog = DB::table('error_logs')
@@ -151,9 +131,10 @@ class InsertDummyWarnData extends Command
 
                     if ($criticalLog) {
                         DB::table('error_logs')->where('id', $criticalLog->id)->update(['updated_at' => $now]);
+                        $errorLogId = $criticalLog->id;
                         $this->info('Updated existing CRITICAL log timestamp.');
                     } else {
-                        DB::table('error_logs')->insert([
+                        $errorLogId = DB::table('error_logs')->insertGetId([
                             'sensor_id' => $sensorId,
                             'state' => 'ALARM',
                             'threshold' => '>= 50 for 300s',
@@ -172,6 +153,31 @@ class InsertDummyWarnData extends Command
             // 🔔 Broadcast the event LAST
             $this->info('Broadcasting event...');
             event(new \App\Events\SensorAlertTriggered(1, $sensor->sensor_name, $alertLevel));
+            event(new NotificationEvent(
+                '🚨 Sensor Temperature Alert',
+                'Sensor ID: #'.$sensorId
+            ));
+
+            $alertsToNotify = [];
+
+            if (in_array($alertLevel, ['critical', 'warn'])) {
+                $alertsToNotify[] = [
+                    'sensor_id' => 1,
+                    'sensor_name' => $sensor->sensor_name,
+                    'measurement' => $sensor->sensor_measurement,
+                    'substation' => $sensor->substation_name,
+                    'panel' => $sensor->panel_name,
+                    'compartment' => $sensor->compartment_name,
+                    'alert_level' => $alertLevel,
+                    'max_temp' => $max,
+                    'variance_percent' => $variance,
+                    'error_log_id' => $errorLogId,
+                ];
+            }
+
+            foreach ($alertsToNotify as $alert) {
+                (new SensorAlertNotification($alert, 'Temperature'))->sendTelegramMessage();
+            }
         }
 
         $this->info('Inserted dummy data at ' . $now);

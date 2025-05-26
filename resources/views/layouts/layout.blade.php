@@ -58,7 +58,9 @@
 <body>
 
     <script type="module">
-        import { StreamChat } from 'https://cdn.skypack.dev/stream-chat';
+        import {
+            StreamChat
+        } from 'https://cdn.skypack.dev/stream-chat';
         window.StreamChat = StreamChat;
     </script>
 
@@ -220,14 +222,14 @@
 
     <!-- Toast Logic -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             window.showToast = function(type, sensorName, sensorId) {
                 const toastEl = document.getElementById('alert-toast');
                 const toastCard = toastEl.querySelector('.toast-card');
                 const toastIcon = document.getElementById('toast-icon');
                 const toastMessage = document.getElementById('toast-message');
                 const primaryButton = toastEl.querySelector('.toast-btn.primary');
-    
+
                 let levelText = '',
                     color = '';
                 if (type === 'warn') {
@@ -246,7 +248,7 @@
                     toastCard.classList.remove('toast-critical');
                     primaryButton.classList.remove('critical');
                 }
-    
+
                 toastIcon.textContent = '⚠️';
                 toastMessage.innerHTML = `
                     <strong style="color: ${color};">${levelText}:</strong> 
@@ -256,13 +258,13 @@
                 toastEl.style.display = 'block';
                 setTimeout(() => dismissToast(), 7000);
             };
-    
+
             function dismissToast() {
                 document.getElementById('alert-toast').style.display = 'none';
             }
         });
-    </script>    
-    
+    </script>
+
 
     @stack('scripts')
     @stack('styles')

@@ -10,66 +10,54 @@
     <nav class="header-nav ms-auto">
         <ul class="d-flex align-items-center">
 
-            <li class="nav-item d-block d-lg-none">
-                <a class="nav-link nav-icon search-bar-toggle" href="#">
-                    <i class="bi bi-search"></i>
-                </a>
+            <!-- Date & Time -->
+            <li class="nav-item d-flex align-items-center me-3" style="min-width: 140px;">
+                <span id="current-date" class="small text-nowrap me-2"></span>
+                <span id="current-time" class="small text-nowrap"></span>
             </li>
 
             <!-- Notification Icon -->
-            <li class="nav-item dropdown">
-                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                    <i class="bi bi-bell"></i>
-                    <span class="badge bg-primary badge-number">4</span>
+            <li class="nav-item dropdown me-3">
+                <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        id="notification-count">0</span>
                 </a>
-
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
-                    <li class="dropdown-header">
-                        You have 4 new notifications
-                        <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
-                    </li>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" id="notification-list" style="width: 320px;">
+                    <li class="dropdown-header fw-semibold px-3 py-2 border-bottom">Notifications</li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <!-- Dummy Notification Items -->
-                    <li class="notification-item">
-                        <i class="bi bi-exclamation-circle text-warning"></i>
-                        <div>
-                            <h4>Lorem Ipsum</h4>
-                            <p>Sample notification text</p>
-                            <p>30 min. ago</p>
-                        </div>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li class="dropdown-footer">
-                        <a href="#">Show all notifications</a>
+                    <!-- Dynamic items inserted here -->
+                    <li class="dropdown-footer text-center mt-2">
+                        <a href="#" class="text-primary small">Show all notifications</a>
                     </li>
                 </ul>
             </li>
 
             <!-- Message Icon -->
-            <li class="nav-item dropdown">
-                <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
-                    <i class="bi bi-chat-left-text"></i>
-                    <span class="badge bg-success badge-number" id="message-count">0</span>
+            <li class="nav-item dropdown me-3">
+                <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-chat-left-text fs-5"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"
+                        id="message-count">0</span>
                 </a>
-
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
-                    <li class="dropdown-header" id="dropdown-header">
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 360px;">
+                    <li class="dropdown-header fw-semibold px-3 py-2 border-bottom" id="dropdown-header">
                         You have 0 new messages
-                        <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
                     </li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-
-                    <!-- Message Items inserted here -->
-                    <ul id="message-list" class="list-unstyled mb-0 px-2"></ul>
-
-                    <li class="dropdown-footer">
-                        <a href="#">Show all messages</a>
+                    <!-- Wrap the message list inside a <li> to fix structure -->
+                    <li>
+                        <ul id="message-list" class="list-unstyled px-2 mb-2"
+                            style="max-height: 300px; overflow-y: auto;">
+                            <!-- Dynamic messages go here -->
+                        </ul>
+                    </li>
+                    <li class="dropdown-footer text-center mt-2">
+                        <a href="#" class="text-primary small">Show all messages</a>
                     </li>
                 </ul>
             </li>
@@ -86,9 +74,7 @@
                             <i class="bi bi-person-fill text-white" style="font-size: 2.5rem;"></i>
                         @endif
                     </div>
-                    {{-- <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Profile" class="rounded-circle"> --}}
                 </a>
-
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
                         <h6>{{ Auth::user()->name }}</h6>
@@ -98,35 +84,17 @@
                     </li>
                     <li>
                         <a class="dropdown-item d-flex align-items-center" href="{{ url('profile') }}">
-                            <i class="bi bi-person"></i>
+                            <i class="bi bi-person me-2"></i>
                             <span>My Profile</span>
                         </a>
                     </li>
-                    {{-- <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                            <i class="bi bi-gear"></i>
-                            <span>Account Settings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                            <i class="bi bi-question-circle"></i>
-                            <span>Need Help?</span>
-                        </a>
-                    </li> --}}
                     <li>
                         <hr class="dropdown-divider">
                     </li>
                     <li>
                         <a class="dropdown-item d-flex align-items-center" href="#"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="bi bi-box-arrow-right"></i>
+                            <i class="bi bi-box-arrow-right me-2"></i>
                             <span>Sign Out</span>
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -137,5 +105,38 @@
             </li>
 
         </ul>
+B
     </nav>
 </header>
+<script>
+    // Simple JS to update time every second
+    function updateDateTime() {
+        const dateElement = document.getElementById('current-date');
+        const timeElement = document.getElementById('current-time');
+        const now = new Date();
+
+        // Format date: e.g. "Sun, 25 May 2025"
+        const optionsDate = {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        };
+        const dateString = now.toLocaleDateString(undefined, optionsDate);
+
+        // Format time: e.g. "14:35:09"
+        const optionsTime = {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        };
+        const timeString = now.toLocaleTimeString(undefined, optionsTime);
+
+        dateElement.textContent = dateString;
+        timeElement.textContent = timeString;
+    }
+
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+</script>

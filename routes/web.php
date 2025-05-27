@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Response;
 use App\Events\SensorAlertTriggered;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::resource('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->names(['index' => 'dashboard']);

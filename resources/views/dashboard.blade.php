@@ -514,43 +514,30 @@
                                     }
                                 }
 
-                                function calculateTemperatureStats(redPhase, yellowPhase, bluePhase) {
-                                    if (!redPhase.length || !yellowPhase.length || !bluePhase.length) {
-                                        return {
-                                            varianceAvg: 0,
-                                            varianceMax: 0,
-                                            tempDiff: 0,
-                                            tempMax: 0
-                                        };
-                                    }
+                                function calculateTemperatureStats(latestRed, latestYellow, latestBlue) {
+                                    const latestTemps = [latestRed, latestYellow, latestBlue];
+                                    const maxTemp = Math.max(...latestTemps);
+                                    const minTemp = Math.min(...latestTemps);
+                                    const tempDiff = maxTemp - minTemp;
 
-                                    const allTemps = [...redPhase, ...yellowPhase, ...bluePhase];
-                                    const tempMax = Math.max(...allTemps);
-                                    const tempMin = Math.min(...allTemps);
-                                    const tempDiff = tempMax - tempMin;
-
-                                    // Calculate variances between phases for each data point
-                                    const variances = [];
-                                    for (let i = 0; i < redPhase.length; i++) {
-                                        const temps = [redPhase[i], yellowPhase[i], bluePhase[i]];
-                                        const max = Math.max(...temps);
-                                        const min = Math.min(...temps);
-                                        variances.push(max - min);
-                                    }
-
-                                    const varianceAvg = variances.reduce((a, b) => a + b, 0) / variances.length;
-                                    const varianceMax = Math.max(...variances);
+                                    // Avoid division by zero
+                                    const variance = maxTemp === 0 ? 0 : ((tempDiff / maxTemp) * 100);
 
                                     return {
-                                        varianceAvg: varianceAvg.toFixed(2),
-                                        varianceMax: varianceMax.toFixed(2),
-                                        tempDiff: tempDiff.toFixed(2),
-                                        tempMax: tempMax.toFixed(2)
+                                        varianceAvg: variance.toFixed(2), // Actual variance from 3-phase temps
+                                        varianceMax: 10.00.toFixed(2), // Static threshold for limit
+                                        tempDiff: tempDiff.toFixed(2), // Max - Min difference
+                                        tempMax: 30.00.toFixed(2) // Static maximum allowed temperature
                                     };
                                 }
 
+
                                 function updateTemperatureStats(redPhase, yellowPhase, bluePhase) {
-                                    const stats = calculateTemperatureStats(redPhase, yellowPhase, bluePhase);
+                                    const latestRed = redPhase[redPhase.length - 1];
+                                    const latestYellow = yellowPhase[yellowPhase.length - 1];
+                                    const latestBlue = bluePhase[bluePhase.length - 1];
+
+                                    const stats = calculateTemperatureStats(latestRed, latestYellow, latestBlue);
 
                                     const varianceAvgElement = document.getElementById('variance_avg');
                                     const varianceMaxElement = document.getElementById('variance_max');
@@ -713,7 +700,7 @@
                                         }
 
                                         const data = await res.json();
-                                        console.log('PD Response Data:', data); 
+                                        console.log('PD Response Data:', data);
 
                                         if (!data || data.length === 0) {
                                             console.warn("No partial discharge data available for selected period");
@@ -967,4 +954,3 @@
 
     </main>
 @endsection
-

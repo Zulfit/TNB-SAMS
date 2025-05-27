@@ -105,7 +105,7 @@
             </li>
 
         </ul>
-B
+
     </nav>
 </header>
 <script>

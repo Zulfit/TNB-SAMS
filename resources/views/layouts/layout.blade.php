@@ -47,6 +47,7 @@
 
         .container {
             flex: 1;
+            margin-left: 85px;
         }
 
         footer {

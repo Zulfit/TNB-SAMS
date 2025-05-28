@@ -103,7 +103,7 @@
                         <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Sensor Information</h6>
                     </div>
                     <div class="card-body">
-                        <div class="row g-3">
+                        <div class="row g-3 py-3">
                             <div class="col-md-2">
                                 <div class="border rounded p-2 bg-light">
                                     <small class="text-muted d-block">Sensor</small>

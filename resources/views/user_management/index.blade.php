@@ -16,7 +16,7 @@
         </div>
 
         <section class="section dashboard">
-            <div class="container mt-4">
+            <div class="container-fluid p-0">
                 <!-- Upload Dataset Card -->
                 @if (in_array('create', $global_permissions['user_management_access'] ?? []) ||
                         in_array('full', $global_permissions['user_management_access'] ?? []))
@@ -189,7 +189,6 @@
                     </div>
                 </div>
             </div>
-
         </section>
     </main>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

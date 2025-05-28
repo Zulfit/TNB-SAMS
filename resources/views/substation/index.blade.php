@@ -16,7 +16,7 @@
         </div>
 
         <section class="section dashboard">
-            <div class="container mt-4">
+            <div class="container-fluid p-0">
                 @if (in_array('create', $global_permissions['substation_access'] ?? []) ||
                         in_array('full', $global_permissions['substation_access'] ?? []))
                     <div class="card shadow-sm border-0 rounded-4">

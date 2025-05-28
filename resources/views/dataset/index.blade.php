@@ -14,7 +14,7 @@
         </div>
 
         <section class="section dashboard">
-            <div class="container mt-4">
+            <div class="container-fluid p-0">
                 <!-- Upload Dataset Card -->
                 @if (in_array('create', $global_permissions['dataset_access'] ?? []) ||
                         in_array('full', $global_permissions['dataset_access'] ?? []))

@@ -4,15 +4,17 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Register - TNB-SAMS</title>
+    <title>TNB-SAMS</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
+    <link href="/assets/img/sams-logo.png" rel="icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
         * {
@@ -86,6 +88,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -484,10 +487,10 @@
                 <img src="assets/img/TNBLogo_white.png" alt="TNB Logo">
             </a>
             <div class="hero-content">
-                <div class="hero-logo">T</div>
+                <div class="hero-logo"><i class="fas fa-bolt"></i></div>
                 <h1 class="hero-title">TNB-SAMS</h1>
                 <p class="hero-subtitle">Substation Asset Monitoring System</p>
-                
+
                 <div class="hero-features">
                     <div class="feature-item">
                         <div class="feature-icon">
@@ -508,7 +511,7 @@
                         <div class="feature-text">Efficient</div>
                     </div>
                 </div>
-                
+
                 <p class="hero-cta">Monitor TNB substation assets with precision</p>
             </div>
         </div>
@@ -517,8 +520,8 @@
                 <div class="logo-section">
                     <a href="/" class="logo">
                         <div
-                            style="width: 40px; height: 40px; background: linear-gradient(45deg, #667eea, #764ba2); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 0.5rem;">
-                            T</div>
+                            style="width: 40px; height: 40px; background: linear-gradient(135deg, #011567 0%, #0020f0 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 0.5rem;">
+                            <i class="fas fa-bolt"></i></div>
                         TNB-SAMS
                     </a>
                 </div>

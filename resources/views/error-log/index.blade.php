@@ -152,7 +152,9 @@
                                                         $statusColor = 'primary';
                                                         if($error->status == 'New') {
                                                             $statusColor = 'info';
-                                                        } elseif($error->status == 'Acknowledge') {
+                                                        }elseif($error->status == 'Quiry') {
+                                                            $statusColor = 'danger';
+                                                        }elseif($error->status == 'Acknowledge') {
                                                             $statusColor = 'warning';
                                                         } elseif($error->status == 'Completed') {
                                                             $statusColor = 'success';
@@ -217,16 +219,6 @@
                             </table>
                         </div>
                     </div>
-                    {{-- @if($errors->count() > 0)
-                    <div class="card-footer bg-white py-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="text-muted small">
-                                Showing {{ $errors->firstItem() ?? 0 }} to {{ $errors->lastItem() ?? 0 }} of {{ $errors->total() }} entries
-                            </div>
-                            {{ $errors->links() }}
-                        </div>
-                    </div>
-                    @endif --}}
                 </div>
             </div>
         </section>

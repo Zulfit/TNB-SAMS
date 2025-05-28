@@ -133,18 +133,46 @@ class ErrorLogController extends Controller
      */
     public function update(Request $request, ErrorLog $errorLog)
     {
-        $alertsToNotify = [];
-
         if ($request->input('action') == 'complete') {
             $validated = $request->validate([
-                'report' => 'required|string'
+                'admin_review' => 'string',
+                'sensor_status' => 'string'
             ]);
 
             $errorLog->state = 'NORMAL';
             $errorLog->threshold = '>= 50 for 3600s';
             $errorLog->severity = 'SAFE';
-            $errorLog->report = $validated['report'];
             $errorLog->status = 'Completed';
+            $errorLog->admin_review = $validated['admin_review'];
+
+            $sensor = Sensor::find($errorLog->sensor_id);
+            $sensor->sensor_status = $validated['sensor_status'];
+            $sensor->save();
+
+        } elseif ($request->action === 'quiry') {
+            $validated = $request->validate([
+                'admin_review' => 'string',
+                'sensor_status' => 'string'
+            ]);
+
+            $sensor = Sensor::find($errorLog->sensor_id);
+
+            $errorLog->status = 'Quiry';
+            $errorLog->admin_review = $validated['admin_review'];
+
+            $sensor->sensor_status = $validated['sensor_status'];
+            $sensor->save();
+
+        } elseif ($request->action === 'review') {
+            $validated = $request->validate([
+                'report' => 'required|string'
+            ]);
+
+            $errorLog->update([
+                'status' => 'Reviewed',
+                $errorLog->report = $validated['report'],
+                $errorLog->reviewed_at = now()
+            ]);
 
         } elseif ($request->action === 'acknowledge') {
             $errorLog->update([
@@ -164,16 +192,16 @@ class ErrorLogController extends Controller
             $errorLog->status = 'New';
 
             $alert = [
-                'sensor_name'   => $errorLog->sensor->sensor_name,
-                'measurement'   => $errorLog->sensor->sensor_measurement,
-                'substation'    => $errorLog->sensor->substation->substation_name,
-                'panel'         => $errorLog->sensor->panel->panel_name,
-                'compartment'   => $errorLog->sensor->compartment->compartment_name,
-                'severity'      => $errorLog->severity,
-                'error_log_id'  => $errorLog->id,
-                'pic'           => $errorLog->user->name, 
+                'sensor_name' => $errorLog->sensor->sensor_name,
+                'measurement' => $errorLog->sensor->sensor_measurement,
+                'substation' => $errorLog->sensor->substation->substation_name,
+                'panel' => $errorLog->sensor->panel->panel_name,
+                'compartment' => $errorLog->sensor->compartment->compartment_name,
+                'severity' => $errorLog->severity,
+                'error_log_id' => $errorLog->id,
+                'pic' => $errorLog->user->name,
             ];
-        
+
             // Use SensorAlertNotification to send Telegram message
             new SensorAlertNotification($alert, '')->sendAssignMessageAdmin();
             new SensorAlertNotification($alert, '')->sendAssignMessageStaff();

@@ -16,6 +16,8 @@ class ErrorLog extends Model
         'desc',
         'status',
         'report',
+        'admin_review',
+        'reviewed_at',
     ];
 
     public function sensor()

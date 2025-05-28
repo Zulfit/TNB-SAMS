@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('desc')->nullable();
             $table->string('status')->nullable();
             $table->string('report')->nullable();
+            $table->string('admin_review')->nullable();
+            $table->string('reviewed_at')->nullable();
             $table->timestamps();
         });
     }

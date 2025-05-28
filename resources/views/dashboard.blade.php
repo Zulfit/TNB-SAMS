@@ -44,121 +44,171 @@
                 <div class="col-lg-20">
                     <div class="row">
 
-                        <!-- Total Substations Card -->
-                        <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
-                            <div class="card info-card h-100 border-0 shadow-sm hover-card">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-wrapper mb-3">
-                                        <div class="icon-circle bg-primary-subtle">
-                                            <i class="bi bi-building text-primary fs-2"></i>
+                        <!-- First Row -->
+                        <div class="row mb-2">
+                            <!-- Total Substations Card -->
+                            <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                <div class="card info-card h-100 border-0 shadow-sm hover-card">
+                                    <div class="card-body text-center p-3">
+                                        <div class="icon-wrapper mb-2">
+                                            <div class="icon-circle bg-primary-subtle"
+                                                style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto;">
+                                                <i class="bi bi-building text-primary fs-4"></i>
+                                            </div>
                                         </div>
+                                        <h5 class="card-title text-muted mb-1 small">Total Substations</h5>
+                                        <h3 class="fw-bold text-primary mb-0" id="total-substations">
+                                            {{ $total_substation }}</h3>
+                                        <small class="text-success">
+                                            <i class="bi bi-arrow-up"></i> Active
+                                        </small>
                                     </div>
-                                    <h5 class="card-title text-muted mb-2">Total Substations</h5>
-                                    <h2 class="fw-bold text-primary mb-0" id="total-substations">{{ $total_substation }}
-                                    </h2>
-                                    <small class="text-success">
-                                        <i class="bi bi-arrow-up"></i> Active
-                                    </small>
+                                </div>
+                            </div>
+
+                            <!-- Total Sensors Card -->
+                            <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                <div class="card info-card h-100 border-0 shadow-sm hover-card">
+                                    <div class="card-body text-center p-3">
+                                        <div class="icon-wrapper mb-2">
+                                            <div class="icon-circle bg-info-subtle"
+                                                style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto;">
+                                                <i class="bi bi-cpu text-info fs-4"></i>
+                                            </div>
+                                        </div>
+                                        <h5 class="card-title text-muted mb-1 small">Total Sensors</h5>
+                                        <h3 class="fw-bold text-info mb-0" id="total-sensors">{{ $total_sensor }}</h3>
+                                        <small class="text-success">
+                                            <i class="bi bi-check-circle"></i> Active
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Total Alarms Card -->
+                            <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                <div class="card info-card h-100 border-0 shadow-sm hover-card">
+                                    <div class="card-body text-center p-3">
+                                        <div class="icon-wrapper mb-2">
+                                            <div class="icon-circle bg-danger-subtle"
+                                                style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto;">
+                                                <i class="bi bi-exclamation-triangle text-danger fs-4"></i>
+                                            </div>
+                                        </div>
+                                        <h5 class="card-title text-muted mb-1 small">Total Alarms</h5>
+                                        <h3 class="fw-bold text-danger mb-0" id="total-alarms">{{ $total_failure }}</h3>
+                                        <small class="text-danger">
+                                            <i class="bi bi-file-text"></i> All Error Logs
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Issues Resolved Card -->
+                            <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                <div class="card info-card h-100 border-0 shadow-sm hover-card">
+                                    <div class="card-body text-center p-3">
+                                        <div class="icon-wrapper mb-2">
+                                            <div class="icon-circle bg-success-subtle"
+                                                style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto;">
+                                                <i class="bi bi-check-circle text-success fs-4"></i>
+                                            </div>
+                                        </div>
+                                        <h5 class="card-title text-muted mb-1">Issues Resolved</h5>
+                                        <h3 class="fw-bold text-success mb-0" id="total-resolved">
+                                            {{ $total_resolved ?? 0 }}</h3>
+                                        <small class="text-success">
+                                            <i class="bi bi-check-all"></i> Solved Logs
+                                        </small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Total Sensors Card -->
-                        <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
-                            <div class="card info-card h-100 border-0 shadow-sm hover-card">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-wrapper mb-3">
-                                        <div class="icon-circle bg-info-subtle">
-                                            <i class="bi bi-cpu text-info fs-2"></i>
+                        <!-- Second Row -->
+                        <div class="row mb-2">
+                            <!-- Critical State Card -->
+                            <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                <div class="card info-card h-100 border-0 shadow-sm hover-card">
+                                    <div class="card-body text-center p-3">
+                                        <div class="icon-wrapper mb-2">
+                                            <div class="icon-circle bg-danger-subtle"
+                                                style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto;">
+                                                <i class="bi bi-x-octagon text-danger fs-4"></i>
+                                            </div>
                                         </div>
+                                        <h5 class="card-title text-muted mb-1 small">Critical State</h5>
+                                        <h3 class="fw-bold text-danger mb-0" id="total-critical">
+                                            {{ $total_critical ?? 0 }}</h3>
+                                        <small class="text-danger">
+                                            <i class="bi bi-shield-x"></i> Critical Logs
+                                        </small>
                                     </div>
-                                    <h5 class="card-title text-muted mb-2">Total Sensors</h5>
-                                    <h2 class="fw-bold text-info mb-0" id="total-sensors">{{ $total_sensor }}</h2>
-                                    <small class="text-success">
-                                        <i class="bi bi-check-circle"></i> Online
-                                    </small>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Total Alarms Card -->
-                        <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
-                            <div class="card info-card h-100 border-0 shadow-sm hover-card">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-wrapper mb-3">
-                                        <div class="icon-circle bg-danger-subtle">
-                                            <i class="bi bi-exclamation-triangle text-danger fs-2"></i>
+                            <!-- Warning State Card -->
+                            <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                <div class="card info-card h-100 border-0 shadow-sm hover-card">
+                                    <div class="card-body text-center p-3">
+                                        <div class="icon-wrapper mb-2">
+                                            <div class="icon-circle bg-warning-subtle"
+                                                style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto;">
+                                                <i class="bi bi-exclamation-circle text-warning fs-4"></i>
+                                            </div>
                                         </div>
+                                        <h5 class="card-title text-muted mb-1 small">Warning State</h5>
+                                        <h3 class="fw-bold text-warning mb-0" id="total-warnings">
+                                            {{ $total_warning ?? 0 }}</h3>
+                                        <small class="text-warning">
+                                            <i class="bi bi-shield-exclamation"></i> Warning Logs
+                                        </small>
                                     </div>
-                                    <h5 class="card-title text-muted mb-2">Total Alarms</h5>
-                                    <h2 class="fw-bold text-danger mb-0" id="total-alarms">{{ $total_failure }}</h2>
-                                    <small class="text-danger">
-                                        <i class="bi bi-arrow-up"></i> Active
-                                    </small>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Warning State Card -->
-                        <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
-                            <div class="card info-card h-100 border-0 shadow-sm hover-card">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-wrapper mb-3">
-                                        <div class="icon-circle bg-warning-subtle">
-                                            <i class="bi bi-exclamation-circle text-warning fs-2"></i>
+                            <!-- Total Review Card -->
+                            <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                <div class="card info-card h-100 border-0 shadow-sm hover-card">
+                                    <div class="card-body text-center p-3">
+                                        <div class="icon-wrapper mb-2">
+                                            <div class="icon-circle bg-info-subtle"
+                                                style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto;">
+                                                <i class="bi bi-clipboard-check text-info fs-4"></i>
+                                            </div>
                                         </div>
+                                        <h5 class="card-title text-muted mb-1 small">Total Review</h5>
+                                        <h3 class="fw-bold text-info mb-0" id="total-review">{{ $total_review ?? 0 }}</h3>
+                                        <small class="text-info">
+                                            <i class="bi bi-hourglass-split"></i> Pending Review
+                                        </small>
                                     </div>
-                                    <h5 class="card-title text-muted mb-2">Warning State</h5>
-                                    <h2 class="fw-bold text-warning mb-0" id="total-warnings">{{ $total_warning ?? 0 }}
-                                    </h2>
-                                    <small class="text-warning">
-                                        <i class="bi bi-clock"></i> Pending
-                                    </small>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Critical State Card -->
-                        <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
-                            <div class="card info-card h-100 border-0 shadow-sm hover-card">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-wrapper mb-3">
-                                        <div class="icon-circle bg-danger-subtle">
-                                            <i class="bi bi-x-octagon text-danger fs-2"></i>
+                            <!-- Total Query Card -->
+                            <div class="col-lg-3 col-md-6 col-sm-6 mb-2">
+                                <div class="card info-card h-100 border-0 shadow-sm hover-card">
+                                    <div class="card-body text-center p-3">
+                                        <div class="icon-wrapper mb-2">
+                                            <div class="icon-circle bg-warning-subtle"
+                                                style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto;">
+                                                <i class="bi bi-arrow-counterclockwise text-warning fs-4"></i>
+                                            </div>
                                         </div>
+                                        <h5 class="card-title text-muted mb-1 small">Total Query</h5>
+                                        <h3 class="fw-bold text-warning mb-0" id="total-query">{{ $total_query ?? 0 }}</h3>
+                                        <small class="text-warning">
+                                            <i class="bi bi-question-circle"></i> Manager Query
+                                        </small>
                                     </div>
-                                    <h5 class="card-title text-muted mb-2">Critical State</h5>
-                                    <h2 class="fw-bold text-danger mb-0" id="total-critical">{{ $total_critical ?? 0 }}
-                                    </h2>
-                                    <small class="text-danger">
-                                        <i class="bi bi-arrow-up"></i> High Priority
-                                    </small>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Resolved Issues Card -->
-                        <div class="col-lg-2 col-md-4 col-sm-6 mb-4">
-                            <div class="card info-card h-100 border-0 shadow-sm hover-card">
-                                <div class="card-body text-center p-4">
-                                    <div class="icon-wrapper mb-3">
-                                        <div class="icon-circle bg-success-subtle">
-                                            <i class="bi bi-check-circle text-success fs-2"></i>
-                                        </div>
-                                    </div>
-                                    <h5 class="card-title text-muted mb-2">Issues Resolved</h5>
-                                    <h2 class="fw-bold text-success mb-0" id="total-resolved">{{ $total_resolved ?? 0 }}
-                                    </h2>
-                                    <small class="text-success">
-                                        <i class="bi bi-arrow-up"></i> This Period
-                                    </small>
                                 </div>
                             </div>
                         </div>
 
                         {{-- Sensor Temperature --}}
                         <div class="col-lg-12">
-                            <div class="card shadow-lg border-0 rounded-4 p-3"
+                            <div class="card shadow-sm border-0 rounded-4 p-3"
                                 style="background: white; box-shadow: 0px 4px 20px rgba(120, 100, 200, 0.3);">
                                 <div class="card-body">
                                     <!-- Title & Filters -->

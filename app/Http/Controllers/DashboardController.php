@@ -30,13 +30,15 @@ class DashboardController extends Controller
 
         // Calculate totals - some filtered by year, some not
         $total_substation = Substation::count();
-        $total_sensor = Sensor::count();
+        $total_sensor = Sensor::where('sensor_status', 'Active')->count();
 
         // Build query for failures based on filters
         $failureQuery = ErrorLog::query();
         $warningQuery = ErrorLog::where('severity', 'warn');
         $criticalQuery = ErrorLog::where('severity', 'critical');
-        $resolvedQuery = ErrorLog::where('severity', 'normal');
+        $resolvedQuery = ErrorLog::where('status', 'Completed');
+        $reviewQuery = ErrorLog::where('status', 'Reviewed');
+        $quiryQuery = ErrorLog::where('status', 'Quiry');
 
         // Apply year filter
         if ($year) {
@@ -44,6 +46,8 @@ class DashboardController extends Controller
             $warningQuery->whereYear('created_at', $year);
             $criticalQuery->whereYear('created_at', $year);
             $resolvedQuery->whereYear('created_at', $year);
+            $reviewQuery->whereYear('created_at', $year);
+            $quiryQuery->whereYear('created_at', $year);
         }
 
         // Apply month filter if provided
@@ -52,12 +56,16 @@ class DashboardController extends Controller
             $warningQuery->whereMonth('created_at', $month);
             $criticalQuery->whereMonth('created_at', $month);
             $resolvedQuery->whereMonth('created_at', $month);
+            $reviewQuery->whereMonth('created_at', $month);
+            $quiryQuery->whereMonth('created_at', $month);
         }
 
         $total_failure = $failureQuery->count();
         $total_warning = $warningQuery->count();
         $total_critical = $criticalQuery->count();
         $total_resolved = $resolvedQuery->count();
+        $total_review = $reviewQuery->count();
+        $total_query = $quiryQuery->count();
 
         return view('dashboard', compact(
             'substations',
@@ -70,6 +78,8 @@ class DashboardController extends Controller
             'total_warning',
             'total_critical',
             'total_resolved',
+            'total_review',
+            'total_query',
             'year',
             'month'
         ));
@@ -85,7 +95,9 @@ class DashboardController extends Controller
         $failureQuery = ErrorLog::query();
         $warningQuery = ErrorLog::where('severity', 'warn');
         $criticalQuery = ErrorLog::where('severity', 'critical');
-        $resolvedQuery = ErrorLog::where('severity', 'normal');
+        $resolvedQuery = ErrorLog::where('status', 'Completed');
+        $reviewQuery = ErrorLog::where('status', 'Reviewed');
+        $quiryQuery = ErrorLog::where('status', 'Quiry');
 
         // Apply year filter
         if ($year) {
@@ -93,6 +105,8 @@ class DashboardController extends Controller
             $warningQuery->whereYear('created_at', $year);
             $criticalQuery->whereYear('created_at', $year);
             $resolvedQuery->whereYear('created_at', $year);
+            $reviewQuery->whereYear('created_at', $year);
+            $quiryQuery->whereYear('created_at', $year);
         }
 
         // Apply month filter if provided
@@ -101,6 +115,8 @@ class DashboardController extends Controller
             $warningQuery->whereMonth('created_at', $month);
             $criticalQuery->whereMonth('created_at', $month);
             $resolvedQuery->whereMonth('created_at', $month);
+            $reviewQuery->whereMonth('created_at', $month);
+            $quiryQuery->whereMonth('created_at', $month);
         }
 
         $stats = [
@@ -110,6 +126,8 @@ class DashboardController extends Controller
             'total_warning' => $warningQuery->count(),
             'total_critical' => $criticalQuery->count(),
             'total_resolved' => $resolvedQuery->count(),
+            'total_review' => $reviewQuery->count(),
+            'total_query' => $quiryQuery->count(),
             'year' => $year,
             'month' => $month,
             'timeGap' => $timeGap

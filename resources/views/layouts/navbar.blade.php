@@ -1,11 +1,16 @@
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
-    <div class="sidebar-header d-flex align-items-center justify-content-between">
-        <a href="/dashboard" class="logo d-flex align-items-center">
-            <img src="{{ asset('images/logo.png') }}" class="me-2" alt="Logo">
-            <span class="d-none d-lg-block logo-text">TNB-SAMS</span>
+    <div class="sidebar-header">
+        <a href="/dashboard" class="sams-logo">
+            <div class="logo-icon"
+                style="width: 40px; height: 40px; background: linear-gradient(135deg, #011567 0%, #0020f0 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 0.5rem;">
+                <i class="fas fa-bolt"></i>
+            </div>
+            <span class="logo-text">TNB-SAMS</span>
         </a>
-        <i class="toggle-sidebar-btn bi bi-chevron-left"></i>
+        <div class="toggle-container">
+            <i id="toggleSidebar" class="toggle-sidebar-btn bi bi-chevron-left"></i>
+        </div>
     </div><!-- End Logo -->
 
     <ul class="sidebar-nav" id="sidebar-nav">
@@ -91,42 +96,29 @@
     </div>
 </aside><!-- End Sidebar-->
 
-<!-- Add this JavaScript to toggle the sidebar -->
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Set active menu item based on current URL
-        let links = document.querySelectorAll(".nav-link");
-        links.forEach(link => {
-            if (link.href === window.location.href) {
-                link.classList.add("active");
-            }
-        });
+    const toggleBtn = document.getElementById("toggleSidebar");
 
-        // Toggle sidebar functionality
-        const toggleBtn = document.querySelector(".toggle-sidebar-btn");
+    toggleBtn.addEventListener("click", function() {
         const body = document.querySelector("body");
+        body.classList.toggle("sidebar-collapsed");
 
-        // Check for saved state in localStorage
-        const sidebarState = localStorage.getItem("sidebar-state");
-        if (sidebarState === "collapsed") {
-            body.classList.add("sidebar-collapsed");
+        // Toggle chevron direction
+        toggleBtn.classList.toggle("bi-chevron-left");
+        toggleBtn.classList.toggle("bi-chevron-right");
+
+        // Save state
+        const state = body.classList.contains("sidebar-collapsed") ? "collapsed" : "expanded";
+        localStorage.setItem("sidebar-state", state);
+    });
+
+    // Optional: Restore state from localStorage on load
+    document.addEventListener("DOMContentLoaded", function() {
+        const savedState = localStorage.getItem("sidebar-state");
+        if (savedState === "collapsed") {
+            document.body.classList.add("sidebar-collapsed");
             toggleBtn.classList.remove("bi-chevron-left");
             toggleBtn.classList.add("bi-chevron-right");
         }
-
-        toggleBtn.addEventListener("click", function() {
-            body.classList.toggle("sidebar-collapsed");
-
-            // Toggle chevron icon direction
-            if (body.classList.contains("sidebar-collapsed")) {
-                toggleBtn.classList.remove("bi-chevron-left");
-                toggleBtn.classList.add("bi-chevron-right");
-                localStorage.setItem("sidebar-state", "collapsed");
-            } else {
-                toggleBtn.classList.remove("bi-chevron-right");
-                toggleBtn.classList.add("bi-chevron-left");
-                localStorage.setItem("sidebar-state", "expanded");
-            }
-        });
     });
 </script>

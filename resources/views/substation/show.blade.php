@@ -15,7 +15,7 @@
         </div>
 
         <section class="section dashboard">
-            <div class="container mt-4">
+            <div class="container-fluid p-0">
                 <!-- Upload Dataset Card -->
                 <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-header bg-white border-bottom py-3">

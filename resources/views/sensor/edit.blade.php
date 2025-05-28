@@ -15,9 +15,9 @@
         </div>
 
         <section class="section dashboard">
-            <div class="container mt-4">
+            <div class="container-fluid p-0">
                 <!-- Upload Dataset Card -->
-                <div class="card shadow-lg border-0 rounded-4">
+                <div class="card shadow-sm border-0 rounded-4">
                     <div class="card-header bg-white border-bottom py-3 px-4">
                         <h5 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Edit Sensor Details</h5>
                     </div>

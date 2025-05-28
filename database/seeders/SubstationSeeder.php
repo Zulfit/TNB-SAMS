@@ -33,6 +33,41 @@ class SubstationSeeder extends Seeder
                 'substation_location' => 'TBHN/KVT/G0003',
                 'substation_date' => now(),
             ],
+            [
+                'substation_name' => 'PPU TASIK TOLAKAN',
+                'substation_location' => 'TBHN/KVT/G0004',
+                'substation_date' => now(),
+            ],
+            [
+                'substation_name' => 'PPU TASIK CERMIN',
+                'substation_location' => 'TBHN/KVT/G0005',
+                'substation_date' => now(),
+            ],
+            [
+                'substation_name' => 'PPU UK',
+                'substation_location' => 'TBHN/KVT/G0006',
+                'substation_date' => now(),
+            ],
+            [
+                'substation_name' => 'PPU BARU BANGI',
+                'substation_location' => 'TBHN/KVT/G0007',
+                'substation_date' => now(),
+            ],
+            [
+                'substation_name' => 'PPU PANDAN INDAH',
+                'substation_location' => 'TBHN/KVT/G0008',
+                'substation_date' => now(),
+            ],
+            [
+                'substation_name' => 'PPU SETAPAK',
+                'substation_location' => 'TBHN/KVT/G0009',
+                'substation_date' => now(),
+            ],
+            [
+                'substation_name' => 'PPU KAJANG',
+                'substation_location' => 'TBHN/KVT/G0010',
+                'substation_date' => now(),
+            ],
         ];
 
         foreach ($substations as $substation) {

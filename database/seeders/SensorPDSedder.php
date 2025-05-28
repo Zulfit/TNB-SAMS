@@ -20,6 +20,7 @@ class SensorPDSedder extends Seeder
 
         $sensorIds = DB::table('sensors')
             ->where('sensor_measurement', 'Partial Discharge')
+            ->where('sensor_status','Active')
             ->pluck('id')
             ->toArray();
 

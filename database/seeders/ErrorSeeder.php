@@ -32,6 +32,24 @@ class ErrorSeeder extends Seeder
                 'threshold' => '>= 50 for 3600s',
                 'severity' => 'WARN',
             ],
+            [
+                'sensor_id' => 4,
+                'state' => 'AWAIT',
+                'threshold' => '>= 50 for 3600s',
+                'severity' => 'WARN',
+            ],
+            [
+                'sensor_id' => 6,
+                'state' => 'AWAIT',
+                'threshold' => '>= 50 for 3600s',
+                'severity' => 'WARN',
+            ],
+            [
+                'sensor_id' => 7,
+                'state' => 'AWAIT',
+                'threshold' => '>= 50 for 3600s',
+                'severity' => 'WARN',
+            ],
         ];
 
         foreach($errors as $error)

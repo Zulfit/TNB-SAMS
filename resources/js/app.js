@@ -42,7 +42,7 @@ window.Echo.channel('sensor-alerts')
 
 window.Echo.channel('notification-channel')
     .listen('.notification-event', (event) => {
-        console.log('🔔 Notification Event:', event);
+        // console.log('🔔 Notification Event:', event);
 
         const badge = document.getElementById('notification-count');
         const list = document.getElementById('notification-list');

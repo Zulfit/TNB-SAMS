@@ -63,6 +63,10 @@ class UserManagementController extends Controller
             ['permissions' => $permissions]
         );
 
+        $staff = User::find($request->user_id);
+        $staff->email_verified_at = now();
+        $staff->save();
+
         return redirect()->back()->with('success', 'User verified successfully.');
     }
 

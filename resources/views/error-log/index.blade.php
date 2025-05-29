@@ -5,6 +5,12 @@
         <div class="pagetitle d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="mb-0">Error Log</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Error Log</a></li>
+                    </ol>
+                </nav>
             </div>
         </div>
 
@@ -16,7 +22,14 @@
                     </div>
                     <div class="card-body pt-4">
                         <form method="GET" action="{{ route('error-log.index') }}" class="row g-3">
-                            <div class="col-md-4 col-lg-2">
+                            <!-- ID Search Field -->
+                            <div class="col-md-4 col-lg-3">
+                                <label for="error_id" class="form-label small text-muted">Error ID</label>
+                                <input type="text" id="error_id" name="error_id" class="form-control form-control-sm"
+                                    placeholder="Search ID..." value="{{ request('error_id') }}">
+                            </div>
+
+                            <div class="col-md-4 col-lg-3">
                                 <label for="substation" class="form-label small text-muted">Substation</label>
                                 <select id="substation" name="substation" class="form-select form-select-sm">
                                     <option value="">All Substations</option>
@@ -29,7 +42,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-4 col-lg-2">
+                            <div class="col-md-4 col-lg-3">
                                 <label for="panel" class="form-label small text-muted">Panel</label>
                                 <select id="panel" name="panel" class="form-select form-select-sm">
                                     <option value="">All Panels</option>
@@ -42,7 +55,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-4 col-lg-2">
+                            <div class="col-md-4 col-lg-3">
                                 <label for="compartment" class="form-label small text-muted">Compartment</label>
                                 <select id="compartment" name="compartment" class="form-select form-select-sm">
                                     <option value="">All Compartments</option>
@@ -55,7 +68,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-4 col-lg-2">
+                            <div class="col-md-4 col-lg-3">
                                 <label for="measurement" class="form-label small text-muted">Measurement</label>
                                 <select id="measurement" name="measurement" class="form-select form-select-sm">
                                     <option value="">All Measurements</option>
@@ -68,7 +81,7 @@
                                 </select>
                             </div>
 
-                            <div class="col-md-4 col-lg-2">
+                            <div class="col-md-4 col-lg-3">
                                 <label for="state" class="form-label small text-muted">State</label>
                                 <select id="state" name="state" class="form-select form-select-sm">
                                     <option value="">All States</option>
@@ -81,12 +94,31 @@
                                 </select>
                             </div>
 
+                            <!-- Status Filter -->
+                            <div class="col-md-4 col-lg-3">
+                                <label for="status" class="form-label small text-muted">Status</label>
+                                <select id="status" name="status" class="form-select form-select-sm">
+                                    <option value="">All Status</option>
+                                    @foreach ($statuses as $status)
+                                        <option value="{{ $status }}">{{ $status }}</option>
+                                    @endforeach
+                                    {{-- <option value="New" {{ request('status') == 'New' ? 'selected' : '' }}>New</option>
+                                    <option value="Quiry" {{ request('status') == 'Quiry' ? 'selected' : '' }}>Quiry
+                                    </option>
+                                    <option value="Acknowledge" {{ request('status') == 'Acknowledge' ? 'selected' : '' }}>
+                                        Acknowledge</option>
+                                    <option value="Completed" {{ request('status') == 'Completed' ? 'selected' : '' }}>
+                                        Completed</option> --}}
+                                </select>
+                            </div>
+
                             <div class="col-md-4 col-lg-2 d-flex align-items-end">
                                 <div class="d-flex gap-2 w-100">
                                     <button type="submit" class="btn btn-primary" title="Apply Filters">
                                         <i class="bi bi-funnel-fill"></i>
                                     </button>
-                                    <a href="{{ route('error-log.index') }}" class="btn btn-outline-secondary" title="Clear Filters">
+                                    <a href="{{ route('error-log.index') }}" class="btn btn-outline-secondary"
+                                        title="Clear Filters">
                                         <i class="bi bi-x-circle"></i>
                                     </a>
                                 </div>
@@ -98,7 +130,8 @@
                 <div class="card shadow-sm border-0 rounded-3">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Error Logs</h5>
-                        <span class="badge bg-secondary">{{ $errors->count() }} {{ Str::plural('record', $errors->count()) }}</span>
+                        <span class="badge bg-secondary">{{ $errors->count() }}
+                            {{ Str::plural('record', $errors->count()) }}</span>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -113,97 +146,108 @@
                                         <th class="py-3">State</th>
                                         <th class="py-3">Threshold</th>
                                         <th class="py-3">Severity</th>
-                                        <th class="py-3">
-                                            {{ Auth::user()->position == 'Staff' ? 'Status' : 'PIC' }}
-                                        </th>
+                                        {{-- @if (Auth::user()->position == 'Staff') --}}
+                                        <th class="py-3">Status</th>
+                                        {{-- @endif --}}
+                                        @if (Auth::user()->position != 'Staff')
+                                            <th class="py-3">PIC</th>
+                                        @endif
                                         <th class="py-3">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-center">
                                     @forelse ($errors as $error)
-                                        <tr class="{{ $error->severity == 'Critical' ? 'table-danger' : ($error->severity == 'Warning' ? 'table-warning' : '') }}">
+                                        <tr
+                                            class="{{ $error->severity == 'Critical' ? 'table-danger' : ($error->severity == 'Warning' ? 'table-warning' : '') }}">
                                             <td>{{ $error->id }}</td>
                                             <td>{{ $error->updated_at->format('M d, Y H:i') }}</td>
                                             <td>{{ $error->sensor->sensor_name }}</td>
                                             <td>
                                                 <div class="d-flex flex-column">
-                                                    <span class="fw-bold">{{ $error->sensor->substation->substation_name }}</span>
+                                                    <span
+                                                        class="fw-bold">{{ $error->sensor->substation->substation_name }}</span>
                                                     <small class="text-muted">
-                                                        {{ $error->sensor->panel->panel_name }} / 
+                                                        {{ $error->sensor->panel->panel_name }} /
                                                         {{ $error->sensor->compartment->compartment_name }}
                                                     </small>
                                                 </div>
                                             </td>
                                             <td>{{ $error->sensor->sensor_measurement }}</td>
                                             <td>
-                                                <span class="badge rounded-pill {{ $error->getStateBadgeClass() }}" style="padding: 8px 12px; font-size: 0.8rem;">
+                                                <span class="badge rounded-pill {{ $error->getStateBadgeClass() }}"
+                                                    style="padding: 8px 12px; font-size: 0.8rem;">
                                                     {{ $error->state }}
                                                 </span>
                                             </td>
                                             <td>{{ $error->threshold }}</td>
                                             <td>
-                                                <span class="badge rounded-pill {{ $error->getSeverityBadgeClass() }}" style="padding: 8px 12px; font-size: 0.8rem;">
+                                                <span class="badge rounded-pill {{ $error->getSeverityBadgeClass() }}"
+                                                    style="padding: 8px 12px; font-size: 0.8rem;">
                                                     {{ $error->severity }}
                                                 </span>
                                             </td>
+                                            {{-- @if (Auth::user()->position == 'Staff') --}}
                                             <td>
-                                                @if (Auth::user()->position == 'Staff')
-                                                    @php
-                                                        $statusColor = 'primary';
-                                                        if($error->status == 'New') {
-                                                            $statusColor = 'info';
-                                                        }elseif($error->status == 'Quiry') {
-                                                            $statusColor = 'danger';
-                                                        }elseif($error->status == 'Acknowledge') {
-                                                            $statusColor = 'warning';
-                                                        } elseif($error->status == 'Completed') {
-                                                            $statusColor = 'success';
-                                                        }
-                                                    @endphp
-                                                    <span class="badge bg-{{ $statusColor }} text-white rounded-pill px-3 py-2">
-                                                        {{ $error->status }}
-                                                    </span>
-                                                @else
+                                                @php
+                                                    $statusColor = 'primary';
+                                                    if ($error->status == 'New') {
+                                                        $statusColor = 'info';
+                                                    } elseif ($error->status == 'Quiry') {
+                                                        $statusColor = 'danger';
+                                                    } elseif ($error->status == 'Acknowledge') {
+                                                        $statusColor = 'warning';
+                                                    } elseif ($error->status == 'Completed') {
+                                                        $statusColor = 'success';
+                                                    }
+                                                @endphp
+                                                <span
+                                                    class="badge bg-{{ $statusColor }} text-white rounded-pill px-3 py-2">
+                                                    {{ $error->status }}
+                                                </span>
+                                            </td>
+                                            {{-- @endif --}}
+                                            @if (Auth::user()->position != 'Staff')
+                                                <td>
                                                     @if ($error->pic === 1)
-                                                        <span class="badge bg-secondary text-white rounded-pill" style="padding: 8px 12px; font-size: 0.8rem;">
+                                                        <span class="badge bg-secondary text-white rounded-pill"
+                                                            style="padding: 8px 12px; font-size: 0.8rem;">
                                                             Unassigned
                                                         </span>
                                                     @else
-                                                        <span class="badge bg-primary text-white rounded-pill" style="padding: 8px 12px; font-size: 0.8rem;">
+                                                        <span class="badge bg-primary text-white rounded-pill"
+                                                            style="padding: 8px 12px; font-size: 0.8rem;">
                                                             {{ $error->user->name }}
                                                         </span>
                                                     @endif
-                                                @endif
-                                            </td>
+                                                </td>
+                                            @endif
                                             <td>
                                                 <div class="dropdown">
-                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                                        type="button" data-bs-toggle="dropdown">
                                                         Actions
                                                     </button>
                                                     <ul class="dropdown-menu">
                                                         <li>
-                                                            <a href="{{ route('error-log.assign', $error->id) }}" class="dropdown-item">
+                                                            <a href="{{ route('error-log.assign', $error->id) }}"
+                                                                class="dropdown-item">
                                                                 <i class="bi bi-person-check me-2"></i>
-                                                                @if(Auth::user()->position == 'Staff')
+                                                                @if (Auth::user()->position == 'Staff')
                                                                     Update Status
                                                                 @else
                                                                     {{ $error->pic != 1 ? 'View Task' : 'Assign PIC' }}
                                                                 @endif
-                                                            </a>                                                            
-                                                        </li>
-                                                        {{-- <li>
-                                                            <a href="#" class="dropdown-item view-details" data-id="{{ $error->id }}">
-                                                                <i class="bi bi-eye me-2"></i> View Details
                                                             </a>
-                                                        </li> --}}
+                                                        </li>
                                                     </ul>
                                                 </div>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="10" class="text-center py-5">
-                                                <img src="{{ asset('images/empty-state.svg') }}" alt="No data" width="120" class="mb-3">
+                                            <td colspan="{{ Auth::user()->position == 'Staff' ? '10' : '11' }}"
+                                                class="text-center py-5">
+                                                <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
                                                 <h5 class="text-muted">No Error Logs Found</h5>
                                                 <p class="text-muted">
                                                     @if (Auth::user()->position == 'Staff')
@@ -247,40 +291,51 @@
         </div>
     </div>
 
-@push('scripts')
-<script>
-    // Add JavaScript to handle the View Details functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        // Handle view details click
-        const viewDetailButtons = document.querySelectorAll('.view-details');
-        viewDetailButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const errorId = this.getAttribute('data-id');
-                // Here you would fetch the details and populate the modal
-                // For now, we'll just show the modal
-                const modal = new bootstrap.Modal(document.getElementById('errorDetailsModal'));
-                modal.show();
-            });
-        });
+    @push('scripts')
+        <script>
+            // Add JavaScript to handle the View Details functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                // Handle view details click
+                const viewDetailButtons = document.querySelectorAll('.view-details');
+                viewDetailButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const errorId = this.getAttribute('data-id');
+                        // Here you would fetch the details and populate the modal
+                        // For now, we'll just show the modal
+                        const modal = new bootstrap.Modal(document.getElementById('errorDetailsModal'));
+                        modal.show();
+                    });
+                });
 
-        // Add hover effect to rows
-        const tableRows = document.querySelectorAll('tbody tr');
-        tableRows.forEach(row => {
-            row.addEventListener('mouseenter', function() {
-                if (!this.classList.contains('no-hover')) {
-                    this.style.cursor = 'pointer';
-                    this.style.backgroundColor = '#f8f9fa';
+                // Add hover effect to rows
+                const tableRows = document.querySelectorAll('tbody tr');
+                tableRows.forEach(row => {
+                    row.addEventListener('mouseenter', function() {
+                        if (!this.classList.contains('no-hover')) {
+                            this.style.cursor = 'pointer';
+                            this.style.backgroundColor = '#f8f9fa';
+                        }
+                    });
+
+                    row.addEventListener('mouseleave', function() {
+                        if (!this.classList.contains('no-hover')) {
+                            this.style.backgroundColor = '';
+                        }
+                    });
+                });
+
+                // Auto-submit form on Enter key for ID search
+                const errorIdInput = document.getElementById('error_id');
+                if (errorIdInput) {
+                    errorIdInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            this.closest('form').submit();
+                        }
+                    });
                 }
             });
-            
-            row.addEventListener('mouseleave', function() {
-                if (!this.classList.contains('no-hover')) {
-                    this.style.backgroundColor = '';
-                }
-            });
-        });
-    });
-</script>
-@endpush
+        </script>
+    @endpush
 @endsection

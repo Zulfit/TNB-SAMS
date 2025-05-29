@@ -9,7 +9,7 @@
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                         <li class="breadcrumb-item"><a href="{{ route('error-log.index') }}">Error Logs</a></li>
-                        <li class="breadcrumb-item active">Error Details</li>
+                        <li class="breadcrumb-item active">Error Log Details</li>
                     </ol>
                 </nav>
             </div>
@@ -18,14 +18,14 @@
         <!-- Current Status Banner -->
         <div class="alert alert-{{ $error->status == null ? 'secondary' : 
             ($error->status == 'New' ? 'primary' : 
-            ($error->status == 'Acknowledged' ? 'warning' : 
-            ($error->status == 'Reviewed' ? 'info' :
+            ($error->status == 'Acknowledge' ? 'warning' : 
+            ($error->status == 'Review' ? 'info' :
             ($error->status == 'Quiry' ? 'danger' : 'success')))) }} d-flex align-items-center mb-4">
             <div class="d-flex align-items-center flex-grow-1">
                 <i class="bi bi-{{ $error->status == null ? 'person-plus' : 
                     ($error->status == 'New' ? 'exclamation-circle' : 
-                    ($error->status == 'Acknowledged' ? 'clock-history' : 
-                    ($error->status == 'Reviewed' ? 'eye' :
+                    ($error->status == 'Acknowledge' ? 'clock-history' : 
+                    ($error->status == 'Review' ? 'eye' :
                     ($error->status == 'Quiry' ? 'question-circle' : 'check-circle')))) }} fs-4 me-2"></i>
                 <div>
                     <strong>Current Status: {{ $error->status ?? 'Unassigned' }}</strong>
@@ -34,9 +34,9 @@
                             This error requires assignment to a staff member.
                         @elseif($error->status == 'New')
                             A staff member has been assigned. Waiting for acknowledgment.
-                        @elseif($error->status == 'Acknowledged')
-                            This error has been acknowledged and is being worked on.
-                        @elseif($error->status == 'Reviewed')
+                        @elseif($error->status == 'Acknowledge')
+                            This error has been Acknowledge and is being worked on.
+                        @elseif($error->status == 'Review')
                             Resolution report submitted and under admin review.
                         @elseif($error->status == 'Quiry')
                             Resolution requires revision. Sent back to staff for additional work.
@@ -56,11 +56,11 @@
                 <div class="ms-auto">
                     <span class="badge bg-info">Action Required: Acknowledge Task</span>
                 </div>
-            @elseif($error->status == 'Acknowledged' && Auth::user()->position == 'Staff' && auth()->id() == $error->pic)
+            @elseif($error->status == 'Acknowledge' && Auth::user()->position == 'Staff' && auth()->id() == $error->pic)
                 <div class="ms-auto">
                     <span class="badge bg-warning">Action Required: Submit Resolution</span>
                 </div>
-            @elseif($error->status == 'Reviewed' && Auth::user()->position != 'Staff')
+            @elseif($error->status == 'Review' && Auth::user()->position != 'Staff')
                 <div class="ms-auto">
                     <span class="badge bg-info">Action Required: Review Report</span>
                 </div>
@@ -151,23 +151,23 @@
                                 <div class="status-timeline mb-4">
                                     <div class="d-flex align-items-center">
                                         <!-- New -->
-                                        <div class="timeline-step {{ in_array($error->status, ['New', 'Acknowledged', 'Reviewed', 'Quiry', 'Completed']) ? 'active' : '' }}">
+                                        <div class="timeline-step {{ in_array($error->status, ['New', 'Acknowledge', 'Review', 'Quiry', 'Completed']) ? 'active' : '' }}">
                                             <div class="timeline-point"></div>
                                             <div class="timeline-label">New</div>
                                         </div>
-                                        <div class="timeline-line {{ in_array($error->status, ['Acknowledged', 'Reviewed', 'Quiry', 'Completed']) ? 'active' : '' }}"></div>
+                                        <div class="timeline-line {{ in_array($error->status, ['Acknowledge', 'Review', 'Quiry', 'Completed']) ? 'active' : '' }}"></div>
                                         
-                                        <!-- Acknowledged -->
-                                        <div class="timeline-step {{ in_array($error->status, ['Acknowledged', 'Reviewed', 'Quiry', 'Completed']) ? 'active' : '' }}">
+                                        <!-- Acknowledge -->
+                                        <div class="timeline-step {{ in_array($error->status, ['Acknowledge', 'Review', 'Quiry', 'Completed']) ? 'active' : '' }}">
                                             <div class="timeline-point"></div>
-                                            <div class="timeline-label">Acknowledged</div>
+                                            <div class="timeline-label">Acknowledge</div>
                                         </div>
-                                        <div class="timeline-line {{ in_array($error->status, ['Reviewed', 'Quiry', 'Completed']) ? 'active' : '' }}"></div>
+                                        <div class="timeline-line {{ in_array($error->status, ['Review', 'Quiry', 'Completed']) ? 'active' : '' }}"></div>
                                         
-                                        <!-- Reviewed -->
-                                        <div class="timeline-step {{ in_array($error->status, ['Reviewed', 'Quiry', 'Completed']) ? 'active' : '' }}">
+                                        <!-- Review -->
+                                        <div class="timeline-step {{ in_array($error->status, ['Review', 'Quiry', 'Completed']) ? 'active' : '' }}">
                                             <div class="timeline-point"></div>
-                                            <div class="timeline-label">Reviewed</div>
+                                            <div class="timeline-label">Review</div>
                                         </div>
                                         
                                         <!-- Quiry Branch (if applicable) -->
@@ -232,18 +232,18 @@
                                     </div>
 
                                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-                                        <div>
+                                        {{-- <div>
                                             @if ($error->status && $error->status !== 'New')
-                                                <span class="badge bg-{{ $error->status == 'Acknowledged' ? 'warning' : 
-                                                    ($error->status == 'Reviewed' ? 'info' :
+                                                <span class="badge bg-{{ $error->status == 'Acknowledge' ? 'warning' : 
+                                                    ($error->status == 'Review' ? 'info' :
                                                     ($error->status == 'Quiry' ? 'danger' : 'success')) }} fs-6 py-2 px-3">
-                                                    <i class="bi bi-{{ $error->status == 'Acknowledged' ? 'clock-history' : 
-                                                        ($error->status == 'Reviewed' ? 'eye' :
+                                                    <i class="bi bi-{{ $error->status == 'Acknowledge' ? 'clock-history' : 
+                                                        ($error->status == 'Review' ? 'eye' :
                                                         ($error->status == 'Quiry' ? 'question-circle' : 'check-circle')) }} me-1"></i>
                                                     {{ $error->status }}
                                                 </span>
                                             @endif
-                                        </div>
+                                        </div> --}}
 
                                         <div class="d-flex gap-2">
                                             <!-- Staff acknowledge when status is New -->
@@ -268,11 +268,11 @@
                                             <!-- Chat buttons -->
                                             @if (auth()->id() == $error->pic && $error->assigned_by)
                                                 <a href="{{ route('chat.with.user', ['userId' => $error->assigned_by]) }}" class="btn btn-outline-primary">
-                                                    <i class="bi bi-chat-dots me-1"></i> Message Admin
+                                                    <i class="bi bi-chat-dots me-1"></i> Message {{ $error->assignBy->name }}
                                                 </a>
                                             @elseif (auth()->id() == $error->assigned_by && $error->pic)
                                                 <a href="{{ route('chat.with.user', ['userId' => $error->pic]) }}" class="btn btn-outline-primary">
-                                                    <i class="bi bi-chat-dots me-1"></i> Message Staff
+                                                    <i class="bi bi-chat-dots me-1"></i> Message {{ $error->user->name }}
                                                 </a>
                                             @endif
                                         </div>
@@ -283,8 +283,8 @@
                     </div>
                 </div>
 
-                {{-- Status: Acknowledged - Staff submits resolution report --}}
-                @if ($error->status === 'Acknowledged' && Auth::user()->position == 'Staff' && auth()->id() == $error->pic)
+                {{-- Status: Acknowledge - Staff submits resolution report --}}
+                @if ($error->status === 'Acknowledge' && Auth::user()->position == 'Staff' && auth()->id() == $error->pic)
                     <div class="row">
                         <div class="col-12 mb-4">
                             <div class="card shadow-sm border-0 rounded-3 border-start border-warning border-4">
@@ -388,8 +388,8 @@
                     </div>
                 @endif
 
-                {{-- Status: Reviewed - Admin reviews and can complete or send back to quiry --}}
-                @if ($error->status === 'Reviewed' && Auth::user()->position != 'Staff')
+                {{-- Status: Review - Admin reviews and can complete or send back to quiry --}}
+                @if ($error->status === 'Review' && Auth::user()->position != 'Staff')
                     <div class="row">
                         <div class="col-12 mb-4">
                             <div class="card shadow-sm border-0 rounded-3 border-start border-info border-4">
@@ -469,8 +469,8 @@
                     </div>
                 @endif
 
-                {{-- Status: Reviewed - Staff can only view (read-only) --}}
-                @if ($error->status === 'Reviewed' && Auth::user()->position == 'Staff')
+                {{-- Status: Review - Staff can only view (read-only) --}}
+                @if ($error->status === 'Review' && Auth::user()->position == 'Staff')
                     <div class="row">
                         <div class="col-12 mb-4">
                             <div class="card shadow-sm border-0 rounded-3 border-start border-info border-4">
@@ -543,7 +543,7 @@
                                                             @endif
                                                         @endforeach
                                                         |
-                                                        {{ \Carbon\Carbon::parse($error->reviewed_at)->format('M d, Y \a\t h:i A') }}
+                                                        {{ \Carbon\Carbon::parse($error->Review_at)->format('M d, Y \a\t h:i A') }}
                                                     </small>
                                                 </div>
                                             </div>

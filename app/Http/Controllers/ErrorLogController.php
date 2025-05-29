@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificationEvent;
 use App\Models\Compartments;
 use App\Models\ErrorLog;
 use App\Models\Panels;
@@ -19,65 +20,74 @@ class ErrorLogController extends Controller
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
+        // Start with base query
+        $query = ErrorLog::with(['sensor.substation', 'sensor.panel', 'sensor.compartment', 'user']);
 
-        $errors = ErrorLog::with(['user', 'sensor.substation', 'sensor.panel', 'sensor.compartment'])
-            ->when(
-                $request->substation,
-                fn($q) =>
-                $q->whereHas(
-                    'sensor',
-                    fn($q2) =>
-                    $q2->where('sensor_substation', $request->substation)
-                )
-            )
-            ->when(
-                $request->panel,
-                fn($q) =>
-                $q->whereHas(
-                    'sensor',
-                    fn($q2) =>
-                    $q2->where('sensor_panel', $request->panel)
-                )
-            )
-            ->when(
-                $request->compartment,
-                fn($q) =>
-                $q->whereHas(
-                    'sensor',
-                    fn($q2) =>
-                    $q2->where('sensor_compartment', $request->compartment)
-                )
-            )
-            ->when(
-                $request->measurement,
-                fn($q) =>
-                $q->whereHas(
-                    'sensor',
-                    fn($q2) =>
-                    $q2->where('sensor_measurement', $request->measurement)
-                )
-            )
-            ->when($request->state, fn($q) => $q->where('state', $request->state))
+        // Filter by user role
+        if (Auth::user()->position == 'Staff') {
+            $query->where('pic', Auth::user()->id);
+        }
 
-            // 👉 Restrict to only own errors if position is Staff
-            ->when(
-                $user->position === 'Staff',
-                fn($q) => $q->where('pic', $user->id)
-            )
+        // Apply filters
+        if ($request->filled('error_id')) {
+            $query->where('id', 'like', '%' . $request->error_id . '%');
+        }
 
-            ->orderByDesc('updated_at')
-            ->get();
+        if ($request->filled('substation')) {
+            $query->whereHas('sensor', function ($q) use ($request) {
+                $q->where('sensor_substation', $request->substation);
+            });
+        }
 
-        return view('error-log.index', [
-            'errors' => $errors,
-            'substations' => Substation::all(),
-            'panels' => Panels::all(),
-            'compartments' => Compartments::all(),
-            'measurements' => Sensor::distinct()->pluck('sensor_measurement'),
-            'states' => ErrorLog::distinct()->pluck('state'),
-            'user'
-        ]);
+        if ($request->filled('panel')) {
+            $query->whereHas('sensor', function ($q) use ($request) {
+                $q->where('sensor_panel', $request->panel);
+            });
+        }
+
+        if ($request->filled('compartment')) {
+            $query->whereHas('sensor', function ($q) use ($request) {
+                $q->where('sensor_compartment', $request->compartment);
+            });
+        }
+
+        if ($request->filled('measurement')) {
+            $query->whereHas('sensor', function ($q) use ($request) {
+                $q->where('sensor_measurement', $request->measurement);
+            });
+        }
+
+        if ($request->filled('state')) {
+            $query->where('state', $request->state);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Get filtered results
+        $errors = $query->orderBy('updated_at', 'desc')->get();
+
+        // Get filter options
+        $substations = Substation::all();
+        $panels = Panels::all();
+        $compartments = Compartments::all();
+        
+        // Get unique measurements and states for filters
+        $measurements = Sensor::distinct()->pluck('sensor_measurement')->filter()->sort()->values();
+        $states = ErrorLog::distinct()->pluck('state')->filter()->sort()->values();
+
+        $statuses = ['New','Acknowledge','Review','Quiry','Completed'];
+
+        return view('error-log.index', compact(
+            'errors',
+            'substations',
+            'panels',
+            'compartments',
+            'measurements',
+            'states',
+            'statuses'
+        ));
     }
 
 
@@ -169,14 +179,14 @@ class ErrorLogController extends Controller
             ]);
 
             $errorLog->update([
-                'status' => 'Reviewed',
+                'status' => 'Review',
                 $errorLog->report = $validated['report'],
                 $errorLog->reviewed_at = now()
             ]);
 
         } elseif ($request->action === 'acknowledge') {
             $errorLog->update([
-                'status' => 'Acknowledged',
+                'status' => 'Acknowledge',
             ]);
 
         } elseif ($request->input('action') == 'assign') {
@@ -205,6 +215,10 @@ class ErrorLogController extends Controller
             // Use SensorAlertNotification to send Telegram message
             new SensorAlertNotification($alert, '')->sendAssignMessageAdmin();
             new SensorAlertNotification($alert, '')->sendAssignMessageStaff();
+            event(new NotificationEvent(
+                'New Error Log Assigned!',
+                "Error Log ID: #{$errorLog->id}<br>Sensor Name: {$errorLog->sensor->sensor_name}<br>PIC: {$errorLog->user->name}"
+            ));
         }
 
         $errorLog->save();

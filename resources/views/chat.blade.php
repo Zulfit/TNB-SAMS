@@ -2,6 +2,20 @@
 
 @section('content')
     <main id="main" class="main">
+        <div class="pagetitle d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="mb-0">Chat with {{$targetUser->name}}</h1>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="{{ route('error-log.index') }}">Error Logs</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url()->previous() }}">Error Log Details</a></li>
+                        <li class="breadcrumb-item active">Chat</a></li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        
         <div class="chat-container">
             <div class="chat-header">
                 <div class="user-info">

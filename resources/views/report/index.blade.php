@@ -84,7 +84,7 @@
                                     <th class="py-3">Download</th>
                                     @if (in_array('delete', $global_permissions['report_access'] ?? []) ||
                                             in_array('full', $global_permissions['report_access'] ?? []))
-                                        <th>Action</th>
+                                        <th class="py-3">Action</th>
                                     @endif
                                 </tr>
                             </thead>

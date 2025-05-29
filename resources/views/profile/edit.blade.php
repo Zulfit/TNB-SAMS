@@ -5,7 +5,12 @@
         <div class="pagetitle d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="mb-0">Profile Settings</h1>
-                <p class="text-muted mb-0">Manage your account settings and preferences</p>
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li class="breadcrumb-item active">Profile Settings</a></li>
+                    </ol>
+                </nav>
             </div>
         </div>
 
@@ -32,7 +37,7 @@
                                             <div class="d-flex align-items-center gap-4">
                                                 <div class="position-relative">
                                                     <div class="avatar-preview" id="avatarPreview"
-                                                        style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid #e9ecef; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
+                                                        style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 3px solid #e9ecef; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;" data-profile-image>
                                                         @if (Auth::user()->profile_picture)
                                                             <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}"
                                                                 alt="Profile"
@@ -52,11 +57,13 @@
                                                     <input type="file" id="profilePicture" name="profile_picture"
                                                         accept="image/*" class="d-none">
                                                     <div class="d-flex flex-column gap-2">
-                                                        <button type="button" id="uploadBtn" class="btn btn-outline-primary btn-sm">
+                                                        <button type="button" id="uploadBtn"
+                                                            class="btn btn-outline-primary btn-sm">
                                                             <i class="bi bi-upload me-2"></i>Upload New Photo
                                                         </button>
                                                         @if (Auth::user()->profile_picture)
-                                                            <button type="button" id="removePhotoBtn" class="btn btn-outline-danger btn-sm">
+                                                            <button type="button" id="removePhotoBtn"
+                                                                class="btn btn-outline-danger btn-sm">
                                                                 <i class="bi bi-trash me-2"></i>Remove Photo
                                                             </button>
                                                         @endif
@@ -164,7 +171,8 @@
                                                 <h6 class="mb-1">Change Password</h6>
                                                 <small class="text-muted">Update your account password</small>
                                             </div>
-                                            <button type="button" id="togglePasswordBtn" class="btn btn-outline-warning btn-sm">
+                                            <button type="button" id="togglePasswordBtn"
+                                                class="btn btn-outline-warning btn-sm">
                                                 <i class="bi bi-chevron-down" id="passwordChevron"></i>
                                             </button>
                                         </div>
@@ -181,7 +189,8 @@
                                                 <h6 class="mb-1">Delete Account</h6>
                                                 <small class="text-muted">Permanently delete your account</small>
                                             </div>
-                                            <button type="button" id="toggleDeleteBtn" class="btn btn-outline-danger btn-sm">
+                                            <button type="button" id="toggleDeleteBtn"
+                                                class="btn btn-outline-danger btn-sm">
                                                 <i class="bi bi-chevron-down" id="deleteChevron"></i>
                                             </button>
                                         </div>
@@ -459,12 +468,46 @@
         });
 
         // Image preview function
+        // Updated image preview function
         function previewImage(input) {
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    // Update the form's avatar preview
                     const avatarPreview = document.getElementById('avatarPreview');
-                    avatarPreview.innerHTML = '<img src="' + e.target.result + '" alt="Profile Preview" style="width: 100%; height: 100%; object-fit: cover;">';
+                    if (avatarPreview) {
+                        avatarPreview.innerHTML = '<img src="' + e.target.result +
+                            '" alt="Profile Preview" style="width: 100%; height: 100%; object-fit: cover;">';
+                    }
+
+                    // Update the sidebar avatar preview
+                    const sidebarAvatar = document.querySelector('.avatar-circle');
+                    if (sidebarAvatar) {
+                        sidebarAvatar.innerHTML = '<img src="' + e.target.result +
+                            '" alt="Profile Preview" style="width: 100%; height: 100%; object-fit: cover;">';
+                    }
+
+                    // Update header profile image (you'll need to adjust the selector based on your header structure)
+                    const headerProfileImg = document.querySelector('.header-profile-img'); // Adjust this selector
+                    if (headerProfileImg) {
+                        if (headerProfileImg.tagName === 'IMG') {
+                            headerProfileImg.src = e.target.result;
+                        } else {
+                            headerProfileImg.innerHTML = '<img src="' + e.target.result +
+                                '" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">';
+                        }
+                    }
+
+                    // Alternative: Update all profile images on the page
+                    const allProfileImages = document.querySelectorAll('[data-profile-image]');
+                    allProfileImages.forEach(img => {
+                        if (img.tagName === 'IMG') {
+                            img.src = e.target.result;
+                        } else {
+                            img.innerHTML = '<img src="' + e.target.result +
+                                '" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">';
+                        }
+                    });
                 };
                 reader.readAsDataURL(input.files[0]);
             }
@@ -475,11 +518,11 @@
             if (confirm('Are you sure you want to remove your profile picture?')) {
                 const avatarPreview = document.getElementById('avatarPreview');
                 avatarPreview.innerHTML = '<i class="bi bi-person-fill text-white" style="font-size: 2.5rem;"></i>';
-                
+
                 // Reset file input
                 const profilePictureInput = document.getElementById('profilePicture');
                 profilePictureInput.value = '';
-                
+
                 // You might want to add a hidden input to track picture removal
                 // or make an AJAX call to remove the picture from server
             }
@@ -498,7 +541,7 @@
         function togglePasswordForm() {
             const passwordCard = document.getElementById('passwordCard');
             const passwordChevron = document.getElementById('passwordChevron');
-            
+
             if (passwordCard.classList.contains('d-none')) {
                 passwordCard.classList.remove('d-none');
                 passwordChevron.classList.remove('bi-chevron-down');
@@ -514,7 +557,7 @@
         function toggleDeleteForm() {
             const deleteCard = document.getElementById('deleteCard');
             const deleteChevron = document.getElementById('deleteChevron');
-            
+
             if (deleteCard.classList.contains('d-none')) {
                 deleteCard.classList.remove('d-none');
                 deleteChevron.classList.remove('bi-chevron-down');

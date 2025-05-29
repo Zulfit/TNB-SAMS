@@ -65,7 +65,7 @@
             <!-- Profile -->
             <li class="nav-item dropdown pe-3">
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <div class="avatar-preview" id="avatarPreview"
+                    <div class="avatar-preview"
                         style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 3px solid #e9ecef; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center;">
                         @if (Auth::user()->profile_picture)
                             <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="Profile"

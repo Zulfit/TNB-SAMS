@@ -10,6 +10,7 @@ use App\Models\SensorTemperature;
 use App\Models\Substation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -37,7 +38,7 @@ class DashboardController extends Controller
         $warningQuery = ErrorLog::where('severity', 'warn');
         $criticalQuery = ErrorLog::where('severity', 'critical');
         $resolvedQuery = ErrorLog::where('status', 'Completed');
-        $reviewQuery = ErrorLog::where('status', 'Reviewed');
+        $reviewQuery = ErrorLog::where('status', 'Review');
         $quiryQuery = ErrorLog::where('status', 'Quiry');
 
         // Apply year filter
@@ -96,7 +97,7 @@ class DashboardController extends Controller
         $warningQuery = ErrorLog::where('severity', 'warn');
         $criticalQuery = ErrorLog::where('severity', 'critical');
         $resolvedQuery = ErrorLog::where('status', 'Completed');
-        $reviewQuery = ErrorLog::where('status', 'Reviewed');
+        $reviewQuery = ErrorLog::where('status', 'Review');
         $quiryQuery = ErrorLog::where('status', 'Quiry');
 
         // Apply year filter
@@ -132,6 +133,8 @@ class DashboardController extends Controller
             'month' => $month,
             'timeGap' => $timeGap
         ];
+
+        // Log::info('Stats data:', $stats);
 
         return response()->json($stats);
     }

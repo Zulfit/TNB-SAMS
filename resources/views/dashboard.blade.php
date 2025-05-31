@@ -27,13 +27,6 @@
                     <option value="11" {{ $month == 11 ? 'selected' : '' }}>November</option>
                     <option value="12" {{ $month == 12 ? 'selected' : '' }}>December</option>
                 </select>
-                <label for="timeGapFilter" class="form-label mb-0 fw-semibold">Time Gap:</label>
-                <select id="timeGapFilter" class="form-select form-select-sm" style="width: auto; min-width: 120px;">
-                    <option value="5min">Every 5 Minutes</option>
-                    <option value="10min">Every 10 Minutes</option>
-                    <option value="30min">Every 30 Minutes</option>
-                    <option value="hourly">Hourly</option>
-                </select>
             </div>
         </div><!-- End Page Title -->
 
@@ -41,7 +34,7 @@
             <div class="row">
 
                 <!-- Left side columns -->
-                <div class="col-lg-20">
+                <div class="col-lg-12">
                     <div class="row">
 
                         <!-- First Row -->
@@ -79,7 +72,7 @@
                                         <h5 class="card-title text-muted mb-1 small">Total Sensors</h5>
                                         <h3 class="fw-bold text-info mb-0" id="total-sensors">{{ $total_sensor }}</h3>
                                         <small class="text-success">
-                                            <i class="bi bi-check-circle"></i> Active
+                                            <i class="bi bi-check-circle"></i> Online
                                         </small>
                                     </div>
                                 </div>
@@ -178,7 +171,8 @@
                                             </div>
                                         </div>
                                         <h5 class="card-title text-muted mb-1 small">Total Review</h5>
-                                        <h3 class="fw-bold text-info mb-0" id="total-review">{{ $total_review ?? 0 }}</h3>
+                                        <h3 class="fw-bold text-info mb-0" id="total_review">{{ $total_review ?? 0 }}
+                                        </h3>
                                         <small class="text-info">
                                             <i class="bi bi-hourglass-split"></i> Pending Review
                                         </small>
@@ -197,7 +191,8 @@
                                             </div>
                                         </div>
                                         <h5 class="card-title text-muted mb-1 small">Total Query</h5>
-                                        <h3 class="fw-bold text-warning mb-0" id="total-query">{{ $total_query ?? 0 }}</h3>
+                                        <h3 class="fw-bold text-warning mb-0" id="total-query">{{ $total_query ?? 0 }}
+                                        </h3>
                                         <small class="text-warning">
                                             <i class="bi bi-question-circle"></i> Manager Query
                                         </small>
@@ -206,81 +201,181 @@
                             </div>
                         </div>
 
-                        {{-- Sensor Temperature --}}
-                        <div class="col-lg-12">
-                            <div class="card shadow-sm border-0 rounded-4 p-3"
-                                style="background: white; box-shadow: 0px 4px 20px rgba(120, 100, 200, 0.3);">
-                                <div class="card-body">
-                                    <!-- Title & Filters -->
-                                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                                        <h5 class="card-title mb-0">Sensor Temperature °C</h5>
-                                        <div class="d-flex align-items-center flex-wrap gap-2">
-                                            <span>Substation</span>
-                                            <select name="substation" class="form-select form-select-sm w-auto">
+                        {{-- Sensor Chart Filter --}}
+                        <div class="card shadow-sm border-0 rounded-3 mb-4">
+                            <div class="card-header bg-white py-3">
+                                <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Sensor Chart Filters</h5>
+                            </div>
+                            <div class="card-body p-4">
+                                <form method="GET" class="row g-3">
+
+                                    <!-- Substation Filter -->
+                                    <div class="col-md-4 col-lg-3">
+                                        <label class="form-label small text-muted">Substation</label>
+                                        <select class="form-select form-select-sm" name="substation"
+                                            id="substationFilter">
+                                            @if (isset($substations) && count($substations) > 0)
                                                 @foreach ($substations as $substation)
-                                                    <option value="{{ $substation->id }}">
+                                                    <option value="{{ $substation->id }}"
+                                                        {{ request('substation') == $substation->id ? 'selected' : '' }}>
                                                         {{ $substation->substation_name }}
                                                     </option>
                                                 @endforeach
-                                            </select>
-                                            <span>Panels</span>
-                                            <select name="panel" class="form-select form-select-sm w-auto">
+                                            @endif
+                                        </select>
+                                    </div>
+
+                                    <!-- Panel Filter -->
+                                    <div class="col-md-4 col-lg-3">
+                                        <label class="form-label small text-muted">Panel</label>
+                                        <select class="form-select form-select-sm" name="panel" id="panelFilter">
+                                            @if (isset($panels) && count($panels) > 0)
                                                 @foreach ($panels as $panel)
-                                                    <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
+                                                    <option value="{{ $panel->id }}"
+                                                        {{ request('panel') == $panel->id ? 'selected' : '' }}>
+                                                        {{ $panel->panel_name }}
+                                                    </option>
                                                 @endforeach
-                                            </select>
-                                            <span>Compartments</span>
-                                            <select name="compartment" class="form-select form-select-sm w-auto">
+                                            @endif
+                                        </select>
+                                    </div>
+
+                                    <!-- Compartment Filter -->
+                                    <div class="col-md-4 col-lg-3">
+                                        <label class="form-label small text-muted">Compartment</label>
+                                        <select class="form-select form-select-sm" name="compartment"
+                                            id="compartmentFilter">
+                                            @if (isset($compartments) && count($compartments) > 0)
                                                 @foreach ($compartments as $compartment)
-                                                    <option value="{{ $compartment->id }}">
-                                                        {{ $compartment->compartment_name }}</option>
+                                                    <option value="{{ $compartment->id }}"
+                                                        {{ request('compartment') == $compartment->id ? 'selected' : '' }}>
+                                                        {{ $compartment->compartment_name }}
+                                                    </option>
                                                 @endforeach
-                                            </select>
-                                        </div>
+                                            @endif
+                                        </select>
                                     </div>
 
-                                    <!-- Chart -->
-                                    <div class="position-relative">
-                                        <canvas id="tempChart" style="height: 400px;"></canvas>
-                                        <div id="chartLoadingTemp" class="chart-loading d-none">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
+                                    <!-- Time Gap Filter -->
+                                    <div class="col-md-4 col-lg-3">
+                                        <label for="timeGapFilter" class="form-label small text-muted">Time Gap</label>
+                                        <select id="timeGapFilter" class="form-select form-select-sm" name="time_gap">
+                                            <option value="5min" {{ request('time_gap') == '5min' ? 'selected' : '' }}>
+                                                Every 5 Minutes</option>
+                                            <option value="10min" {{ request('time_gap') == '10min' ? 'selected' : '' }}>
+                                                Every 10 Minutes</option>
+                                            <option value="30min" {{ request('time_gap') == '30min' ? 'selected' : '' }}>
+                                                Every 30 Minutes</option>
+                                            <option value="hourly"
+                                                {{ request('time_gap') == 'hourly' ? 'selected' : '' }}>Hourly</option>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        {{-- Sensor Temperature --}}
+                        <div class="card shadow-sm border-0 rounded-3 mb-4" id="thermalChartContainer"
+                            style="background: white; box-shadow: 0px 4px 20px rgba(120, 100, 200, 0.3);">
+                            <div class="card-body">
+                                <!-- Title -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">Sensor Thermal °C</h5>
+                                </div>
+
+                                <!-- Chart -->
+                                <div class="position-relative">
+                                    <canvas id="thermalChart" style="height: 400px;"></canvas>
+                                    <div id="chartLoadingTemp" class="chart-loading d-none">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <!-- Legend & Info -->
-                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                        <div>
-                                            <span class="d-flex align-items-center"><span
-                                                    class="rounded-circle bg-danger d-inline-block me-2"
-                                                    style="width: 10px; height: 10px;"></span> Red Phase</span>
-                                            <span class="d-flex align-items-center"><span
-                                                    class="rounded-circle bg-warning d-inline-block me-2"
-                                                    style="width: 10px; height: 10px;"></span> Yellow Phase</span>
-                                            <span class="d-flex align-items-center"><span
-                                                    class="rounded-circle bg-primary d-inline-block me-2"
-                                                    style="width: 10px; height: 10px;"></span> Blue Phase</span>
+                                <!-- Legend & Info -->
+                                <div class="container-fluid p-4">
+                                    <div class="row g-3 mt-3">
+                                        <!-- Phase Legend -->
+                                        <div class="col-12 col-lg-4 order-1">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h6 class="card-title mb-3">Phase Color</h6>
+                                                    <div class="d-flex flex-column gap-2">
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="rounded-circle bg-danger d-inline-block me-2"
+                                                                style="width: 10px; height: 10px;"></span>
+                                                            <span>Red Phase</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="rounded-circle bg-warning d-inline-block me-2"
+                                                                style="width: 10px; height: 10px;"></span>
+                                                            <span>Yellow Phase</span>
+                                                        </div>
+                                                        <div class="d-flex align-items-center">
+                                                            <span class="rounded-circle bg-primary d-inline-block me-2"
+                                                                style="width: 10px; height: 10px;"></span>
+                                                            <span>Blue Phase</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div>
-                                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span>Variance between wires</span>
-                                                <input id="variance_avg" class="form-control text-center w-25" readonly>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span>Maximum variances</span>
-                                                <input id="variance_max" class="form-control text-center w-25" readonly>
+                                        <!-- Temperature Statistics -->
+                                        <div class="col-12 col-md-4 order-2">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h6 class="card-title mb-3">Temperature Stats</h6>
+                                                    <div class="row g-2">
+                                                        <div class="col-12">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="text-nowrap me-2">Maximum</span>
+                                                                <input id="temp_max" class="form-control text-center"
+                                                                    style="max-width: 100px;" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="text-nowrap me-2">Minimum</span>
+                                                                <input id="temp_min" class="form-control text-center"
+                                                                    style="max-width: 100px;" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="text-nowrap me-2">Difference</span>
+                                                                <input id="temp_diff" class="form-control text-center"
+                                                                    style="max-width: 100px;" readonly>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div>
-                                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                                <span>Difference max & min temperature</span>
-                                                <input id="temp_diff" class="form-control text-center w-25" readonly>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <span>Maximum temperature</span>
-                                                <input id="temp_max" class="form-control text-center w-25" readonly>
+
+                                        <!-- Variance Statistics -->
+                                        <div class="col-12 col-md-4 order-3">
+                                            <div class="card h-100">
+                                                <div class="card-body">
+                                                    <h6 class="card-title mb-3">Variance Stats</h6>
+                                                    <div class="row g-2">
+                                                        <div class="col-12">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="text-nowrap me-2">Between Wires</span>
+                                                                <input id="variance_avg" class="form-control text-center"
+                                                                    style="max-width: 100px;" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="text-nowrap me-2">Maximum</span>
+                                                                <input id="variance_max" class="form-control text-center"
+                                                                    style="max-width: 100px;" readonly>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -289,44 +384,20 @@
                         </div>
 
                         {{-- Sensor Partial Discharge --}}
-                        <div class="col-lg-12">
-                            <div class="card shadow-lg border-0 rounded-4 p-3"
-                                style="background: white; box-shadow: 0px 4px 20px rgba(120, 100, 200, 0.3);">
-                                <div class="card-body">
-                                    <!-- Title & Filters -->
-                                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                                        <h5 class="card-title mb-0">Sensor Partial Discharge</h5>
-                                        <div class="d-flex align-items-center flex-wrap gap-2">
-                                            <span>Substation</span>
-                                            <select name="substation_pd" class="form-select form-select-sm w-auto">
-                                                @foreach ($substations as $substation)
-                                                    <option value="{{ $substation->id }}">
-                                                        {{ $substation->substation_name }}</option>
-                                                @endforeach
-                                            </select>
-                                            <span>Panels</span>
-                                            <select name="panel_pd" class="form-select form-select-sm w-auto">
-                                                @foreach ($panels as $panel)
-                                                    <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
-                                                @endforeach
-                                            </select>
-                                            <span>Compartments</span>
-                                            <select name="compartment_pd" class="form-select form-select-sm w-auto">
-                                                @foreach ($compartments as $compartment)
-                                                    <option value="{{ $compartment->id }}">
-                                                        {{ $compartment->compartment_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
+                        <div class="card shadow-sm border-0 rounded-3 mb-4" id="partialDischargeChart"
+                            style="background: white; box-shadow: 0px 4px 20px rgba(120, 100, 200, 0.3);">
+                            <div class="card-body">
+                                <!-- Title -->
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">Sensor Partial Discharge</h5>
+                                </div>
 
-                                    <!-- Chart -->
-                                    <div class="position-relative">
-                                        <canvas id="pdChart" style="height: 400px;"></canvas>
-                                        <div id="chartLoadingPD" class="chart-loading d-none">
-                                            <div class="spinner-border text-primary" role="status">
-                                                <span class="visually-hidden">Loading...</span>
-                                            </div>
+                                <!-- Chart -->
+                                <div class="position-relative">
+                                    <canvas id="pdChart" style="height: 400px;"></canvas>
+                                    <div id="chartLoadingPD" class="chart-loading d-none">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
                                         </div>
                                     </div>
                                 </div>
@@ -337,34 +408,64 @@
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                         <script>
                             document.addEventListener("DOMContentLoaded", function() {
-                                const ctx = document.getElementById('tempChart').getContext('2d');
-                                const pdCtx = document.getElementById('pdChart').getContext('2d');
+                                if (typeof Chart === 'undefined') {
+                                    console.error('Chart.js is not loaded!');
+                                    return;
+                                }
+
+                                // Updated chart initialization
+                                const ctx = document.getElementById('thermalChart');
+                                if (!ctx) {
+                                    console.error('Canvas element with ID "thermalChart" not found!');
+                                    return;
+                                }
+
+                                const chartContext = ctx.getContext('2d');
+                                const pdCtx = document.getElementById('pdChart');
                                 let chartInstance;
                                 let pdChartInstance;
 
                                 const RELOAD_INTERVAL_MS = 300000;
 
-                                // let lastAlertState = null;
-                                // let lastSensorId = null;
-
-                                // Filter elements
+                                // Updated filter elements - now using unified filters
                                 const yearFilter = document.getElementById('yearFilter');
                                 const monthFilter = document.getElementById('monthFilter');
                                 const timeGapFilter = document.getElementById('timeGapFilter');
+                                const substationFilter = document.getElementById('substationFilter');
+                                const panelFilter = document.getElementById('panelFilter');
+                                const compartmentFilter = document.getElementById('compartmentFilter');
 
-                                // Add event listeners for all filters
-                                [yearFilter, monthFilter, timeGapFilter].forEach(filter => {
-                                    filter.addEventListener('change', function() {
-                                        console.log('Filter changed:', {
-                                            year: yearFilter.value,
-                                            month: monthFilter.value,
-                                            timeGap: timeGapFilter.value
-                                        });
-                                        renderChart();
-                                        renderPDChart();
-                                        refreshDashboardStats();
+                                // Add event listeners for all unified filters
+                                [yearFilter, monthFilter, timeGapFilter, substationFilter, panelFilter, compartmentFilter].forEach(
+                                    filter => {
+                                        if (filter) {
+                                            filter.addEventListener('change', function() {
+                                                console.log('Filter changed:', {
+                                                    year: yearFilter?.value,
+                                                    month: monthFilter?.value,
+                                                    timeGap: timeGapFilter?.value,
+                                                    substation: substationFilter?.value,
+                                                    panel: panelFilter?.value,
+                                                    compartment: compartmentFilter?.value,
+                                                });
+
+                                                renderChart();
+                                                renderPDChart();
+                                                refreshDashboardStats();
+                                                toggleCharts();
+                                            });
+                                        }
                                     });
-                                });
+
+                                // Chart visibility toggle function
+                                function toggleCharts() {
+                                    const thermalChart = document.getElementById('thermalChartContainer');
+                                    const partialDischargeChart = document.getElementById('partialDischargeChart');
+
+                                    thermalChart.style.display = 'block';
+                                    partialDischargeChart.style.display = 'block';
+
+                                }
 
                                 function showChartLoading(chartType) {
                                     const loadingElement = document.getElementById(`chartLoading${chartType}`);
@@ -394,9 +495,12 @@
                                                 'X-CSRF-TOKEN': csrfToken.getAttribute('content')
                                             },
                                             body: JSON.stringify({
-                                                year: yearFilter.value,
-                                                month: monthFilter.value || null,
-                                                timeGap: timeGapFilter.value
+                                                year: yearFilter?.value,
+                                                month: monthFilter?.value || null,
+                                                timeGap: timeGapFilter?.value,
+                                                substation: substationFilter?.value || null,
+                                                panel: panelFilter?.value || null,
+                                                compartment: compartmentFilter?.value || null
                                             })
                                         });
 
@@ -406,18 +510,14 @@
 
                                         const data = await response.json();
 
-                                        // Validate data structure
                                         if (!data || typeof data !== 'object') {
                                             throw new Error('Invalid data format received');
                                         }
 
-                                        // Update the cards with new data
                                         updateDashboardCards(data);
 
                                     } catch (error) {
                                         console.error('Error refreshing dashboard stats:', error);
-
-                                        // Optional: Show fallback data or disable related features
                                         showErrorState();
                                     }
                                 }
@@ -463,14 +563,13 @@
                                 }
 
                                 function showErrorState() {
-                                    // Show user-friendly error message
                                     const errorDiv = document.createElement('div');
                                     errorDiv.className = 'alert alert-warning alert-dismissible fade show';
                                     errorDiv.innerHTML = `
-        <strong>Connection Issue:</strong> Unable to refresh dashboard data. Please check your connection and try again.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-                                    document.querySelector('.main').prepend(errorDiv);
+                                        <strong>Connection Issue:</strong> Unable to refresh dashboard data. Please check your connection and try again.
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                    `;
+                                    document.querySelector('.main')?.prepend(errorDiv);
                                 }
 
                                 function formatDateLabel(dateString, timeGap) {
@@ -478,26 +577,8 @@
 
                                     switch (timeGap) {
                                         case '5min':
-                                            return date.toLocaleString('en-US', {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            });
                                         case '10min':
-                                            return date.toLocaleString('en-US', {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            });
                                         case '30min':
-                                            return date.toLocaleString('en-US', {
-                                                month: 'short',
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit'
-                                            });
                                         case 'hourly':
                                             return date.toLocaleString('en-US', {
                                                 month: 'short',
@@ -510,29 +591,30 @@
                                     }
                                 }
 
-                                // Temperature Chart Functions
+                                // Temperature Chart Functions - Updated to use unified filters
                                 async function fetchTemperatureData() {
                                     try {
                                         showChartLoading('Temp');
 
-                                        const substationId = document.querySelector('select[name=substation]').value;
-                                        const panelId = document.querySelector('select[name=panel]').value;
-                                        const compartmentId = document.querySelector('select[name=compartment]').value;
+                                        // Use unified filter values
+                                        const substationId = substationFilter?.value || '';
+                                        const panelId = panelFilter?.value || '';
+                                        const compartmentId = compartmentFilter?.value || '';
 
                                         const res = await fetch('/dashboard/sensor-temperature', {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json',
                                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                                    .getAttribute('content')
+                                                    ?.getAttribute('content')
                                             },
                                             body: JSON.stringify({
                                                 substation: substationId,
                                                 panel: panelId,
                                                 compartment: compartmentId,
-                                                year: yearFilter.value,
-                                                month: monthFilter.value || null,
-                                                timeGap: timeGapFilter.value
+                                                year: yearFilter?.value,
+                                                month: monthFilter?.value || null,
+                                                timeGap: timeGapFilter?.value
                                             })
                                         });
 
@@ -546,7 +628,7 @@
                                         const reversed = [...data].reverse();
 
                                         return {
-                                            labels: reversed.map(d => formatDateLabel(d.created_at, timeGapFilter.value)),
+                                            labels: reversed.map(d => formatDateLabel(d.created_at, timeGapFilter?.value)),
                                             redPhase: reversed.map(d => parseFloat(d.Red_Phase) || 0),
                                             yellowPhase: reversed.map(d => parseFloat(d.Yellow_Phase) || 0),
                                             bluePhase: reversed.map(d => parseFloat(d.Blue_Phase) || 0)
@@ -570,17 +652,16 @@
                                     const minTemp = Math.min(...latestTemps);
                                     const tempDiff = maxTemp - minTemp;
 
-                                    // Avoid division by zero
                                     const variance = maxTemp === 0 ? 0 : ((tempDiff / maxTemp) * 100);
 
                                     return {
-                                        varianceAvg: variance.toFixed(2), // Actual variance from 3-phase temps
-                                        varianceMax: 10.00.toFixed(2), // Static threshold for limit
-                                        tempDiff: tempDiff.toFixed(2), // Max - Min difference
-                                        tempMax: 30.00.toFixed(2) // Static maximum allowed temperature
+                                        varianceAvg: variance.toFixed(2),
+                                        varianceMax: 10.00.toFixed(2),
+                                        tempDiff: tempDiff.toFixed(2),
+                                        tempMax: maxTemp,
+                                        tempMin: minTemp,
                                     };
                                 }
-
 
                                 function updateTemperatureStats(redPhase, yellowPhase, bluePhase) {
                                     const latestRed = redPhase[redPhase.length - 1];
@@ -593,156 +674,181 @@
                                     const varianceMaxElement = document.getElementById('variance_max');
                                     const tempDiffElement = document.getElementById('temp_diff');
                                     const tempMaxElement = document.getElementById('temp_max');
+                                    const tempMinElement = document.getElementById('temp_min');
 
                                     if (varianceAvgElement) varianceAvgElement.value = stats.varianceAvg + '°C';
                                     if (varianceMaxElement) varianceMaxElement.value = stats.varianceMax + '°C';
                                     if (tempDiffElement) tempDiffElement.value = stats.tempDiff + '°C';
                                     if (tempMaxElement) tempMaxElement.value = stats.tempMax + '°C';
+                                    if (tempMinElement) tempMinElement.value = stats.tempMin + '°C';
                                 }
 
                                 async function renderChart() {
-                                    const tempData = await fetchTemperatureData();
+                                    try {
+                                        console.log('Starting chart render...');
 
-                                    if (chartInstance) {
-                                        chartInstance.destroy();
-                                    }
+                                        const tempData = await fetchTemperatureData();
+                                        console.log('Temperature data received:', tempData);
 
-                                    // Update temperature statistics
-                                    updateTemperatureStats(tempData.redPhase, tempData.yellowPhase, tempData.bluePhase);
-
-                                    chartInstance = new Chart(ctx, {
-                                        type: 'line',
-                                        data: {
-                                            labels: tempData.labels,
-                                            datasets: [{
-                                                    label: 'Red Phase',
-                                                    data: tempData.redPhase,
-                                                    borderColor: '#dc3545',
-                                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                                    borderWidth: 2,
-                                                    fill: false,
-                                                    tension: 0.3,
-                                                    pointRadius: 3,
-                                                    pointHoverRadius: 6
-                                                },
-                                                {
-                                                    label: 'Yellow Phase',
-                                                    data: tempData.yellowPhase,
-                                                    borderColor: '#ffc107',
-                                                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                                                    borderWidth: 2,
-                                                    fill: false,
-                                                    tension: 0.3,
-                                                    pointRadius: 3,
-                                                    pointHoverRadius: 6
-                                                },
-                                                {
-                                                    label: 'Blue Phase',
-                                                    data: tempData.bluePhase,
-                                                    borderColor: '#0d6efd',
-                                                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                                                    borderWidth: 2,
-                                                    fill: false,
-                                                    tension: 0.3,
-                                                    pointRadius: 3,
-                                                    pointHoverRadius: 6
-                                                }
-                                            ]
-                                        },
-                                        options: {
-                                            responsive: true,
-                                            maintainAspectRatio: false,
-                                            interaction: {
-                                                intersect: false,
-                                                mode: 'index'
-                                            },
-                                            scales: {
-                                                y: {
-                                                    beginAtZero: true,
-                                                    grid: {
-                                                        color: '#ddd',
-                                                        drawBorder: false,
-                                                        borderDash: [5, 5]
-                                                    },
-                                                    ticks: {
-                                                        stepSize: 5,
-                                                        callback: function(value) {
-                                                            return value + '°C';
-                                                        }
-                                                    },
-                                                    title: {
-                                                        display: true,
-                                                        text: 'Temperature (°C)'
-                                                    }
-                                                },
-                                                x: {
-                                                    grid: {
-                                                        display: false
-                                                    },
-                                                    ticks: {
-                                                        maxRotation: 45,
-                                                        minRotation: 0
-                                                    }
-                                                }
-                                            },
-                                            plugins: {
-                                                legend: {
-                                                    display: true,
-                                                    position: 'top'
-                                                },
-                                                tooltip: {
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                                    titleColor: 'white',
-                                                    bodyColor: 'white',
-                                                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                                                    borderWidth: 1,
-                                                    callbacks: {
-                                                        label: function(context) {
-                                                            return context.dataset.label + ': ' + context.parsed.y +
-                                                                '°C';
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            animation: {
-                                                duration: 750,
-                                                easing: 'easeInOutQuart'
-                                            }
+                                        if (chartInstance) {
+                                            chartInstance.destroy();
                                         }
-                                    });
+
+                                        updateTemperatureStats(tempData.redPhase, tempData.yellowPhase, tempData.bluePhase);
+
+                                        chartInstance = new Chart(chartContext, {
+                                            type: 'line',
+                                            data: {
+                                                labels: tempData.labels,
+                                                datasets: [{
+                                                        label: 'Red Phase',
+                                                        data: tempData.redPhase,
+                                                        borderColor: '#dc3545',
+                                                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                                                        borderWidth: 2,
+                                                        fill: false,
+                                                        tension: 0.3,
+                                                        pointRadius: 3,
+                                                        pointHoverRadius: 6
+                                                    },
+                                                    {
+                                                        label: 'Yellow Phase',
+                                                        data: tempData.yellowPhase,
+                                                        borderColor: '#ffc107',
+                                                        backgroundColor: 'rgba(255, 193, 7, 0.1)',
+                                                        borderWidth: 2,
+                                                        fill: false,
+                                                        tension: 0.3,
+                                                        pointRadius: 3,
+                                                        pointHoverRadius: 6
+                                                    },
+                                                    {
+                                                        label: 'Blue Phase',
+                                                        data: tempData.bluePhase,
+                                                        borderColor: '#0d6efd',
+                                                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                                                        borderWidth: 2,
+                                                        fill: false,
+                                                        tension: 0.3,
+                                                        pointRadius: 3,
+                                                        pointHoverRadius: 6
+                                                    }
+                                                ]
+                                            },
+                                            options: {
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                interaction: {
+                                                    intersect: false,
+                                                    mode: 'index'
+                                                },
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true,
+                                                        grid: {
+                                                            color: '#ddd',
+                                                            drawBorder: false,
+                                                            borderDash: [5, 5]
+                                                        },
+                                                        ticks: {
+                                                            stepSize: 5,
+                                                            callback: function(value) {
+                                                                return value + '°C';
+                                                            }
+                                                        },
+                                                        title: {
+                                                            display: true,
+                                                            text: 'Temperature (°C)'
+                                                        }
+                                                    },
+                                                    x: {
+                                                        grid: {
+                                                            display: false
+                                                        },
+                                                        ticks: {
+                                                            maxRotation: 45,
+                                                            minRotation: 0
+                                                        }
+                                                    }
+                                                },
+                                                plugins: {
+                                                    legend: {
+                                                        display: true,
+                                                        position: 'top'
+                                                    },
+                                                    tooltip: {
+                                                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                                        titleColor: 'white',
+                                                        bodyColor: 'white',
+                                                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                                                        borderWidth: 1,
+                                                        callbacks: {
+                                                            label: function(context) {
+                                                                return context.dataset.label + ': ' + context.parsed.y +
+                                                                    '°C';
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                animation: {
+                                                    duration: 750,
+                                                    easing: 'easeInOutQuart'
+                                                }
+                                            }
+                                        });
+
+                                        console.log('Chart rendered successfully');
+                                    } catch (error) {
+                                        console.error('Error rendering chart:', error);
+                                        showChartError('thermalChart', 'Failed to load temperature chart');
+                                    }
                                 }
 
-                                // Partial Discharge Chart Functions
+                                function showChartError(chartId, message) {
+                                    const canvas = document.getElementById(chartId);
+                                    if (canvas) {
+                                        const parent = canvas.parentElement;
+                                        parent.innerHTML = `
+                                            <div class="alert alert-warning text-center p-4">
+                                                <i class="bi bi-exclamation-triangle fs-1 text-warning"></i>
+                                                <h6 class="mt-2">${message}</h6>
+                                                <small class="text-muted">Please check console for details</small>
+                                            </div>
+                                        `;
+                                    }
+                                }
+
+                                // Partial Discharge Chart Functions - Updated to use unified filters
                                 async function fetchPDData() {
                                     try {
                                         showChartLoading('PD');
 
-                                        const substationId = document.querySelector('select[name=substation_pd]').value;
-                                        const panelId = document.querySelector('select[name=panel_pd]').value;
-                                        const compartmentId = document.querySelector('select[name=compartment_pd]').value;
+                                        // Use unified filter values
+                                        const substationId = substationFilter?.value || '';
+                                        const panelId = panelFilter?.value || '';
+                                        const compartmentId = compartmentFilter?.value || '';
 
                                         const requestData = {
                                             substation: substationId,
                                             panel: panelId,
                                             compartment: compartmentId,
-                                            year: yearFilter.value,
-                                            month: monthFilter.value || null,
-                                            timeGap: timeGapFilter.value
+                                            year: yearFilter?.value,
+                                            month: monthFilter?.value || null,
+                                            timeGap: timeGapFilter?.value
                                         };
 
-                                        console.log('PD Request Data:', requestData); // Debug log
+                                        console.log('PD Request Data:', requestData);
 
                                         const res = await fetch('/dashboard/sensor-partial-discharge', {
                                             method: 'POST',
                                             headers: {
                                                 'Content-Type': 'application/json',
                                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                                    .getAttribute('content')
+                                                    ?.getAttribute('content')
                                             },
                                             body: JSON.stringify(requestData)
                                         });
 
-                                        // Enhanced error handling
                                         if (!res.ok) {
                                             const errorText = await res.text();
                                             console.error('Server Error Response:', errorText);
@@ -765,7 +871,7 @@
                                         const reversed = [...data].reverse();
 
                                         return {
-                                            labels: reversed.map(d => formatDateLabel(d.created_at, timeGapFilter.value)),
+                                            labels: reversed.map(d => formatDateLabel(d.created_at, timeGapFilter?.value)),
                                             indicators: reversed.map(d => parseFloat(d.Indicator) || 0),
                                             meanRatios: reversed.map(d => parseFloat(d.Mean_Ratio) || 0),
                                             meanEPPCs: reversed.map(d => parseFloat(d.Mean_EPPC) || 0)
@@ -774,9 +880,9 @@
                                         console.error('Detailed PD Error:', {
                                             message: err.message,
                                             stack: err.stack,
-                                            timeGap: timeGapFilter.value,
-                                            year: yearFilter.value,
-                                            month: monthFilter.value
+                                            timeGap: timeGapFilter?.value,
+                                            year: yearFilter?.value,
+                                            month: monthFilter?.value
                                         });
 
                                         return {
@@ -886,44 +992,41 @@
                                     });
                                 }
 
-                                // Cascade filter functionality
+                                // Updated cascade filter functionality for unified filters
                                 function setupCascadeFilters() {
-                                    const substationSelect = document.querySelector('select[name="substation"]');
-                                    const panelSelect = document.querySelector('select[name="panel"]');
-                                    const compartmentSelect = document.querySelector('select[name="compartment"]');
-
-                                    const substationPDSelect = document.querySelector('select[name="substation_pd"]');
-                                    const panelPDSelect = document.querySelector('select[name="panel_pd"]');
-                                    const compartmentPDSelect = document.querySelector('select[name="compartment_pd"]');
-
-                                    async function updatePanels(substationId, targetPanelSelect) {
-                                        if (!substationId) return;
+                                    async function updatePanels(substationId) {
+                                        if (!substationId || !panelFilter) return;
 
                                         try {
                                             const response = await fetch(`/dashboard/panels/${substationId}`);
                                             if (response.ok) {
                                                 const panels = await response.json();
-                                                targetPanelSelect.innerHTML = '<option value="">Select Panel</option>';
+                                                panelFilter.innerHTML = '<option value="">All Panels</option>';
                                                 panels.forEach(panel => {
-                                                    targetPanelSelect.innerHTML +=
+                                                    panelFilter.innerHTML +=
                                                         `<option value="${panel.id}">${panel.panel_name}</option>`;
                                                 });
+
+                                                // Clear compartment filter when panels change
+                                                if (compartmentFilter) {
+                                                    compartmentFilter.innerHTML = '<option value="">All Compartments</option>';
+                                                }
                                             }
                                         } catch (error) {
                                             console.error('Error fetching panels:', error);
                                         }
                                     }
 
-                                    async function updateCompartments(panelId, targetCompartmentSelect) {
-                                        if (!panelId) return;
+                                    async function updateCompartments(panelId) {
+                                        if (!panelId || !compartmentFilter) return;
 
                                         try {
                                             const response = await fetch(`/dashboard/compartments/${panelId}`);
                                             if (response.ok) {
                                                 const compartments = await response.json();
-                                                targetCompartmentSelect.innerHTML = '<option value="">Select Compartment</option>';
+                                                compartmentFilter.innerHTML = '<option value="">All Compartments</option>';
                                                 compartments.forEach(compartment => {
-                                                    targetCompartmentSelect.innerHTML +=
+                                                    compartmentFilter.innerHTML +=
                                                         `<option value="${compartment.id}">${compartment.compartment_name}</option>`;
                                                 });
                                             }
@@ -932,68 +1035,50 @@
                                         }
                                     }
 
-                                    // Temperature chart filters
-                                    if (substationSelect) {
-                                        substationSelect.addEventListener('change', function() {
-                                            updatePanels(this.value, panelSelect);
-                                            renderChart();
+                                    // Set up cascade filter listeners
+                                    if (substationFilter) {
+                                        substationFilter.addEventListener('change', function() {
+                                            updatePanels(this.value);
                                         });
                                     }
 
-                                    if (panelSelect) {
-                                        panelSelect.addEventListener('change', function() {
-                                            updateCompartments(this.value, compartmentSelect);
-                                            renderChart();
+                                    if (panelFilter) {
+                                        panelFilter.addEventListener('change', function() {
+                                            updateCompartments(this.value);
                                         });
-                                    }
-
-                                    if (compartmentSelect) {
-                                        compartmentSelect.addEventListener('change', renderChart);
-                                    }
-
-                                    // PD chart filters
-                                    if (substationPDSelect) {
-                                        substationPDSelect.addEventListener('change', function() {
-                                            updatePanels(this.value, panelPDSelect);
-                                            renderPDChart();
-                                        });
-                                    }
-
-                                    if (panelPDSelect) {
-                                        panelPDSelect.addEventListener('change', function() {
-                                            updateCompartments(this.value, compartmentPDSelect);
-                                            renderPDChart();
-                                        });
-                                    }
-
-                                    if (compartmentPDSelect) {
-                                        compartmentPDSelect.addEventListener('change', renderPDChart);
                                     }
                                 }
 
-                                // Initialize everything
                                 function initialize() {
-                                    renderChart();
-                                    renderPDChart();
-                                    setupCascadeFilters();
+                                    try {
+                                        console.log('Initializing dashboard...');
 
-                                    // Set up periodic updates
-                                    setInterval(() => {
+                                        // Set initial chart visibility BEFORE rendering charts
+                                        toggleCharts();
                                         renderChart();
                                         renderPDChart();
-                                        refreshDashboardStats();
-                                        // checkForAlerts();
-                                    }, RELOAD_INTERVAL_MS);
 
+                                        setupCascadeFilters();
+
+                                        // Set up periodic updates
+                                        setInterval(() => {
+                                            renderChart();
+                                            renderPDChart();
+                                            refreshDashboardStats();
+                                        }, RELOAD_INTERVAL_MS);
+
+                                        console.log('Dashboard initialized successfully');
+                                    } catch (error) {
+                                        console.error('Error during initialization:', error);
+                                    }
                                 }
-
-                                // Start the application
+                        
+                                window.renderChart = renderChart; 
+                                window.renderPDChart = renderPDChart; 
+                                window.refreshDashboardStats =
+                                refreshDashboardStats;
+                                window.toggleCharts = toggleCharts;
                                 initialize();
-
-                                // Make functions globally accessible if needed
-                                window.renderChart = renderChart;
-                                window.renderPDChart = renderPDChart;
-                                window.refreshDashboardStats = refreshDashboardStats;
                             });
                         </script>
 

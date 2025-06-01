@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\UserManagement;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
@@ -37,5 +38,7 @@ class AppServiceProvider extends ServiceProvider
             }
             $view->with('global_permissions', $permissions);
         });
+
+        Paginator::useBootstrap();
     }
 }

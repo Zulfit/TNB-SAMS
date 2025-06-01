@@ -48,6 +48,8 @@ Route::resource('user_management', UserManagementController::class)
 Route::resource('substation', SubstationController::class)->names(['index' => 'substation.index']);
 Route::resource('asset', AssetController::class)->names(['index' => 'asset.index']);
 Route::resource('sensor', SensorController::class)->names(['index' => 'sensor.index']);
+Route::get('/bulk-create', [SensorController::class, 'bulkCreate'])->name('sensor.bulk-create');
+Route::post('/bulk-store', [SensorController::class, 'bulkStore'])->name('sensor.bulk-store');
 
 Route::resource('report', ReportController::class)->names([
     'index' => 'report.index',

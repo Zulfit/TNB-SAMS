@@ -21,9 +21,18 @@
                 @if (in_array('create', $global_permissions['sensor_access'] ?? []) ||
                         in_array('full', $global_permissions['sensor_access'] ?? []))
                     <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-white border-bottom py-3 px-4">
-                            <h5 class="mb-0"><i class="bi bi-cpu me-2"></i>Create New Sensor</h5>
+                        <div
+                            class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-cpu me-2 text-primary fs-5"></i>
+                                <h5 class="mb-0">Create New Sensor</h5>
+                            </div>
+                            <a href="{{ route('sensor.bulk-create') }}"
+                                class="btn btn-outline-primary d-flex align-items-center">
+                                <i class="bi bi-plus-circle me-1"></i> Bulk Create
+                            </a>
                         </div>
+
                         <div class="card-body p-4">
                             <form action="{{ route('sensor.store') }}" method="POST">
                                 @csrf
@@ -97,8 +106,8 @@
                                     <label for="sensor_status" class="form-label fw-semibold">Status</label>
                                     <select id="sensor_status" name="sensor_status" class="form-select">
                                         <option value="">Select status</option>
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
+                                        <option value="Online">Online</option>
+                                        <option value="Offline">Offline</option>
                                     </select>
                                 </div>
 
@@ -114,12 +123,12 @@
                 @endif
 
                 <!-- Dataset Table -->
+
                 <div class="card shadow-sm border-0 rounded-3">
                     <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                         <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Sensor List</h5>
                         <span class="badge bg-secondary">
-                            {{ isset($sensors) ? count($sensors) : 0 }}
-                            {{ isset($sensors) ? Str::plural('sensor', count($sensors)) : 'sensors' }}
+                            {{ $sensors->total() }} {{ Str::plural('sensor', $sensors->total()) }}
                         </span>
                     </div>
                     <div class="card-body p-0">
@@ -136,33 +145,31 @@
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-                                @if (isset($sensors) && count($sensors) > 0)
+                                @if ($sensors->count() > 0)
                                     @foreach ($sensors as $sensor)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                                <td>
-                                                    <div class="fw-bold">{{ $sensor->sensor_name ?? 'N/A' }}</div>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex flex-column">
-                                                        <span
-                                                            class="fw-bold">{{ $sensor->substation->substation_name ?? 'N/A' }}</span>
-                                                        <small class="text-muted">
-                                                            {{ $sensor->panel->panel_name ?? 'N/A' }} /
-                                                            {{ $sensor->compartment->compartment_name ?? 'N/A' }}
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                                <td>{{ $sensor->sensor_measurement ?? 'N/A' }}</td>
-                                                
+                                            <td>{{ $sensors->firstItem() + $loop->index }}</td>
+                                            <td>
+                                                <div class="fw-bold">{{ $sensor->sensor_name ?? 'N/A' }}</div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span class="fw-bold">{{ $sensor->substation->substation_name ?? 'N/A' }}</span>
+                                                    <small class="text-muted">
+                                                        {{ $sensor->panel->panel_name ?? 'N/A' }} /
+                                                        {{ $sensor->compartment->compartment_name ?? 'N/A' }}
+                                                    </small>
+                                                </div>
+                                            </td>
+                                            <td>{{ $sensor->sensor_measurement ?? 'N/A' }}</td>
                                             <td>{{ $sensor->sensor_date }}</td>
                                             <td>
-                                                <span
-                                                    class="badge rounded-pill {{ ($sensor->sensor_status ?? '') === 'Active' ? 'bg-success' : 'bg-secondary' }}"
-                                                    style="padding: 8px 12px; font-size: 0.8rem;">
+                                                <span class="badge rounded-pill {{ ($sensor->sensor_status ?? '') === 'Online' ? 'bg-success' : 'bg-secondary' }}"
+                                                      style="padding: 8px 12px; font-size: 0.8rem;">
                                                     {{ $sensor->sensor_status ?? 'Unknown' }}
                                                 </span>
-                                            </td>                                            <td>
+                                            </td>
+                                            <td>
                                                 @if (in_array('view', $global_permissions['sensor_access'] ?? []) ||
                                                         in_array('full', $global_permissions['sensor_access'] ?? []))
                                                     <a href="{{ route('sensor.show', $sensor->id) }}"
@@ -170,8 +177,8 @@
                                                 @endif
                                                 @if (in_array('edit', $global_permissions['sensor_access'] ?? []) ||
                                                         in_array('full', $global_permissions['sensor_access'] ?? []))
-                                                    <a
-                                                        href="{{ route('sensor.edit', $sensor->id) }}"class="text-success bi bi-pencil-square"></a>
+                                                    <a href="{{ route('sensor.edit', $sensor->id) }}"
+                                                        class="text-success bi bi-pencil-square"></a>
                                                 @endif
                                                 @if (in_array('delete', $global_permissions['sensor_access'] ?? []) ||
                                                         in_array('full', $global_permissions['sensor_access'] ?? []))
@@ -190,7 +197,7 @@
                                     @endforeach
                                 @else
                                     <tr>
-                                        <td colspan="12" class="text-center py-5">
+                                        <td colspan="7" class="text-center py-5">
                                             <div class="d-flex flex-column align-items-center">
                                                 <i class="bi bi-inbox fs-1 text-muted mb-3"></i>
                                                 <h5 class="text-muted">No Sensor Found</h5>
@@ -200,6 +207,11 @@
                                 @endif
                             </tbody>
                         </table>
+                    </div>
+                    
+                    {{-- Simple Pagination --}}
+                    <div class="card-footer bg-white d-flex justify-content-center">
+                        {{ $sensors->links() }}
                     </div>
                 </div>
             </div>

@@ -100,8 +100,8 @@
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Status</label>
                                 <select name="sensor_status" class="form-select">
-                                    <option value="Active" {{ old('sensor_status', $sensor->sensor_status) == 'Active' ? 'selected' : '' }}>Active</option>
-                                    <option value="Inactive" {{ old('sensor_status', $sensor->sensor_status) == 'Inactive' ? 'selected' : '' }}>Inactive</option>
+                                    <option value="Online" {{ old('sensor_status', $sensor->sensor_status) == 'Online' ? 'selected' : '' }}>Online</option>
+                                    <option value="Offline" {{ old('sensor_status', $sensor->sensor_status) == 'Offline' ? 'selected' : '' }}>Offline</option>
                                 </select>
                             </div>
                 
@@ -202,6 +202,9 @@
                                 @endif
                             </tbody>
                         </table>
+                    </div>
+                    <div class="card-footer bg-white d-flex justify-content-center">
+                        {{ $sensors->links() }}
                     </div>
                 </div>
             </div>

@@ -131,7 +131,7 @@
                                             <td>{{ $sensor->sensor_date }}</td>
                                             <td>
                                                 <span
-                                                    class="badge rounded-pill {{ ($sensor->sensor_status ?? '') === 'Active' ? 'bg-success' : 'bg-secondary' }}"
+                                                    class="badge rounded-pill {{ ($sensor->sensor_status ?? '') === 'Online' ? 'bg-success' : 'bg-secondary' }}"
                                                     style="padding: 8px 12px; font-size: 0.8rem;">
                                                     {{ $sensor->sensor_status ?? 'Unknown' }}
                                                 </span>
@@ -173,6 +173,9 @@
                                 @endif
                             </tbody>
                         </table>
+                    </div>
+                    <div class="card-footer bg-white d-flex justify-content-center">
+                        {{ $sensors->links() }}
                     </div>
                 </div>
             </div>

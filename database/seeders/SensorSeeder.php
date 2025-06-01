@@ -15,94 +15,112 @@ class SensorSeeder extends Seeder
     {
         $sensors = [
             [
-                'sensor_name' => '10004001_TH_BBM_Y_IS',
+                'sensor_name' => 'KLCC_TH_BS30_MBSB_001',
                 'sensor_substation' => 1,
                 'sensor_panel' => 1,
                 'sensor_compartment' => 1,
                 'sensor_measurement' => 'Temperature',
-                'sensor_date' => now(),
-                'sensor_status' => 'Active'
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
             ],
             [
-                'sensor_name' => '10004002_TH_BBM_Y_IS',
+                'sensor_name' => 'KLCC_TH_BS30_CBT_002',
                 'sensor_substation' => 1,
-                'sensor_panel' => 2,
-                'sensor_compartment' => 2,
-                'sensor_measurement' => 'Temperature',
-                'sensor_date' => now(),
-                'sensor_status' => 'Active'
-            ],
-            [
-                'sensor_name' => '10004002_TH_BBM_Y_IS',
-                'sensor_substation' => 1,
-                'sensor_panel' => 3,
+                'sensor_panel' => 1,
                 'sensor_compartment' => 3,
                 'sensor_measurement' => 'Temperature',
-                'sensor_date' => now(),
-                'sensor_status' => 'Active'
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
             ],
             [
-                'sensor_name' => '10004002_TH_BBM_Y_IS',
+                'sensor_name' => 'KLCC_TH_BS30_CBB_003',
                 'sensor_substation' => 1,
-                'sensor_panel' => 4,
+                'sensor_panel' => 1,
                 'sensor_compartment' => 4,
                 'sensor_measurement' => 'Temperature',
-                'sensor_date' => now(),
-                'sensor_status' => 'Active'
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
             ],
             [
-                'sensor_name' => '20004001_TH_BBM_IS',
-                'sensor_substation' => 2,
-                'sensor_panel' => 1,
-                'sensor_compartment' => 1,
-                'sensor_measurement' => 'Temperature',
-                'sensor_date' => now(),
-                'sensor_status' => 'Active'
-            ],
-            [
-                'sensor_name' => '20004001_TH_BBM_IS',
-                'sensor_substation' => 2,
-                'sensor_panel' => 2,
-                'sensor_compartment' => 2,
-                'sensor_measurement' => 'Temperature',
-                'sensor_date' => now(),
-                'sensor_status' => 'Active'
-            ],
-            [
-                'sensor_name' => '20004001_TH_BBM_IS',
-                'sensor_substation' => 2,
-                'sensor_panel' => 3,
-                'sensor_compartment' => 3,
-                'sensor_measurement' => 'Temperature',
-                'sensor_date' => now(),
-                'sensor_status' => 'Inactive'
-            ],
-            [
-                'sensor_name' => '30004001_TH_BBM_B_IS',
+                'sensor_name' => 'KLCC_PD_BS30_CBL_004',
                 'sensor_substation' => 1,
                 'sensor_panel' => 1,
-                'sensor_compartment' => 1,
+                'sensor_compartment' => 5,
                 'sensor_measurement' => 'Partial Discharge',
-                'sensor_date' => now(),
-                'sensor_status' => 'Active'
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
             ],
             [
-                'sensor_name' => '30004001_TH_BBM_B_IS',
-                'sensor_substation' => 2,
+                'sensor_name' => 'KLCC_TH_BC34_MBSB_005',
+                'sensor_substation' => 1,
                 'sensor_panel' => 2,
-                'sensor_compartment' => 2,
-                'sensor_measurement' => 'Partial Discharge',
-                'sensor_date' => now(),
-                'sensor_status' => 'Active'
+                'sensor_compartment' => 1,
+                'sensor_measurement' => 'Temperature',
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
             ],
             [
-                'sensor_name' => '30004001_TH_BBM_B_IS',
-                'sensor_substation' => 3,
+                'sensor_name' => 'KLCC_TH_BC34_CBT_006',
+                'sensor_substation' => 1,
+                'sensor_panel' => 2,
+                'sensor_compartment' => 3,
+                'sensor_measurement' => 'Temperature',
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
+            ],
+            [
+                'sensor_name' => 'KLCC_TH_BC34_CBB_007',
+                'sensor_substation' => 1,
+                'sensor_panel' => 2,
+                'sensor_compartment' => 4,
+                'sensor_measurement' => 'Temperature',
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
+            ],
+            [
+                'sensor_name' => 'KLCC_PD_BC34_CBL_008',
+                'sensor_substation' => 1,
+                'sensor_panel' => 2,
+                'sensor_compartment' => 5,
+                'sensor_measurement' => 'Partial Discharge',
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
+            ],
+            [
+                'sensor_name' => 'KLCC_TH_FD1_MBSB_009',
+                'sensor_substation' => 1,
+                'sensor_panel' => 3,
+                'sensor_compartment' => 1,
+                'sensor_measurement' => 'Temperature',
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
+            ],
+            [
+                'sensor_name' => 'KLCC_TH_FD1_CBT_010',
+                'sensor_substation' => 1,
                 'sensor_panel' => 3,
                 'sensor_compartment' => 3,
+                'sensor_measurement' => 'Temperature',
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
+            ],
+            [
+                'sensor_name' => 'KLCC_TH_FD1_CBB_011',
+                'sensor_substation' => 1,
+                'sensor_panel' => 3,
+                'sensor_compartment' => 4,
+                'sensor_measurement' => 'Temperature',
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
+            ],
+            [
+                'sensor_name' => 'KLCC_PD_FD1_CBL_012',
+                'sensor_substation' => 1,
+                'sensor_panel' => 3,
+                'sensor_compartment' => 5,
                 'sensor_measurement' => 'Partial Discharge',
-                'sensor_date' => now(),
-                'sensor_status' => 'Inactive'
+                'sensor_date' => '2024-12-01',
+                'sensor_status' => 'Online'
             ],
         ];
 

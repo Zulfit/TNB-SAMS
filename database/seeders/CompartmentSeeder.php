@@ -27,7 +27,7 @@ class CompartmentSeeder extends Seeder
                 'compartment_name' => 'CB-Bottom'
             ],
             [
-                'compartment_name' => 'Cable Compartments'
+                'compartment_name' => 'Cable Compartment'
             ],
         ];
 

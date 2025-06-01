@@ -19,7 +19,7 @@ class SensorTempSeeder extends Seeder
 
         $sensorIds = DB::table('sensors')
             ->where('sensor_measurement', 'Temperature')
-            ->where('sensor_status','Active')
+            ->where('sensor_status','Online')
             ->pluck('id')
             ->toArray();
 

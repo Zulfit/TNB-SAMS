@@ -27,6 +27,7 @@ class AnalyticsController extends Controller
             ->when($request->measurement, fn($q) => $q->where('sensor_measurement', $request->measurement))
             ->when($request->status, fn($q) => $q->where('sensor_status', $request->status))
             ->with(['substation', 'panel', 'compartment'])
+            ->orderByDesc('updated_at')
             ->get();
 
         return view('analytics', [
@@ -106,13 +107,26 @@ class AnalyticsController extends Controller
         $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
         $timeRange = max(1, (int) $request->input('time_range', 1));
 
+        $intervalExpression = "FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(created_at) / ($timeRange * 3600)) * ($timeRange * 3600))";
+
         if ($parameter === 'Temperature') {
             $data = DB::table('sensor_temperature')
                 ->selectRaw("
                 sensor_id,
-                FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(created_at) / (? * 3600)) * (? * 3600)) as interval_time,
-                AVG(variance_percent) as avg_variance
-            ", [$timeRange, $timeRange])
+                $intervalExpression as interval_time,
+                AVG(red_phase_temp) as avg_red,
+                AVG(yellow_phase_temp) as avg_yellow,
+                AVG(blue_phase_temp) as avg_blue,
+                AVG(max_temp) as avg_max,
+                AVG(min_temp) as avg_min,
+                AVG(variance_percent) as avg_variance,
+                AVG(CASE 
+                    WHEN alert_triggered = 'normal' THEN 0
+                    WHEN alert_triggered = 'warn' THEN 1
+                    WHEN alert_triggered = 'critical' THEN 2
+                    ELSE NULL
+                END) as avg_alert_level
+            ")
                 ->where('sensor_id', $sensorId)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->groupBy('interval_time', 'sensor_id')
@@ -122,15 +136,26 @@ class AnalyticsController extends Controller
             $data = DB::table('sensor_partial_discharge')
                 ->selectRaw("
                 sensor_id,
-                FROM_UNIXTIME(FLOOR(UNIX_TIMESTAMP(created_at) / (? * 3600)) * (? * 3600)) as interval_time,
-                AVG(Indicator) as avg_indicator
-            ", [$timeRange, $timeRange])
+                $intervalExpression as interval_time,
+                AVG(LFB_Ratio) as avg_lfb,
+                AVG(MFB_Ratio) as avg_mfb,
+                AVG(HFB_Ratio) as avg_hfb,
+                AVG(Mean_Ratio) as avg_mean_ratio,
+                AVG(Mean_EPPC) as avg_mean_eppc,
+                AVG(Indicator) as avg_indicator,
+                AVG(CASE 
+                    WHEN alert_triggered = 'normal' THEN 0
+                    WHEN alert_triggered = 'critical' THEN 1
+                    ELSE NULL
+                END) as avg_alert_level
+            ")
                 ->where('sensor_id', $sensorId)
                 ->whereBetween('created_at', [$startDate, $endDate])
                 ->groupBy('interval_time', 'sensor_id')
                 ->orderBy('interval_time')
                 ->get();
         }
+        // Log::info('Sensor Table Query Data:', ['data' => $data]);
 
         return response()->json($data);
     }

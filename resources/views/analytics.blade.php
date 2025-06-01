@@ -98,51 +98,55 @@
                 </div>
 
                 <!-- Sensor Details Card -->
-                <div id="sensorDetails" class="card shadow-sm border-0 rounded-3 mb-4 d-none">
-                    <div class="card-header bg-white py-3">
-                        <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Sensor Information</h6>
+                <div id="sensorDetails" class="card shadow border-0 rounded-4 mb-4 d-none">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h6 class="mb-0 d-flex align-items-center">
+                            <i class="bi bi-info-circle me-2 text-primary"></i>
+                            Sensor Information
+                        </h6>
                     </div>
                     <div class="card-body">
-                        <div class="row g-3 py-3">
-                            <div class="col-md-2">
-                                <div class="border rounded p-2 bg-light">
+                        <div class="row g-3">
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="p-3 bg-light rounded-3 text-center shadow-sm h-100">
                                     <small class="text-muted d-block">Sensor</small>
-                                    <strong id="detailSensor">-</strong>
+                                    <strong id="detailSensor" class="text-dark">-</strong>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <div class="border rounded p-2 bg-light">
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="p-3 bg-light rounded-3 text-center shadow-sm h-100">
                                     <small class="text-muted d-block">Substation</small>
-                                    <strong id="detailSubstation">-</strong>
+                                    <strong id="detailSubstation" class="text-dark">-</strong>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <div class="border rounded p-2 bg-light">
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="p-3 bg-light rounded-3 text-center shadow-sm h-100">
                                     <small class="text-muted d-block">Panel</small>
-                                    <strong id="detailPanel">-</strong>
+                                    <strong id="detailPanel" class="text-dark">-</strong>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <div class="border rounded p-2 bg-light">
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="p-3 bg-light rounded-3 text-center shadow-sm h-100">
                                     <small class="text-muted d-block">Compartment</small>
-                                    <strong id="detailCompartment">-</strong>
+                                    <strong id="detailCompartment" class="text-dark">-</strong>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <div class="border rounded p-2 bg-light">
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="p-3 bg-light rounded-3 text-center shadow-sm h-100">
                                     <small class="text-muted d-block">Parameter</small>
-                                    <strong id="detailParameter">-</strong>
+                                    <strong id="detailParameter" class="text-dark">-</strong>
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <div class="border rounded p-2 bg-light">
+                            <div class="col-6 col-md-4 col-lg-2">
+                                <div class="p-3 bg-light rounded-3 text-center shadow-sm h-100">
                                     <small class="text-muted d-block">Date Range</small>
-                                    <strong id="rangeDate">-</strong>
+                                    <strong id="rangeDate" class="text-dark">-</strong>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <!-- Loading Spinner -->
                 <div id="loadingSpinner" class="text-center my-5 d-none">
@@ -170,11 +174,13 @@
                         <h5 class="mb-0"><i class="bi bi-table me-2"></i>Analytics Data</h5>
                     </div>
                     <div class="card-body p-0">
-                        <div class="table-responsive">
+                        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                             <table class="table table-hover align-middle mb-0" id="tableOutput">
                                 <thead class="table-light text-center">
+                                    <!-- Table Headings -->
                                 </thead>
                                 <tbody class="text-center">
+                                    <!-- Table Body -->
                                 </tbody>
                             </table>
                         </div>
@@ -474,11 +480,12 @@
                 <tr>
                     <th class="py-3">#</th>
                     <th class="py-3">Time</th>
-                    <th class="py-3">Red Temp</th>
-                    <th class="py-3">Yellow Temp</th>
-                    <th class="py-3">Blue Temp</th>
-                    <th class="py-3">Max Temp</th>
-                    <th class="py-3">Min Temp</th>
+                    <th class="py-3">Red Temp°C</th>
+                    <th class="py-3">Yellow Temp°C</th>
+                    <th class="py-3">Blue Temp°C</th>
+                    <th class="py-3">Max Temp°C</th>
+                    <th class="py-3">Min Temp°C</th>
+                    <th class="py-3">Difference Temp°C</th>
                     <th class="py-3">Variance%</th>
                     <th class="py-3">Status</th>
                 </tr>
@@ -496,7 +503,8 @@
                         <td>${(row.avg_blue || 0).toFixed(2)}</td>
                         <td>${(row.avg_max || 0).toFixed(2)}</td>
                         <td>${(row.avg_min || 0).toFixed(2)}</td>
-                        <td>${(row.avg_variance || 0).toFixed(2)}%</td>
+                        <td>${(row.avg_max - row.avg_min || 0).toFixed(2)}</td>
+                        <td>${(row.avg_variance || 0).toFixed(2)}</td>
                         <td>
                             <span class="badge rounded-pill ${alertLevelTemp === 'Critical' ? 'bg-danger' : 
                                                             alertLevelTemp === 'Warn' ? 'bg-warning' : 'bg-success'}" 
@@ -549,9 +557,12 @@
             // Render chart function
             function renderChart(data, parameterType) {
                 const labels = data.map(item => item.interval_time || 'N/A');
-                const values = parameterType === 'Temperature' ?
+
+                const varianceValues = parameterType === 'Temperature' ?
                     data.map(item => parseFloat(item.avg_variance || 0)) :
                     data.map(item => parseFloat(item.avg_indicator || 0));
+
+                const differenceValues = data.map(item => parseFloat((item.avg_max || 0) - (item.avg_min || 0)));
 
                 const timeRange = parseInt(form.querySelector('select[name="time_range"]').value);
                 const isDense = timeRange > 1;
@@ -562,19 +573,34 @@
                 const ctx = document.getElementById('sensorChart').getContext('2d');
                 if (sensorChartInstance) sensorChartInstance.destroy();
 
+                const datasets = [{
+                    label: parameterType === 'Temperature' ? 'Variance (%)' : 'Indicator',
+                    data: varianceValues,
+                    borderColor: 'rgba(75, 192, 192, 1)', // Teal
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.3,
+                    fill: true,
+                    pointRadius: pointRadius
+                }];
+
+                // Only add the difference line if we’re in Temperature mode
+                if (parameterType === 'Temperature') {
+                    datasets.push({
+                        label: 'Difference (Max - Min)',
+                        data: differenceValues,
+                        borderColor: 'rgba(255, 99, 132, 1)', // Red
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.3,
+                        fill: false,
+                        pointRadius: pointRadius
+                    });
+                }
+
                 sensorChartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels,
-                        datasets: [{
-                            label: parameterType === 'Temperature' ? 'Variance (%)' : 'Indicator',
-                            data: values,
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            tension: 0.3,
-                            fill: true,
-                            pointRadius: pointRadius
-                        }]
+                        datasets: datasets
                     },
                     options: {
                         responsive: true,
@@ -585,8 +611,8 @@
                             },
                             title: {
                                 display: true,
-                                text: parameterType === 'Temperature' ? 'Variance Over Time' :
-                                    'Indicator Over Time',
+                                text: parameterType === 'Temperature' ? 'Sensor Thermal Analytics' :
+                                    'Sensor Partial Discharge Analytics',
                                 font: {
                                     size: fontSize + 2
                                 }
@@ -621,7 +647,8 @@
                                 },
                                 title: {
                                     display: true,
-                                    text: parameterType === 'Temperature' ? 'Variance (%)' : 'Indicator',
+                                    text: parameterType === 'Temperature' ? 'Variance / Difference' :
+                                        'Indicator',
                                     font: {
                                         size: fontSize
                                     }
@@ -631,6 +658,7 @@
                     }
                 });
             }
+
 
             // Generate chart button handler
             if (generateChartBtn) {
@@ -748,19 +776,17 @@
                 let tableHeaders = [];
 
                 if (parameterType === 'Temperature') {
-                    tableHeaders = ['#', 'Time', 'Red Temp', 'Yellow Temp', 'Blue Temp', 'Max Temp',
-                        'Min Temp', 'Variance%', 'Status'
+                    tableHeaders = ['#', 'Time', 'Max Temperature °C',
+                        'Min Temperature °C', 'Difference °C', 'Variance%', 'Status'
                     ];
                     chartData.forEach((row, i) => {
                         const alertLevel = interpretAlertLevelTemp(row.avg_alert_level || 0);
                         tableData.push([
                             i + 1,
                             row.interval_time || 'N/A',
-                            (row.avg_red || 0).toFixed(2),
-                            (row.avg_yellow || 0).toFixed(2),
-                            (row.avg_blue || 0).toFixed(2),
-                            (row.avg_max || 0).toFixed(2),
-                            (row.avg_min || 0).toFixed(2),
+                            (row.avg_max || 0).toFixed(2) + '°C',
+                            (row.avg_min || 0).toFixed(2) + '°C',
+                            (row.avg_max - row.avg_min || 0).toFixed(2) + '°C',
                             (row.avg_variance || 0).toFixed(2) + '%',
                             alertLevel
                         ]);
@@ -828,6 +854,7 @@
                         'Blue Temp': (row.avg_blue || 0).toFixed(2),
                         'Max Temp': (row.avg_max || 0).toFixed(2),
                         'Min Temp': (row.avg_min || 0).toFixed(2),
+                        'Difference Temp': (row.avg_max - row.avg_min || 0).toFixed(2),
                         'Variance%': (row.avg_variance || 0).toFixed(2),
                         'Status': interpretAlertLevelTemp(row.avg_alert_level || 0)
                     }));

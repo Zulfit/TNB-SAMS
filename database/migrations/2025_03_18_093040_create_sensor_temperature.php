@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->float('blue_phase_temp');
             $table->float('max_temp');
             $table->float('min_temp');
+            $table->float('diff_temp');
             $table->float('variance_percent');
             $table->enum('alert_triggered', ['normal', 'warn', 'critical'])->default('normal');
             $table->timestamps();

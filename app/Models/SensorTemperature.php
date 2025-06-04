@@ -20,4 +20,9 @@ class SensorTemperature extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function sensor()
+    {
+        return $this->belongsTo(Sensor::class);
+    }
 }

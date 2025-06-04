@@ -15,7 +15,8 @@ class SensorPDSedder extends Seeder
     public function run(): void
     {
         $startTime = Carbon::create(now()->year, 4, 1)->startOfDay();
-        $endTime = now(); // Until now
+        // $endTime = Carbon::create(now()->year, 5, 31)->endOfDay();
+        $endTime = now(); 
         $data = [];
 
         $sensorIds = DB::table('sensors')

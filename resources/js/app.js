@@ -40,19 +40,20 @@ window.Echo.channel('sensor-alerts')
         }
     });
 
+window.errorLogUrl = "{{ route('error-log.index') }}";
 window.Echo.channel('notification-channel')
     .listen('.notification-event', (event) => {
-        // console.log('🔔 Notification Event:', event);
+        console.log('🔔 Notification Event:', event);
 
         const badge = document.getElementById('notification-count');
         const list = document.getElementById('notification-list');
 
         const item = document.createElement('li');
         item.innerHTML = `
-            <a href="#" class="dropdown-item">
+            <a href="" class="dropdown-item">
                 <i class="bi bi-bell-fill text-warning"></i>
                 <strong>${event.title}</strong><br>
-                <span>${event.body}</span>
+                <span>${event.body}</span><br>
                 <span>${event.timestamp}</span>
             </a>
         `;

@@ -39,7 +39,7 @@ class SensorAlertNotification extends Notification
             ->subject('🚨 Sensor Alert - ' . ucfirst($this->measurementType));
 
         if ($this->measurementType === 'Temperature') {
-            $mail->line('Temperature too high: ' . $this->sensorData['max_temp'] . '°C')
+            $mail->line('Difference Temperature: ' . $this->sensorData['diff_temp'] . '°C')
                 ->line('Variance: ' . $this->sensorData['variance_percent'] . '%')
                 ->line('Sensor: ' . $this->sensorData['sensor_name'])
                 ->line('Substation: ' . $this->sensorData['substation'])
@@ -68,7 +68,7 @@ class SensorAlertNotification extends Notification
             $text .= "Panel: " . $this->escapeHtml($this->sensorData['panel']) . "\n";
             $text .= "Compartment: " . $this->escapeHtml($this->sensorData['compartment']) . "\n";
             $text .= "Sensor: " . $this->escapeHtml($this->sensorData['sensor_name']) . "\n";
-            $text .= "Temperature: " . $this->escapeHtml($this->sensorData['max_temp']) . "°C\n";
+            $text .= "Temperature: " . $this->escapeHtml($this->sensorData['diff_temp']) . "°C\n";
             $text .= "Variance: " . $this->escapeHtml($this->sensorData['variance_percent']) . "%\n";
             $text .= "Status: <b>" . $this->escapeHtml(strtoupper($this->sensorData['alert_level'])) . "</b>\n";
         } elseif ($this->measurementType === 'Partial Discharge') {

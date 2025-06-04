@@ -161,18 +161,18 @@
                                             class="{{ $error->severity == 'Critical' ? 'table-danger' : ($error->severity == 'Warning' ? 'table-warning' : '') }}">
                                             <td>{{ $error->id }}</td>
                                             <td>{{ $error->updated_at->format('M d, Y H:i') }}</td>
-                                            <td>{{ $error->sensor->sensor_name }}</td>
+                                            <td>{{ $error->sensor->sensor->sensor_name }}</td>
                                             <td>
                                                 <div class="d-flex flex-column">
                                                     <span
-                                                        class="fw-bold">{{ $error->sensor->substation->substation_name }}</span>
+                                                        class="fw-bold">{{ $error->sensor->sensor->substation->substation_name }}</span>
                                                     <small class="text-muted">
-                                                        {{ $error->sensor->panel->panel_name }} /
-                                                        {{ $error->sensor->compartment->compartment_name }}
+                                                        {{ $error->sensor->sensor->panel->panel_name }} /
+                                                        {{ $error->sensor->sensor->compartment->compartment_name }}
                                                     </small>
                                                 </div>
                                             </td>
-                                            <td>{{ $error->sensor->sensor_measurement }}</td>
+                                            <td>{{ $error->sensor->sensor->sensor_measurement }}</td>
                                             <td>
                                                 <span class="badge rounded-pill {{ $error->getStateBadgeClass() }}"
                                                     style="padding: 8px 12px; font-size: 0.8rem;">

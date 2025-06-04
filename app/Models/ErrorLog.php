@@ -22,17 +22,17 @@ class ErrorLog extends Model
 
     public function sensor()
     {
-        return $this->belongsTo(Sensor::class, 'sensor_id');
+        return $this->morphTo();
     }
 
     public function user()
     {
-        return $this->belongsTo(User::class,'pic');
+        return $this->belongsTo(User::class, 'pic');
     }
 
     public function assignBy()
     {
-        return $this->belongsTo(User::class,'assigned_by');
+        return $this->belongsTo(User::class, 'assigned_by');
     }
 
     public function getStateBadgeClass(): string

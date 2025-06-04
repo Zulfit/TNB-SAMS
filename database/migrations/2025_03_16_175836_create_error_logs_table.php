@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,15 +12,16 @@ return new class extends Migration
     {
         Schema::create('error_logs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('sensor_id')->constrained('sensors')->onDelete('cascade');
+            $table->morphs('sensor');
             $table->string('state');
             $table->string('threshold');
             $table->string('severity');
             $table->foreignId('pic')->nullable()->default(1)->constrained('users')->onDelete('cascade');
             $table->foreignId('assigned_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->string('desc')->nullable();
-            $table->string('status')->nullable();
+            $table->string('status')->nullable()->default('New');
             $table->string('report')->nullable();
+            $table->string('completed_at')->nullable();
             $table->string('admin_review')->nullable();
             $table->string('reviewed_at')->nullable();
             $table->timestamps();

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Collection;
 
 class ReportController extends Controller
 {
@@ -49,77 +50,116 @@ class ReportController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
-    
+
         $substation = Substation::findOrFail($request->report_substation);
-        // dd($substation->id);
-    
+
         // Get related sensors
         $sensors = Sensor::where('sensor_substation', $substation->id)
             ->get();
 
-        // dd($sensors);
-    
         $sensorIds = $sensors->pluck('id');
-        // dd($sensorIds);
-    
+
         // --- Temperature Data ---
         $temperatureData = SensorTemperature::whereIn('sensor_id', $sensorIds)
             ->whereBetween('created_at', [$request->start_date, $request->end_date])
+            ->with('sensor')
             ->get();
-            // dd($temperatureData);
-    
-        $tempStats = [
-            'average_red' => round($temperatureData->avg('red_phase_temp'), 2),
-            'average_yellow' => round($temperatureData->avg('yellow_phase_temp'), 2),
-            'average_blue' => round($temperatureData->avg('blue_phase_temp'), 2),
-            'max_temp' => $temperatureData->max('max_temp'),
-            'min_temp' => $temperatureData->min('min_temp'),
-            'variance_avg' => round($temperatureData->avg('variance_percent'), 2),
-            'alerts' => $temperatureData->groupBy('alert_triggered')->map->count(),
-        ];
-    
+
+        // Group by sensor_id
+        $groupedBySensor = $temperatureData->groupBy('sensor_id');
+
+        // Find highest diff_temp for each sensor
+        $maxDiffTempPerSensor = $groupedBySensor->map(function (Collection $records, $sensorId) {
+            $maxRecord = $records->sortByDesc('diff_temp')->first();
+
+            return [
+                'sensor_id' => $sensorId,
+                'sensor_name' => optional($maxRecord->sensor)->sensor_name,
+                'max_diff_temp' => $maxRecord->diff_temp,
+                'recorded_at' => $maxRecord->created_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
         // --- Partial Discharge Data ---
         $pdData = SensorPartialDischarge::whereIn('sensor_id', $sensorIds)
             ->whereBetween('created_at', [$request->start_date, $request->end_date])
+            ->with('sensor')
             ->get();
-    
-        $pdStats = [
-            'avg_mean_ratio' => round($pdData->avg('Mean_Ratio'), 2),
-            'avg_indicator' => round($pdData->avg('Indicator'), 2),
-            'alerts' => $pdData->groupBy('alert_triggered')->map->count(),
-        ];
-    
+
+        // Group by sensor_id
+        $groupedBySensorPD = $pdData->groupBy('sensor_id');
+
+        // Find highest diff_temp for each sensor
+        $maxIndPerSensor = $groupedBySensorPD->map(function (Collection $recordsPD, $sensorId) {
+            $maxPD = $recordsPD->sortByDesc('Indicator')->first();
+
+            return [
+                'sensor_id' => $sensorId,
+                'sensor_name' => optional($maxPD->sensor)->sensor_name,
+                'max_indicator' => $maxPD->Indicator,
+                'recorded_at' => $maxPD->created_at->format('Y-m-d H:i:s'),
+            ];
+        });
+
         // --- Error Log Summary ---
-        $errorLogs = ErrorLog::whereIn('sensor_id', $sensorIds)
-            ->whereBetween('created_at', [$request->start_date, $request->end_date])
-            ->get();
-            // dd($errorLogs);
-    
-        $errorStats = [
-            'total' => $errorLogs->count(),
-            'by_state' => $errorLogs->groupBy('state')->map->count(),
-            'by_severity' => $errorLogs->groupBy('severity')->map->count(),
-        ];
+        $errorLogs = ErrorLog::where(function ($query) use ($sensorIds) {
+            $query->where('sensor_type', 'App\Models\SensorTemperature')
+                ->whereHas('sensor', function ($subQuery) use ($sensorIds) {
+                    $subQuery->whereHas('sensor', function ($deepQuery) use ($sensorIds) {
+                        $deepQuery->whereIn('sensor_id', $sensorIds);
+                    });
+                });
+        })
+        ->orWhere(function ($query) use ($sensorIds) {
+            $query->where('sensor_type', 'App\Models\SensorPartialDischarge')
+                ->whereHas('sensor', function ($subQuery) use ($sensorIds) {
+                    $subQuery->whereHas('sensor', function ($deepQuery) use ($sensorIds) {
+                        $deepQuery->whereIn('sensor_id', $sensorIds);
+                    });
+                });
+        })
+        ->whereBetween('created_at', [$request->start_date, $request->end_date])
+        ->with(['sensor.sensor']) // Load the nested relationships
+        ->get();
+
+        // dd($errorLogs);
+
+        $errorStats = $errorLogs->groupBy(function ($error) {
+            return $error->sensor_type . '_' . $error->sensor_id; // Group by sensor type + ID
+        })->map(function (Collection $errors, $groupKey) {
+            $firstError = $errors->first();
+
+            return [
+                'sensor_id' => $firstError->sensor_id,
+                'sensor_type' => $firstError->sensor_type,
+                'sensor_name' => optional($firstError->sensor)->sensor_name,
+                'error_count' => $errors->count(),
+                'latest_error' => $errors->sortByDesc('created_at')->first()->created_at->format('Y-m-d H:i:s'),
+                'severity_levels' => $errors->pluck('severity')->unique()->values()->toArray(),
+                'states' => $errors->pluck('state')->unique()->values()->toArray(),
+                'status_breakdown' => $errors->countBy('status')->all()
+            ];
+        });
         // dd($errorStats);
-    
+
         // Store data or generate view
         $pdf = PDF::loadView('report.template', [
             'substation' => $substation,
             'sensors' => $sensors,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'tempStats' => $tempStats,
-            'pdStats' => $pdStats,
+            'maxDiffTempPerSensor' => $maxDiffTempPerSensor,
+            'maxIndPerSensor' => $maxIndPerSensor,
             'errorStats' => $errorStats,
             'generated_by' => $user->name,
             'generated_at' => now()
         ]);
         // dd($pdf);
-    
+
         $filename = 'report_' . uniqid() . '.pdf';
         $path = 'public/reports/' . $filename;
         Storage::put($path, $pdf->output());
-    
+
         Report::create([
             'report_substation' => $substation->id,
             'start_date' => $request->start_date,
@@ -127,7 +167,7 @@ class ReportController extends Controller
             'generated_by' => $user->id,
             'file_report' => 'reports/' . $filename,
         ]);
-    
+
         return redirect()->back()->with('success', 'Report generated successfully.');
     }
 

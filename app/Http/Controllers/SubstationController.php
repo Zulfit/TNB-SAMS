@@ -68,6 +68,12 @@ class SubstationController extends Controller
      */
     public function update(Request $request, Substation $substation)
     {
+        $validated = $request->validate([
+            'substation_name' => 'required|max:255| string',
+            'substation_location' => 'required|max:255| string',
+            'substation_date' => 'required|date',
+        ]);
+        
         $substation->substation_name = $request->substation_name;
         $substation->substation_location = $request->substation_location;
         $substation->substation_date = $request->substation_date;

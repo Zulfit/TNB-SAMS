@@ -30,23 +30,32 @@
                             <div class="mb-4">
                                 <label for="substation_name" class="form-label fw-semibold">Substation Name</label>
                                 <input type="text" id="substation_name" name="substation_name"
-                                    value="{{ $substation->substation_name }}" class="form-control"
+                                    value="{{ $substation->substation_name }}" class="form-control @error('substation_name') is-invalid @enderror"
                                     placeholder="Enter substation name">
+                                    @error('substation_name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                             </div>
 
                             <!-- Substation Location -->
                             <div class="mb-4">
                                 <label for="substation_location" class="form-label fw-semibold">Location</label>
                                 <input type="text" id="substation_location" name="substation_location"
-                                    value="{{ $substation->substation_location }}" class="form-control"
+                                    value="{{ $substation->substation_location }}" class="form-control @error('substation_location') is-invalid @enderror"
                                     placeholder="Enter location">
+                                    @error('substation_location')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                             </div>
 
                             <!-- Commissioning Date -->
                             <div class="mb-4">
                                 <label for="substation_date" class="form-label fw-semibold">Commissioning Date</label>
                                 <input type="date" id="substation_date" name="substation_date"
-                                    value="{{ $substation->substation_date }}" class="form-control">
+                                    value="{{ $substation->substation_date }}" class="form-control @error('substation_date') is-invalid @enderror">
+                                    @error('substation_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                             </div>
 
                             <!-- Update Button -->

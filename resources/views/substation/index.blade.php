@@ -9,8 +9,6 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                     <li class="breadcrumb-item active">Substation</a></li>
-                    {{-- <li class="breadcrumb-item active"><a href="{{ route('sub.index') }}">Substation</a></li>
-                    <li class="breadcrumb-item active">Error Details</li> --}}
                 </ol>
             </nav>
         </div>
@@ -26,25 +24,39 @@
                         <div class="card-body p-4">
                             <form action="{{ route('substation.store') }}" method="POST">
                                 @csrf
-                    
+
                                 <!-- Substation Name -->
                                 <div class="mb-4">
                                     <label for="substation_name" class="form-label fw-semibold">Substation Name</label>
-                                    <input type="text" name="substation_name" id="substation_name" class="form-control" placeholder="Enter substation name">
+                                    <input type="text" name="substation_name" id="substation_name"
+                                        class="form-control @error('substation_name') is-invalid @enderror"
+                                        placeholder="Enter substation name" value="{{ old('substation_name') }}">
+                                    @error('substation_name')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                    
+
                                 <!-- Substation Location -->
                                 <div class="mb-4">
                                     <label for="substation_location" class="form-label fw-semibold">Location</label>
-                                    <input type="text" name="substation_location" id="substation_location" class="form-control" placeholder="Enter location">
+                                    <input type="text" name="substation_location" id="substation_location"
+                                        class="form-control @error('substation_location') is-invalid @enderror"
+                                        placeholder="Enter location" value="{{ old('substation_location') }}">
+                                    @error('substation_location')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                    
+
                                 <!-- Commissioning Date -->
                                 <div class="mb-4">
                                     <label for="substation_date" class="form-label fw-semibold">Commissioning Date</label>
-                                    <input type="date" name="substation_date" id="substation_date" class="form-control">
+                                    <input type="date" name="substation_date" id="substation_date"
+                                        class="form-control @error('substation_date') is-invalid @enderror" value="{{ old('substation_date') }}">
+                                    @error('substation_date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
-                    
+
                                 <!-- Submit Button -->
                                 <div class="d-flex justify-content-end">
                                     <button type="submit" class="btn btn-primary px-4">
@@ -54,7 +66,6 @@
                             </form>
                         </div>
                     </div>
-                    
                 @endif
 
                 <!-- Substation Table -->

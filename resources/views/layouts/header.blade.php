@@ -20,7 +20,7 @@
             <li class="nav-item dropdown me-3">
                 <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-bell fs-5"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
                         id="notification-count">0</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm" id="notification-list" style="width: 320px;">
@@ -39,7 +39,7 @@
             <li class="nav-item dropdown me-3">
                 <a class="nav-link position-relative" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-chat-left-text fs-5"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success d-none"
                         id="message-count">0</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="width: 360px;">
@@ -86,6 +86,15 @@
                         <a class="dropdown-item d-flex align-items-center" href="{{ url('profile') }}">
                             <i class="bi bi-person me-2"></i>
                             <span>My Profile</span>
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="{{ url('profile') }}">
+                            <i class="bi bi-person me-2"></i>
+                            <span>About</span>
                         </a>
                     </li>
                     <li>

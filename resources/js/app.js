@@ -40,27 +40,39 @@ window.Echo.channel('sensor-alerts')
         }
     });
 
-window.errorLogUrl = "{{ route('error-log.index') }}";
-window.Echo.channel('notification-channel')
-    .listen('.notification-event', (event) => {
-        console.log('🔔 Notification Event:', event);
-
-        const badge = document.getElementById('notification-count');
-        const list = document.getElementById('notification-list');
-
-        const item = document.createElement('li');
-        item.innerHTML = `
-            <a href="" class="dropdown-item">
-                <i class="bi bi-bell-fill text-warning"></i>
-                <strong>${event.title}</strong><br>
-                <span>${event.body}</span><br>
-                <span>${event.timestamp}</span>
-            </a>
-        `;
-
-        if (badge && list) {
-            list.prepend(item);
-            badge.textContent = parseInt(badge.textContent || 0) + 1;
-        }
-    });
+    window.errorLogUrl = "{{ route('error-log.index') }}";
+    window.Echo.channel('notification-channel')
+        .listen('.notification-event', (event) => {
+            console.log('🔔 Notification Event:', event);
+    
+            const badge = document.getElementById('notification-count');
+            const list = document.getElementById('notification-list');
+    
+            if (badge && list) {
+                // Create notification item
+                const item = document.createElement('li');
+                item.innerHTML = `
+                    <a href="" class="dropdown-item">
+                        <i class="bi bi-bell-fill text-warning"></i>
+                        <strong>${event.title}</strong><br>
+                        <span>${event.body}</span><br>
+                        <small class="text-muted">${event.timestamp}</small>
+                    </a>
+                `;
+    
+                // Add to list
+                list.prepend(item);
+                
+                // Update badge count and make sure it's visible
+                const currentCount = parseInt(badge.textContent || 0) + 1;
+                badge.textContent = currentCount;
+                
+                // Show badge if it was hidden
+                if (currentCount > 0) {
+                    badge.style.display = 'inline';
+                    // or if using Bootstrap classes:
+                    // badge.classList.remove('d-none');
+                }
+            }
+        });
 

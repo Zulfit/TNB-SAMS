@@ -33,27 +33,7 @@
     <!-- Template Main CSS File -->
     <link href="/assets/css/style.css" rel="stylesheet">
 
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-        }
 
-        body {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .container {
-            flex: 1;
-            margin-left: 85px;
-        }
-
-        footer {
-            margin-top: auto;
-        }
-    </style>
 </head>
 
 <body>
@@ -67,20 +47,26 @@
 
     @include('layouts.header')
 
-    <!-- Navbar -->
-    @include('layouts.navbar')
-
-    @if (session('success'))
-        <div id="flashMessage" class="alert alert-success slide-in-top-right shadow" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="layout-wrapper">
+        <!-- Left Navbar -->
+        <div class="navbar-container">
+            @include('layouts.navbar')
         </div>
-    @endif
 
-    <!-- Main Content -->
-    <div class="container mt-4">
-        @yield('content')
-    </div> <!-- Close container properly -->
+        <!-- Main Content Area -->
+        <div class="main-content">
+            @if (session('success'))
+                <div id="flashMessage" class="alert alert-success slide-in-top-right shadow" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            <div class="container-fluid">
+                @yield('content')
+            </div>
+        </div>
+    </div>
 
     <!-- Single Toast Notification Block -->
     <div id="alert-toast" class="toast" style="display: none;">
@@ -158,7 +144,6 @@
                             li.className = 'message-item';
                             li.innerHTML = `
                         <a href="/chat/user/${other}" class="d-flex align-items-start text-dark px-2 py-2" title="${lm.text}">
-                            <img src="/assets/img/default-avatar.png" class="rounded-circle me-2" width="40" height="40" />
                             <div>
                                 <h6 class="mb-0">${lm.user.name}</h6>
                                 <small class="text-muted">${lm.text.slice(0, 40)}…</small><br>
@@ -169,7 +154,13 @@
                         }
                     });
 
-                    badge.textContent = unreadCount;
+                    if (unreadCount > 0) {
+                        badge.textContent = unreadCount;
+                        badge.style.display = 'inline'; // or badge.classList.remove('d-none') if using Bootstrap classes
+                    } else {
+                        badge.style.display = 'none'; // or badge.classList.add('d-none') if using Bootstrap classes
+                    }
+
                     header.innerHTML = `You have ${unreadCount} new message${unreadCount === 1 ? '' : 's'} 
                 <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>`;
                 } catch (err) {

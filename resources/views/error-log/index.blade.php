@@ -21,17 +21,18 @@
                         <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Filter Options</h5>
                     </div>
                     <div class="card-body pt-4">
-                        <form method="GET" action="{{ route('error-log.index') }}" class="row g-3">
+                        <form method="GET" id="filterForm" class="row g-3">
                             <!-- ID Search Field -->
                             <div class="col-md-4 col-lg-3">
                                 <label for="error_id" class="form-label small text-muted">Error ID</label>
-                                <input type="text" id="error_id" name="error_id" class="form-control form-control-sm"
-                                    placeholder="Search ID..." value="{{ request('error_id') }}">
+                                <input type="text" id="error_id" name="error_id"
+                                    class="form-control form-control-sm auto-filter" placeholder="Search ID..."
+                                    value="{{ request('error_id') }}">
                             </div>
 
                             <div class="col-md-4 col-lg-3">
                                 <label for="substation" class="form-label small text-muted">Substation</label>
-                                <select id="substation" name="substation" class="form-select form-select-sm">
+                                <select id="substation" name="substation" class="form-select form-select-sm auto-filter">
                                     <option value="">All Substations</option>
                                     @foreach ($substations as $substation)
                                         <option value="{{ $substation->id }}"
@@ -44,7 +45,7 @@
 
                             <div class="col-md-4 col-lg-3">
                                 <label for="panel" class="form-label small text-muted">Panel</label>
-                                <select id="panel" name="panel" class="form-select form-select-sm">
+                                <select id="panel" name="panel" class="form-select form-select-sm auto-filter">
                                     <option value="">All Panels</option>
                                     @foreach ($panels as $panel)
                                         <option value="{{ $panel->id }}"
@@ -57,7 +58,7 @@
 
                             <div class="col-md-4 col-lg-3">
                                 <label for="compartment" class="form-label small text-muted">Compartment</label>
-                                <select id="compartment" name="compartment" class="form-select form-select-sm">
+                                <select id="compartment" name="compartment" class="form-select form-select-sm auto-filter">
                                     <option value="">All Compartments</option>
                                     @foreach ($compartments as $compartment)
                                         <option value="{{ $compartment->id }}"
@@ -70,7 +71,7 @@
 
                             <div class="col-md-4 col-lg-3">
                                 <label for="measurement" class="form-label small text-muted">Measurement</label>
-                                <select id="measurement" name="measurement" class="form-select form-select-sm">
+                                <select id="measurement" name="measurement" class="form-select form-select-sm auto-filter">
                                     <option value="">All Measurements</option>
                                     @foreach ($measurements as $measurement)
                                         <option value="{{ $measurement }}"
@@ -83,7 +84,7 @@
 
                             <div class="col-md-4 col-lg-3">
                                 <label for="state" class="form-label small text-muted">State</label>
-                                <select id="state" name="state" class="form-select form-select-sm">
+                                <select id="state" name="state" class="form-select form-select-sm auto-filter">
                                     <option value="">All States</option>
                                     @foreach ($states as $state)
                                         <option value="{{ $state }}"
@@ -97,31 +98,12 @@
                             <!-- Status Filter -->
                             <div class="col-md-4 col-lg-3">
                                 <label for="status" class="form-label small text-muted">Status</label>
-                                <select id="status" name="status" class="form-select form-select-sm">
+                                <select id="status" name="status" class="form-select form-select-sm auto-filter">
                                     <option value="">All Status</option>
                                     @foreach ($statuses as $status)
                                         <option value="{{ $status }}">{{ $status }}</option>
                                     @endforeach
-                                    {{-- <option value="New" {{ request('status') == 'New' ? 'selected' : '' }}>New</option>
-                                    <option value="Quiry" {{ request('status') == 'Quiry' ? 'selected' : '' }}>Quiry
-                                    </option>
-                                    <option value="Acknowledge" {{ request('status') == 'Acknowledge' ? 'selected' : '' }}>
-                                        Acknowledge</option>
-                                    <option value="Completed" {{ request('status') == 'Completed' ? 'selected' : '' }}>
-                                        Completed</option> --}}
                                 </select>
-                            </div>
-
-                            <div class="col-md-4 col-lg-2 d-flex align-items-end">
-                                <div class="d-flex gap-2 w-100">
-                                    <button type="submit" class="btn btn-primary" title="Apply Filters">
-                                        <i class="bi bi-funnel-fill"></i>
-                                    </button>
-                                    <a href="{{ route('error-log.index') }}" class="btn btn-outline-secondary"
-                                        title="Clear Filters">
-                                        <i class="bi bi-x-circle"></i>
-                                    </a>
-                                </div>
                             </div>
                         </form>
                     </div>
@@ -297,6 +279,16 @@
             document.addEventListener('DOMContentLoaded', function() {
                 // Handle view details click
                 const viewDetailButtons = document.querySelectorAll('.view-details');
+                const filterSelects = document.querySelectorAll('.auto-filter');
+                const formFilter = document.getElementById('filterForm');
+
+                filterSelects.forEach(function(select) {
+                    select.addEventListener('change', function() {
+                        // Submit the form automatically when any filter changes
+                        formFilter.submit();
+                    });
+                });
+
                 viewDetailButtons.forEach(button => {
                     button.addEventListener('click', function(e) {
                         e.preventDefault();

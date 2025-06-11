@@ -46,7 +46,9 @@
                     <div class="small">
                         @if (is_null($error->status))
                             This error requires assignment to a staff member.
-                        @elseif($error->status == 'New')
+                        @elseif($error->status == 'New' && $error->pic == 1)
+                            Waiting for manager to assign staff.
+                        @elseif($error->status == 'New' && $error->pic != 1)
                             A staff member has been assigned. Waiting for acknowledgment.
                         @elseif($error->status == 'Acknowledge')
                             This error has been Acknowledge and is being worked on.
@@ -733,7 +735,7 @@
                                     text: 'Timestamp'
                                 },
                                 ticks: {
-                                    maxTicksLimit: 20, 
+                                    maxTicksLimit: 20,
                                     maxRotation: 45
                                 }
                             },

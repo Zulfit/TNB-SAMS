@@ -33,7 +33,7 @@ class SubstationController extends Controller
         $validated = $request->validate([
             'substation_name' => 'required|max:255| string',
             'substation_location' => 'required|max:255| string',
-            'substation_date' => 'required|date',
+            'substation_date' => 'required|date|before_or_equal:today',
         ]);
 
         Substation::create([
@@ -71,7 +71,7 @@ class SubstationController extends Controller
         $validated = $request->validate([
             'substation_name' => 'required|max:255| string',
             'substation_location' => 'required|max:255| string',
-            'substation_date' => 'required|date',
+            'substation_date' => 'required|date|before_or_equal:today',
         ]);
         
         $substation->substation_name = $request->substation_name;

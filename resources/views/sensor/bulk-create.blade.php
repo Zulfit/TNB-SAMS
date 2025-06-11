@@ -9,8 +9,6 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
                     <li class="breadcrumb-item active">Sensor</a></li>
-                    {{-- <li class="breadcrumb-item active"><a href="{{ route('sub.index') }}">Substation</a></li>
-                    <li class="breadcrumb-item active">Error Details</li> --}}
                 </ol>
             </nav>
         </div>
@@ -21,7 +19,8 @@
                 @if (in_array('create', $global_permissions['sensor_access'] ?? []) ||
                         in_array('full', $global_permissions['sensor_access'] ?? []))
                     <div class="card shadow-sm border-0 rounded-4">
-                        <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
+                        <div
+                            class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center">
                             <div class="d-flex align-items-center">
                                 <i class="bi bi-cpu me-2 text-primary fs-5"></i>
                                 <h5 class="mb-0">Create New Sensor</h5>
@@ -30,96 +29,140 @@
                                 <i class="bi bi-plus-circle me-1"></i> Single Create
                             </a>
                         </div>
-                        
+
                         <div class="card-body p-4">
                             <form id="bulk-sensor-form" action="{{ route('sensor.bulk-store') }}" method="POST">
                                 @csrf
-                        
+
                                 <!-- Assigned Substation -->
                                 <div class="mb-4">
-                                    <label for="sensor_substation" class="form-label fw-semibold">Assigned Substation</label>
-                                    <select id="sensor_substation" name="substation_id" class="form-select" required>
+                                    <label for="sensor_substation" class="form-label fw-semibold">Assigned
+                                        Substation</label>
+                                    <select id="sensor_substation" name="substation_id"
+                                        class="form-select @error('sensor_substation') is-invalid @enderror"
+                                        value="{{ old('sensor_substation') }}">
                                         <option value="">Select a substation</option>
                                         @foreach ($substations as $substation)
-                                            <option value="{{ $substation->id }}">{{ $substation->substation_name }}</option>
+                                            <option value="{{ $substation->id }}">{{ $substation->substation_name }}
+                                            </option>
                                         @endforeach
                                     </select>
+                                    @if ($errors->has('sensor_substation'))
+                                        <div class="invalid-feedback">{{ $errors->first('sensor_substation') }}</div>
+                                    @endif
                                 </div>
-                        
+
                                 <!-- Dynamic Sensor Inputs -->
                                 <div id="sensors-container">
                                     <div class="sensor-block border p-3 mb-3 rounded">
                                         <!-- Sensor Name -->
                                         <div class="mb-2">
                                             <label class="form-label fw-semibold">Sensor Name</label>
-                                            <input type="text" name="sensors[0][name]" class="form-control" placeholder="Enter sensor name" required>
+                                            <input type="text" name="sensors[0][name]"
+                                                class="form-control @error('sensors.0.compartments') is-invalid @enderror"
+                                                placeholder="Enter sensor name" value="{{ old('sensors.0.name') }}">
+                                            @if ($errors->has('sensors.0.name'))
+                                                <div class="invalid-feedback">{{ $errors->first('sensors.0.name') }}
+                                                </div>
+                                            @endif
                                         </div>
-                        
+
                                         <!-- Panel -->
                                         <div class="mb-2">
                                             <label class="form-label fw-semibold">Panel</label>
-                                            <select name="sensors[0][panel_id]" class="form-select" required>
+                                            <select name="sensors[0][panel_id]"
+                                                class="form-select @error('sensors.0.panel_id') is-invalid @enderror"
+                                                value="{{ old('sensors.0.panel_id') }}">
                                                 <option value="">Select a panel</option>
                                                 @foreach ($panels as $panel)
                                                     <option value="{{ $panel->id }}">{{ $panel->panel_name }}</option>
                                                 @endforeach
                                             </select>
+                                            @if ($errors->has('sensors.0.panel_id'))
+                                                <div class="invalid-feedback">{{ $errors->first('sensors.0.panel_id') }}
+                                                </div>
+                                            @endif
                                         </div>
-                        
+
                                         <!-- Compartment Checkboxes -->
                                         <div class="mb-2">
                                             <label class="form-label fw-semibold d-block">Compartments</label>
                                             @foreach ($compartments as $compartment)
                                                 <div class="form-check form-check-inline">
-                                                    <input class="form-check-input" type="checkbox" name="sensors[0][compartments][]" value="{{ $compartment->id }}">
-                                                    <label class="form-check-label">{{ $compartment->compartment_name }}</label>
+                                                    <input
+                                                        class="form-check-input @error('sensors.0.compartments') is-invalid @enderror"
+                                                        type="checkbox" name="sensors[0][compartments][]"
+                                                        value="{{ $compartment->id }}"
+                                                        {{ in_array($compartment->id, old('sensors.0.compartments', [])) ? 'checked' : '' }}>
+                                                    <label
+                                                        class="form-check-label">{{ $compartment->compartment_name }}</label>
                                                 </div>
                                             @endforeach
+                                            @if ($errors->has('sensors.0.compartments'))
+                                                <div class="invalid-feedback">{{ $errors->first('sensors.0.compartments') }}
+                                                </div>
+                                            @endif
                                         </div>
-                        
+
                                         <!-- Measurement -->
                                         <div class="mb-2">
                                             <label class="form-label fw-semibold d-block">Measurement</label>
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="sensors[0][measurement]" value="Temperature" checked>
+                                                <input class="form-check-input" type="radio"
+                                                    name="sensors[0][measurement]" value="Temperature" checked>
                                                 <label class="form-check-label">Temperature</label>
                                             </div>
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="sensors[0][measurement]" value="Partial Discharge">
+                                                <input class="form-check-input" type="radio"
+                                                    name="sensors[0][measurement]" value="Partial Discharge">
                                                 <label class="form-check-label">Partial Discharge</label>
                                             </div>
                                         </div>
-                        
+
                                         <!-- Status -->
                                         <div class="mb-2">
                                             <label class="form-label fw-semibold">Status</label>
-                                            <select name="sensors[0][status]" class="form-select" required>
+                                            <select name="sensors[0][status]"
+                                                class="form-select @error('sensors.0.status') is-invalid @enderror">
                                                 <option value="">Select status</option>
-                                                <option value="Online">Online</option>
-                                                <option value="Offline">Offline</option>
+                                                <option value="Online"
+                                                    {{ old('sensors.0.status') == 'Online' ? 'selected' : '' }}>Online
+                                                </option>
+                                                <option value="Offline"
+                                                    {{ old('sensors.0.status') == 'Offline' ? 'selected' : '' }}>Offline
+                                                </option>
                                             </select>
+                                            @if ($errors->has('sensors.0.status'))
+                                                <div class="invalid-feedback">{{ $errors->first('sensors.0.status') }}
+                                                </div>
+                                            @endif
                                         </div>
-                        
+
                                         <!-- Remove button -->
                                         <button type="button" class="btn btn-danger btn-sm remove-sensor-btn mt-2">
                                             <i class="bi bi-trash"></i> Remove
                                         </button>
                                     </div>
                                 </div>
-                        
+
                                 <!-- Add More Button -->
                                 <div class="d-flex justify-content-end">
                                     <button type="button" class="btn btn-secondary" id="add-sensor-btn">
                                         <i class="bi bi-plus-circle"></i> Add More
                                     </button>
                                 </div>
-                        
+
                                 <!-- Installation Date -->
                                 <div class="mb-4">
                                     <label for="installation_date" class="form-label fw-semibold">Installation Date</label>
-                                    <input type="date" id="installation_date" name="installation_date" class="form-control" required>
+                                    <input type="date" id="installation_date" name="installation_date"
+                                        class="form-control @error('installation_date') is-invalid @enderror"
+                                        value="{{ old('installation_date') }}">
+                                    @if ($errors->has('installation_date'))
+                                        <div class="invalid-feedback">{{ $errors->first('installation_date') }}</div>
+                                    @endif
                                 </div>
-                        
+
                                 <!-- Submit Button -->
                                 <div class="d-flex justify-content-end">
                                     <button type="submit" class="btn btn-primary px-4">
@@ -228,31 +271,31 @@
 
             <script>
                 let sensorIndex = 1;
-            
-                document.getElementById('add-sensor-btn').addEventListener('click', function () {
+
+                document.getElementById('add-sensor-btn').addEventListener('click', function() {
                     const container = document.getElementById('sensors-container');
                     const firstBlock = container.querySelector('.sensor-block');
                     const newBlock = firstBlock.cloneNode(true);
-            
+
                     // Clear inputs
                     newBlock.querySelectorAll('input, select').forEach(el => {
                         if (el.type === 'text') el.value = '';
                         if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
                         if (el.tagName === 'SELECT') el.selectedIndex = 0;
                     });
-            
+
                     // Update name attributes with new index
                     newBlock.querySelectorAll('input, select').forEach(el => {
                         if (el.name) {
                             el.name = el.name.replace(/\d+/, sensorIndex);
                         }
                     });
-            
+
                     container.appendChild(newBlock);
                     sensorIndex++;
                 });
-            
-                document.getElementById('sensors-container').addEventListener('click', function (e) {
+
+                document.getElementById('sensors-container').addEventListener('click', function(e) {
                     if (e.target.classList.contains('remove-sensor-btn')) {
                         const block = e.target.closest('.sensor-block');
                         if (document.querySelectorAll('.sensor-block').length > 1) {

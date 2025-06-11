@@ -31,9 +31,9 @@
                                     <input type="text" name="substation_name" id="substation_name"
                                         class="form-control @error('substation_name') is-invalid @enderror"
                                         placeholder="Enter substation name" value="{{ old('substation_name') }}">
-                                    @error('substation_name')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    @if ($errors->has('substation_name'))
+                                        <div class="invalid-feedback">{{ $errors->first('substation_name') }}</div>
+                                    @endif
                                 </div>
 
                                 <!-- Substation Location -->
@@ -42,19 +42,20 @@
                                     <input type="text" name="substation_location" id="substation_location"
                                         class="form-control @error('substation_location') is-invalid @enderror"
                                         placeholder="Enter location" value="{{ old('substation_location') }}">
-                                    @error('substation_location')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    @if ($errors->has('substation_location'))
+                                        <div class="invalid-feedback">{{ $errors->first('substation_location') }}</div>
+                                    @endif
                                 </div>
 
                                 <!-- Commissioning Date -->
                                 <div class="mb-4">
                                     <label for="substation_date" class="form-label fw-semibold">Commissioning Date</label>
                                     <input type="date" name="substation_date" id="substation_date"
-                                        class="form-control @error('substation_date') is-invalid @enderror" value="{{ old('substation_date') }}">
-                                    @error('substation_date')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                        class="form-control @error('substation_date') is-invalid @enderror"
+                                        value="{{ old('substation_date') }}">
+                                    @if ($errors->has('substation_date'))
+                                        <div class="invalid-feedback">{{ $errors->first('substation_date') }}</div>
+                                    @endif
                                 </div>
 
                                 <!-- Submit Button -->

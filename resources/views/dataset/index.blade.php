@@ -29,7 +29,12 @@
                                 <!-- File Input -->
                                 <div class="mb-4">
                                     <label for="dataset_file" class="form-label fw-semibold">Dataset File</label>
-                                    <input name="dataset_file" type="file" id="dataset_file" class="form-control">
+                                    <input name="dataset_file" type="file" id="dataset_file"
+                                        class="form-control @error('dataset_file') is-invalid @enderror"
+                                        value="{{ old('dataset_file') }}">
+                                    @error('dataset_file')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <!-- Type Selection -->
@@ -51,12 +56,17 @@
                                 <!-- Sensor Selection -->
                                 <div class="mb-4">
                                     <label for="dataset_sensor" class="form-label fw-semibold">Sensor</label>
-                                    <select name="dataset_sensor" id="dataset_sensor" class="form-select">
+                                    <select name="dataset_sensor" id="dataset_sensor"
+                                        class="form-select @error('dataset_sensor') is-invalid @enderror"
+                                        value="{{ old('dataset_sensor') }}">
                                         <option value="">Select Sensor</option>
                                         @foreach ($sensors as $sensor)
                                             <option value="{{ $sensor->id }}">{{ $sensor->sensor_name }}</option>
                                         @endforeach
                                     </select>
+                                    @error('dataset_sensor')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <!-- Submit Button -->
@@ -102,17 +112,20 @@
                                             <td>{{ $dataset->sensor->sensor_name }}</td>
                                             <td>{{ $dataset->created_at }}</td>
                                             <td><span class="badge bg-success">Success</span></td>
-                                            @if (in_array('delete', $global_permissions['dataset_access'] ?? []) ||
-                                                    in_array('full', $global_permissions['dataset_access'] ?? []))
-                                                <form action="{{ route('dataset.destroy', $dataset->id) }}" method="POST"
-                                                    onsubmit="return confirm('Are you sure you want to delete this dataset?');"
-                                                    style="display: inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit"
-                                                        class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                                </form>
-                                            @endif
+                                            <td>
+                                                @if (in_array('delete', $global_permissions['dataset_access'] ?? []) ||
+                                                        in_array('full', $global_permissions['dataset_access'] ?? []))
+                                                    <form action="{{ route('dataset.destroy', $dataset->id) }}"
+                                                        method="POST"
+                                                        onsubmit="return confirm('Are you sure you want to delete this dataset?');"
+                                                        style="display: inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                    </form>
+                                                @endif
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @else

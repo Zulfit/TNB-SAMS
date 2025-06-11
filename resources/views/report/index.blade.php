@@ -28,7 +28,8 @@
                                 <!-- Substation -->
                                 <div class="mb-4">
                                     <label for="report_substation" class="form-label fw-semibold">Substation</label>
-                                    <select id="report_substation" name="report_substation" class="form-select">
+                                    <select id="report_substation" name="report_substation"
+                                        class="form-select @error('report_substation') is-invalid @enderror">
                                         <option value="" disabled selected>Select a substation</option>
                                         @foreach ($substations as $substation)
                                             <option value="{{ $substation->id }}"
@@ -37,20 +38,31 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    @if ($errors->has('report_substation'))
+                                        <div class="invalid-feedback">{{ $errors->first('report_substation') }}</div>
+                                    @endif
                                 </div>
 
                                 <!-- Start Date -->
                                 <div class="mb-4">
                                     <label for="start_date" class="form-label fw-semibold">Start Date</label>
-                                    <input type="date" id="start_date" name="start_date" class="form-control"
+                                    <input type="date" id="start_date" name="start_date"
+                                        class="form-control @error('start_date') is-invalid @enderror"
                                         value="{{ old('start_date') }}">
+                                    @if ($errors->has('start_date'))
+                                        <div class="invalid-feedback">{{ $errors->first('start_date') }}</div>
+                                    @endif
                                 </div>
 
                                 <!-- End Date -->
                                 <div class="mb-4">
                                     <label for="end_date" class="form-label fw-semibold">End Date</label>
-                                    <input type="date" id="end_date" name="end_date" class="form-control"
+                                    <input type="date" id="end_date" name="end_date"
+                                        class="form-control @error('end_date') is-invalid @enderror"
                                         value="{{ old('end_date') }}">
+                                    @if ($errors->has('end_date'))
+                                        <div class="invalid-feedback">{{ $errors->first('end_date') }}</div>
+                                    @endif
                                 </div>
 
                                 <!-- Submit Button -->

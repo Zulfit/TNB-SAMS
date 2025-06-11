@@ -44,7 +44,7 @@ class SensorController extends Controller
             'sensor_panel' => 'required|exists:panels,id',
             'sensor_compartment' => 'required|exists:compartments,id',
             'sensor_substation' => 'required|exists:substations,id',
-            'sensor_date' => 'required|date',
+            'sensor_date' => 'required|date|before_or_equal:today',
             'sensor_status' => 'required',
         ]);
 
@@ -142,6 +142,15 @@ class SensorController extends Controller
      */
     public function update(Request $request, Sensor $sensor)
     {
+        $validated = $request->validate([
+            'sensor_name' => 'required|max:255|string',
+            'sensor_panel' => 'required|exists:panels,id',
+            'sensor_compartment' => 'required|exists:compartments,id',
+            'sensor_substation' => 'required|exists:substations,id',
+            'sensor_date' => 'required|date|before_or_equal:today',
+            'sensor_status' => 'required',
+        ]);
+        
         $sensor->sensor_name = $request->sensor_name;
         $sensor->sensor_panel = $request->sensor_panel;
         $sensor->sensor_compartment = $request->sensor_compartment;

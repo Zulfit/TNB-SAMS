@@ -31,7 +31,7 @@
                                 <!-- User Selection -->
                                 <div class="mb-4">
                                     <label for="user-select" class="form-label fw-semibold">User’s Name</label>
-                                    <select name="user_id" id="user-select" class="form-select">
+                                    <select name="user_id" id="user-select" class="form-select @error('user_id') is-invalid @enderror">
                                         <option value="" selected disabled>Select a user</option>
                                         @foreach ($unverified_users as $unverified_user)
                                             <option value="{{ $unverified_user->id }}"
@@ -42,6 +42,9 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    @if ($errors->has('user_id'))
+                                        <div class="invalid-feedback">{{ $errors->first('user_id') }}</div>
+                                    @endif
                                 </div>
 
                                 <!-- User Details (Auto-filled) -->

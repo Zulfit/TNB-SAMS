@@ -25,18 +25,23 @@
                         <form action="{{ route('sensor.update', $sensor->id) }}" method="POST">
                             @csrf
                             @method('PUT')
-                
+
                             <!-- Sensor Name -->
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Sensor Name</label>
-                                <input name="sensor_name" type="text" class="form-control"
+                                <input name="sensor_name" type="text"
+                                    class="form-control @error('sensor_name') is-invalid @enderror"
                                     value="{{ old('sensor_name', $sensor->sensor_name) }}">
+                                @error('sensor_name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                
+
                             <!-- Substation -->
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Assigned Substation</label>
-                                <select name="sensor_substation" class="form-select">
+                                <select name="sensor_substation"
+                                    class="form-select @error('sensor_substation') is-invalid @enderror">
                                     @foreach ($substations as $substation)
                                         <option value="{{ $substation->id }}"
                                             {{ old('sensor_substation', $sensor->substation_id) == $substation->id ? 'selected' : '' }}>
@@ -44,12 +49,15 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('sensor_substation')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                
+
                             <!-- Panel -->
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Panel</label>
-                                <select name="sensor_panel" class="form-select">
+                                <select name="sensor_panel" class="form-select @error('sensor_panel') is-invalid @enderror">
                                     @foreach ($panels as $panel)
                                         <option value="{{ $panel->id }}"
                                             {{ old('sensor_panel', $sensor->panel_id) == $panel->id ? 'selected' : '' }}>
@@ -57,12 +65,16 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('sensor_panel')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                
+
                             <!-- Compartment -->
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Compartment</label>
-                                <select name="sensor_compartment" class="form-select">
+                                <select name="sensor_compartment"
+                                    class="form-select @error('sensor_compartment') is-invalid @enderror">
                                     @foreach ($compartments as $compartment)
                                         <option value="{{ $compartment->id }}"
                                             {{ old('sensor_compartment', $sensor->compartment_id) == $compartment->id ? 'selected' : '' }}>
@@ -70,41 +82,56 @@
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('sensor_compartment')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                
+
                             <!-- Measurement -->
                             <div class="mb-3">
                                 <label class="form-label fw-semibold d-block">Measurement</label>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="Temperature"
-                                        value="Temperature"
+                                    <input class="form-check-input" type="radio" name="sensor_measurement"
+                                        id="Temperature" value="Temperature"
                                         {{ old('sensor_measurement', $sensor->sensor_measurement) == 'Temperature' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="Temperature">Temperature</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="sensor_measurement" id="PartialDischarge"
-                                        value="Partial Discharge"
+                                    <input class="form-check-input" type="radio" name="sensor_measurement"
+                                        id="PartialDischarge" value="Partial Discharge"
                                         {{ old('sensor_measurement', $sensor->sensor_measurement) == 'Partial Discharge' ? 'checked' : '' }}>
                                     <label class="form-check-label" for="PartialDischarge">Partial Discharge</label>
                                 </div>
                             </div>
-                
+
                             <!-- Installation Date -->
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Installation Date</label>
-                                <input name="sensor_date" type="date" class="form-control"
+                                <input name="sensor_date" type="date"
+                                    class="form-control @error('sensor_date') is-invalid @enderror"
                                     value="{{ old('sensor_date', $sensor->sensor_date) }}">
+                                @error('sensor_date')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                
+
                             <!-- Status -->
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">Status</label>
-                                <select name="sensor_status" class="form-select">
-                                    <option value="Online" {{ old('sensor_status', $sensor->sensor_status) == 'Online' ? 'selected' : '' }}>Online</option>
-                                    <option value="Offline" {{ old('sensor_status', $sensor->sensor_status) == 'Offline' ? 'selected' : '' }}>Offline</option>
+                                <select name="sensor_status"
+                                    class="form-select @error('sensor_status') is-invalid @enderror">
+                                    <option value="Online"
+                                        {{ old('sensor_status', $sensor->sensor_status) == 'Online' ? 'selected' : '' }}>
+                                        Online</option>
+                                    <option value="Offline"
+                                        {{ old('sensor_status', $sensor->sensor_status) == 'Offline' ? 'selected' : '' }}>
+                                        Offline</option>
                                 </select>
+                                @error('sensor_status')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
-                
+
                             <!-- Submit -->
                             <div class="d-flex justify-content-end">
                                 <button type="submit" class="btn btn-primary px-4">
@@ -113,7 +140,7 @@
                             </div>
                         </form>
                     </div>
-                </div>                
+                </div>
 
                 <!-- Dataset Table -->
                 <div class="card shadow-sm border-0 rounded-3">
@@ -142,21 +169,21 @@
                                     @foreach ($sensors as $sensor)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                                <td>
-                                                    <div class="fw-bold">{{ $sensor->sensor_name ?? 'N/A' }}</div>
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex flex-column">
-                                                        <span
-                                                            class="fw-bold">{{ $sensor->substation->substation_name ?? 'N/A' }}</span>
-                                                        <small class="text-muted">
-                                                            {{ $sensor->panel->panel_name ?? 'N/A' }} /
-                                                            {{ $sensor->compartment->compartment_name ?? 'N/A' }}
-                                                        </small>
-                                                    </div>
-                                                </td>
-                                                <td>{{ $sensor->sensor_measurement ?? 'N/A' }}</td>
-                                                
+                                            <td>
+                                                <div class="fw-bold">{{ $sensor->sensor_name ?? 'N/A' }}</div>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex flex-column">
+                                                    <span
+                                                        class="fw-bold">{{ $sensor->substation->substation_name ?? 'N/A' }}</span>
+                                                    <small class="text-muted">
+                                                        {{ $sensor->panel->panel_name ?? 'N/A' }} /
+                                                        {{ $sensor->compartment->compartment_name ?? 'N/A' }}
+                                                    </small>
+                                                </div>
+                                            </td>
+                                            <td>{{ $sensor->sensor_measurement ?? 'N/A' }}</td>
+
                                             <td>{{ $sensor->sensor_date }}</td>
                                             <td>
                                                 <span
@@ -164,7 +191,8 @@
                                                     style="padding: 8px 12px; font-size: 0.8rem;">
                                                     {{ $sensor->sensor_status ?? 'Unknown' }}
                                                 </span>
-                                            </td>                                            <td>
+                                            </td>
+                                            <td>
                                                 @if (in_array('view', $global_permissions['sensor_access'] ?? []) ||
                                                         in_array('full', $global_permissions['sensor_access'] ?? []))
                                                     <a href="{{ route('sensor.show', $sensor->id) }}"

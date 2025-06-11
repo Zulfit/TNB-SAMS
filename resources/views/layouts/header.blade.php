@@ -92,8 +92,8 @@
                         <hr class="dropdown-divider">
                     </li>
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="{{ url('profile') }}">
-                            <i class="bi bi-person me-2"></i>
+                        <a class="dropdown-item d-flex align-items-center" href="{{ url('about') }}">
+                            <i class="bi bi-info-circle me-2"></i>
                             <span>About</span>
                         </a>
                     </li>

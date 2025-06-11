@@ -28,7 +28,8 @@ Route::get('/dashboard/panels/{substationId}', [DashboardController::class, 'get
 Route::get('/dashboard/compartments/{panelId}', [DashboardController::class, 'getCompartmentsByPanel']);
 Route::post('/dashboard/sensor-temperature', [DashboardController::class, 'getSensorTemperature']);
 Route::post('/dashboard/sensor-partial-discharge', [DashboardController::class, 'getSensorPartialDischarge']);
-
+Route::post('/dashboard/get-panels', [DashboardController::class, 'getPanels'])->name('dashboard.get.panels');
+Route::post('/dashboard/get-compartments', [DashboardController::class, 'getCompartments'])->name('dashboard.get.compartments');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -128,5 +129,9 @@ Route::get('/chat/token/header', function () {
         'user_name' => $user->name,
     ]);
 });
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
 
 require __DIR__ . '/auth.php';

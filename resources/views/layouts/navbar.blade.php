@@ -1,7 +1,7 @@
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
     <div class="sidebar-header">
-        <a href="/dashboard" class="sams-logo" id="toggleLogo">
+        <a href="#" class="sams-logo" id="toggleLogo">
             <div class="logo-icon"
                 style="width: 40px; height: 40px; background: linear-gradient(135deg, #011567 0%, #0020f0 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 0.5rem;">
                 <i class="fas fa-bolt"></i>

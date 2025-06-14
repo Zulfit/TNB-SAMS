@@ -48,6 +48,15 @@ class SensorController extends Controller
             'sensor_status' => 'required',
         ]);
 
+        $exists = Sensor::where('sensor_name', $request->sensor_name)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                'custom_popup' => 'A sensor name have been used.'
+            ]);
+        }
+
         Sensor::create([
             'sensor_name' => $validated['sensor_name'],
             'sensor_panel' => $validated['sensor_panel'],
@@ -97,10 +106,19 @@ class SensorController extends Controller
                 // e.g. TBHN-sensor-001
                 $sensorName = $sensorData['name'] . '_' . $indexPadded;
 
+                $exists = Sensor::where('sensor_name', $request->sensor_name)
+                    ->exists();
+
+                if ($exists) {
+                    return back()->withErrors([
+                        'custom_popup' => 'A sensor name have been used.'
+                    ]);
+                }
+
                 Sensor::create([
                     'sensor_name' => $sensorName,
                     'sensor_panel' => $sensorData['panel_id'],
-                    'sensor_compartment' => $compartmentId, 
+                    'sensor_compartment' => $compartmentId,
                     'sensor_substation' => $validated['substation_id'],
                     'sensor_measurement' => $sensorData['measurement'],
                     'sensor_date' => $validated['installation_date'],
@@ -150,7 +168,7 @@ class SensorController extends Controller
             'sensor_date' => 'required|date|before_or_equal:today',
             'sensor_status' => 'required',
         ]);
-        
+
         $sensor->sensor_name = $request->sensor_name;
         $sensor->sensor_panel = $request->sensor_panel;
         $sensor->sensor_compartment = $request->sensor_compartment;

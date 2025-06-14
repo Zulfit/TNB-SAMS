@@ -26,6 +26,14 @@
                             <form action="{{ route('dataset.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
 
+                                @if ($errors->has('custom_popup'))
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {{ $errors->first('custom_popup') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                @endif
+                                
                                 <!-- File Input -->
                                 <div class="mb-4">
                                     <label for="dataset_file" class="form-label fw-semibold">Dataset File</label>
@@ -68,14 +76,6 @@
                                         <div class="invalid-feedback">{{ $errors->first('dataset_sensor') }}</div>
                                     @endif
                                 </div>
-
-                                @if ($errors->has('custom_popup'))
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        {{ $errors->first('custom_popup') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                            aria-label="Close"></button>
-                                    </div>
-                                @endif
 
                                 <!-- Submit Button -->
                                 <div class="d-flex justify-content-end">

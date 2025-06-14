@@ -35,6 +35,14 @@
                             <form action="{{ route('sensor.store') }}" method="POST">
                                 @csrf
 
+                                @if ($errors->has('custom_popup'))
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {{ $errors->first('custom_popup') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                @endif
+                                
                                 <!-- Assigned Substation -->
                                 <div class="mb-4">
                                     <label for="sensor_substation" class="form-label fw-semibold">Assigned

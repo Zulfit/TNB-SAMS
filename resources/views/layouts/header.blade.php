@@ -77,8 +77,9 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
-                        <h6>{{ Auth::user()->name }}</h6>
-                    </li>
+                        <h6 class="mb-0">{{ Auth::user()->name }}</h6>
+                        <small class="text-muted">{{ Auth::user()->position }}</small>
+                    </li>                    
                     <li>
                         <hr class="dropdown-divider">
                     </li>

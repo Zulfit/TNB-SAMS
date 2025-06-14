@@ -28,15 +28,21 @@ class AnalyticsController extends Controller
             ->when($request->status, fn($q) => $q->where('sensor_status', $request->status))
             ->with(['substation', 'panel', 'compartment'])
             ->orderByDesc('updated_at')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
+
+        // Full sensor list (not paginated) — maybe for dropdowns or filters
+        $sensorList = Sensor::all();
 
         return view('analytics', [
-            'sensors' => $sensors,
+            'sensors' => $sensors,           // Paginated list
+            'sensorList' => $sensorList,     // Full list
             'substations' => Substation::all(),
             'panels' => Panels::all(),
             'compartments' => Compartments::all(),
         ]);
     }
+
 
     public function sensorTable(Request $request)
     {

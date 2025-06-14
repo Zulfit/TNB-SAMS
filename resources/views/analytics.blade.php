@@ -29,7 +29,7 @@
                                 <select name="sensor" id="sensorSelect" class="form-select form-select-sm">
                                     <option value="">Select Sensor</option>
                                     @if (isset($sensors) && count($sensors) > 0)
-                                        @foreach ($sensors as $sensor)
+                                        @foreach ($sensorList as $sensor)
                                             <option value="{{ $sensor->id }}">{{ $sensor->sensor_name }}</option>
                                         @endforeach
                                     @endif
@@ -187,16 +187,21 @@
                     </div>
                 </div>
 
-                <!-- Sensor List Filter Card -->
-                <div class="card shadow-sm border-0 rounded-3 mb-4">
-                    <div class="card-header bg-white py-3">
-                        <h5 class="mb-0"><i class="bi bi-funnel me-2"></i>Sensor List Filters</h5>
+                <!-- Sensor List Table -->
+
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Sensor List</h5>
+                        <span class="badge bg-secondary">
+                            {{ isset($sensorList) ? count($sensorList) : 0 }}
+                            {{ isset($sensors) ? Str::plural('sensor', count($sensors)) : 'sensors' }}
+                        </span>
                     </div>
                     <div class="card-body p-4">
-                        <form method="GET" class="row g-3">
+                        <form method="GET" id="filterForm" class="row g-3">
                             <div class="col-md-4 col-lg-2">
                                 <label class="form-label small text-muted">Substation</label>
-                                <select class="form-select form-select-sm" name="substation">
+                                <select class="form-select form-select-sm auto-filter" name="substation">
                                     <option value="">All Substations</option>
                                     @if (isset($substations) && count($substations) > 0)
                                         @foreach ($substations as $substation)
@@ -211,7 +216,7 @@
 
                             <div class="col-md-4 col-lg-2">
                                 <label class="form-label small text-muted">Panel</label>
-                                <select class="form-select form-select-sm" name="panel">
+                                <select class="form-select form-select-sm auto-filter" name="panel">
                                     <option value="">All Panels</option>
                                     @if (isset($panels) && count($panels) > 0)
                                         @foreach ($panels as $panel)
@@ -226,7 +231,7 @@
 
                             <div class="col-md-4 col-lg-2">
                                 <label class="form-label small text-muted">Compartment</label>
-                                <select class="form-select form-select-sm" name="compartment">
+                                <select class="form-select form-select-sm auto-filter" name="compartment">
                                     <option value="">All Compartments</option>
                                     @if (isset($compartments) && count($compartments) > 0)
                                         @foreach ($compartments as $compartment)
@@ -241,7 +246,7 @@
 
                             <div class="col-md-4 col-lg-2">
                                 <label class="form-label small text-muted">Measurement</label>
-                                <select class="form-select form-select-sm" name="measurement">
+                                <select class="form-select form-select-sm auto-filter" name="measurement">
                                     <option value="">All Measurements</option>
                                     <option value="Temperature"
                                         {{ request('measurement') == 'Temperature' ? 'selected' : '' }}>Temperature
@@ -254,7 +259,7 @@
 
                             <div class="col-md-4 col-lg-2">
                                 <label class="form-label small text-muted">Status</label>
-                                <select class="form-select form-select-sm" name="status">
+                                <select class="form-select form-select-sm auto-filter" name="status">
                                     <option value="">All Statuses</option>
                                     <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active
                                     </option>
@@ -262,30 +267,7 @@
                                         Inactive</option>
                                 </select>
                             </div>
-
-                            <div class="col-md-4 col-lg-2 d-flex align-items-end">
-                                <div class="d-flex gap-2 w-100">
-                                    <button type="submit" class="btn btn-primary btn-sm" title="Apply Filters">
-                                        <i class="bi bi-funnel-fill"></i>
-                                    </button>
-                                    <a href="{{ route('analytics') }}" class="btn btn-outline-secondary btn-sm"
-                                        title="Clear Filters">
-                                        <i class="bi bi-x-circle"></i>
-                                    </a>
-                                </div>
-                            </div>
                         </form>
-                    </div>
-                </div>
-
-                <!-- Sensor List Table -->
-                <div class="card shadow-sm border-0 rounded-3">
-                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"><i class="bi bi-list-ul me-2"></i>Sensor List</h5>
-                        <span class="badge bg-secondary">
-                            {{ isset($sensors) ? count($sensors) : 0 }}
-                            {{ isset($sensors) ? Str::plural('sensor', count($sensors)) : 'sensors' }}
-                        </span>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -304,7 +286,7 @@
                                     @if (isset($sensors) && count($sensors) > 0)
                                         @foreach ($sensors as $sensor)
                                             <tr>
-                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ ($sensors->currentPage() - 1) * $sensors->perPage() + $loop->iteration }}</td>
                                                 <td>
                                                     <div class="fw-bold">{{ $sensor->sensor_name ?? 'N/A' }}</div>
                                                 </td>
@@ -344,6 +326,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="card-footer bg-white d-flex justify-content-center">
+                            {{ $sensors->links() }}
+                        </div>                       
                     </div>
                 </div>
             </div>
@@ -366,9 +351,18 @@
             const generateTableBtn = document.getElementById('generateTable');
             const generateChartBtn = document.getElementById('generateChart');
             const spinner = document.getElementById('loadingSpinner');
+            const filterSelects = document.querySelectorAll('.auto-filter');
+            const formFilter = document.getElementById('filterForm');
             let sensorChartInstance = null;
             let chartData = null;
             let parameterType = null;
+
+            filterSelects.forEach(function(select) {
+                select.addEventListener('change', function() {
+                    // Submit the form automatically when any filter changes
+                    formFilter.submit();
+                });
+            });
 
             // Set default dates (last 7 days)
             function setDefaultDates() {

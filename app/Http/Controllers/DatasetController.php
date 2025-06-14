@@ -9,6 +9,7 @@ use App\Models\SensorPartialDischarge;
 use App\Models\SensorTemperature;
 use App\Models\Substation;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DatasetController extends Controller
@@ -43,6 +44,19 @@ class DatasetController extends Controller
             'dataset_sensor' => 'required|exists:sensors,id',
         ]);
 
+        $originalName = $request->file('dataset_file')->getClientOriginalName();
+
+        $exists = Dataset::where('dataset_sensor', $request->dataset_sensor)
+            ->where('dataset_measurement', $request->dataset_measurement)
+            ->where('dataset_file', $originalName)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors([
+                'custom_popup' => 'A dataset for this sensor and measurement type has already been uploaded.'
+            ]);
+        }
+
         $file = $request->file('dataset_file');
         $path = $file->storeAs('datasets', $file->getClientOriginalName(), 'public');
 
@@ -58,11 +72,13 @@ class DatasetController extends Controller
 
         foreach ($rows[0] as $index => $row) {
             // Skip header
-            if ($index === 0) continue;
-    
+            if ($index === 0)
+                continue;
+
             if ($request->dataset_measurement == 'Temperature') {
-                if (count($row) < 9) continue;
-    
+                if (count($row) < 9)
+                    continue;
+
                 SensorTemperature::create([
                     'sensor_id' => $request->dataset_sensor,
                     'red_phase_temp' => $row[1],
@@ -76,10 +92,11 @@ class DatasetController extends Controller
                     'updated_at' => now(),
                 ]);
             }
-    
+
             if ($request->dataset_measurement == 'Partial Discharge') {
-                if (count($row) < 15) continue;
-    
+                if (count($row) < 15)
+                    continue;
+
                 SensorPartialDischarge::create([
                     'sensor_id' => $request->dataset_sensor,
                     'LFB_Ratio' => $row[1],
@@ -132,8 +149,7 @@ class DatasetController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(Dataset $dataset)
-    {
-        {
+    { {
             $dataset->delete();
             return redirect()->route('dataset.index')->with('success', 'Dataset successfully deleted!');
         }

@@ -32,9 +32,9 @@
                                     <input name="dataset_file" type="file" id="dataset_file"
                                         class="form-control @error('dataset_file') is-invalid @enderror"
                                         value="{{ old('dataset_file') }}">
-                                    @error('dataset_file')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    @if ($errors->has('dataset_file'))
+                                        <div class="invalid-feedback">{{ $errors->first('dataset_file') }}</div>
+                                    @endif
                                 </div>
 
                                 <!-- Type Selection -->
@@ -64,10 +64,18 @@
                                             <option value="{{ $sensor->id }}">{{ $sensor->sensor_name }}</option>
                                         @endforeach
                                     </select>
-                                    @error('dataset_sensor')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    @if ($errors->has('dataset_sensor'))
+                                        <div class="invalid-feedback">{{ $errors->first('dataset_sensor') }}</div>
+                                    @endif
                                 </div>
+
+                                @if ($errors->has('custom_popup'))
+                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                        {{ $errors->first('custom_popup') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                            aria-label="Close"></button>
+                                    </div>
+                                @endif
 
                                 <!-- Submit Button -->
                                 <div class="d-flex justify-content-end">
@@ -99,7 +107,7 @@
                                     <th class="py-3">Sensor</th>
                                     <th class="py-3">Date</th>
                                     <th class="py-3">Status</th>
-                                    <th class="py-3">Action</th>
+                                    {{-- <th class="py-3">Action</th> --}}
                                 </tr>
                             </thead>
                             <tbody class="text-center">
@@ -112,7 +120,7 @@
                                             <td>{{ $dataset->sensor->sensor_name }}</td>
                                             <td>{{ $dataset->created_at }}</td>
                                             <td><span class="badge bg-success">Success</span></td>
-                                            <td>
+                                            {{-- <td>
                                                 @if (in_array('delete', $global_permissions['dataset_access'] ?? []) ||
                                                         in_array('full', $global_permissions['dataset_access'] ?? []))
                                                     <form action="{{ route('dataset.destroy', $dataset->id) }}"
@@ -125,7 +133,7 @@
                                                             class="border-0 bg-transparent text-danger bi bi-trash"></button>
                                                     </form>
                                                 @endif
-                                            </td>
+                                            </td> --}}
                                         </tr>
                                     @endforeach
                                 @else
@@ -143,7 +151,6 @@
                     </div>
                 </div>
             </div>
-
         </section>
     </main>
 @endsection

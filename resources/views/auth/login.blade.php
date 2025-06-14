@@ -129,10 +129,10 @@
 
         .hero-subtitle {
             font-size: 1.25rem;
-            opacity: 0.9;
+            opacity: 5;
             line-height: 1.6;
             margin-bottom: 2rem;
-            font-weight: 300;
+            font-weight: 500;
         }
 
         .hero-features {
@@ -551,9 +551,9 @@
                     </button>
                 </form>
 
-                <div class="register-link">
+                {{-- <div class="register-link">
                     Don't have an account? <a href="/register">Create an account</a>
-                </div>
+                </div> --}}
             </div>
         </div>
     </div>

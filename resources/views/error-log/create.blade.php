@@ -319,7 +319,7 @@
                 </div>
 
                 {{-- Status: Completed (Review Chart) --}}
-                @if ($error->status == 'Completed')
+                @if ($error->status == 'Completed' || $error->status == 'Review')
                     <div class="card shadow-sm border-0 rounded-3 mb-4" id="partialDischargeChart"
                         style="background: white; box-shadow: 0px 4px 20px rgba(120, 100, 200, 0.3);">
                         <div class="card-body">
@@ -349,7 +349,7 @@
                             <div class="card shadow-sm border-0 rounded-3 border-start border-warning border-4">
                                 <div class="card-header bg-transparent border-0 pt-4 pb-0">
                                     <h5 class="card-title fw-bold">
-                                        <i class="bi bi-clipboard-check text-warning me-2"></i>Resolution Report
+                                        <i class="bi bi-clipboard-check text-warning me-2"></i>Error Resolution Log
                                     </h5>
                                 </div>
                                 <div class="card-body pt-2">
@@ -374,7 +374,7 @@
                                         <div class="d-flex justify-content-end pb-2">
                                             <button type="submit" name="action" value="review"
                                                 class="btn btn-primary">
-                                                <i class="bi bi-check-circle me-1"></i> Submit Report
+                                                <i class="bi bi-check-circle me-1"></i> Submit
                                             </button>
                                         </div>
                                     </form>
@@ -618,7 +618,7 @@
                                                             @endif
                                                         @endforeach
                                                         |
-                                                        {{ \Carbon\Carbon::parse($error->Review_at)->format('M d, Y \a\t h:i A') }}
+                                                        {{ \Carbon\Carbon::parse($error->completed_at)->format('M d, Y \a\t h:i A') }}
                                                     </small>
                                                 </div>
                                             </div>
@@ -641,7 +641,7 @@
                                                         <h6 class="fw-bold mb-0">Manager Review</h6>
                                                         <small class="text-muted">
                                                             Completed on
-                                                            {{ \Carbon\Carbon::parse($error->completed_at)->format('M d, Y \a\t h:i A') }}
+                                                            {{ \Carbon\Carbon::parse($error->reviewed_at)->format('M d, Y \a\t h:i A') }}
                                                         </small>
                                                     </div>
                                                 </div>
@@ -735,7 +735,7 @@
                                     text: 'Timestamp'
                                 },
                                 ticks: {
-                                    maxTicksLimit: 20,
+                                    maxTicksLimit: 40,
                                     maxRotation: 45
                                 }
                             },

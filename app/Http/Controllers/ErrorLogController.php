@@ -115,16 +115,16 @@ class ErrorLogController extends Controller
         $staff = User::where('position', 'Staff')
             ->whereNotNull('email_verified_at')
             ->get();
-        // dd($error->updated_at);
+        // dd($error->sensor->sensor_id);
         if ($error->sensor_type == 'App\Models\SensorTemperature') {
             $datas = SensorTemperature::select('diff_temp','created_at')
                 ->where('sensor_id', $error->sensor->sensor_id)
-                ->whereBetween('created_at', [$error->created_at, $error->updated_at])
+                ->whereBetween('created_at', [$error->created_at, now()])
                 ->get();
         }elseif ($error->sensor_type == 'App\Models\SensorPartialDischarge') {
             $datas = SensorPartialDischarge::select('indicator','created_at')
                 ->where('sensor_id', $error->sensor->sensor_id)
-                ->whereBetween('created_at', [$error->created_at, $error->updated_at])
+                ->whereBetween('created_at', [$error->created_at, now()])
                 ->get();
         }
         return view('error-log.create', compact('error', 'staff','datas'));
@@ -177,6 +177,20 @@ class ErrorLogController extends Controller
             $sensor->sensor_status = $validated['sensor_status'];
             $sensor->save();
 
+            $error = ErrorLog::where('id', $errorLog->id)->first();
+            if ($error->sensor_type == 'App\Models\SensorTemperature') {
+                $temp = SensorTemperature::where('sensor_id', $error->sensor->sensor_id)
+                    ->orderBy('updated_at', 'desc')
+                    ->first();
+            } elseif ($error->sensor_type == 'App\Models\SensorPartialDischarge') {
+                $temp = SensorPartialDischarge::where('sensor_id', $error->sensor->sensor_id)
+                    ->orderBy('updated_at', 'desc')
+                    ->first();
+            }            
+            // dd($temp);
+            $temp->alert_triggered = 'normal';
+            $temp->save();
+
         } elseif ($request->action === 'quiry') {
             $validated = $request->validate([
                 'admin_review' => 'string',
@@ -206,6 +220,10 @@ class ErrorLogController extends Controller
             $errorLog->update([
                 'status' => 'Acknowledge',
             ]);
+
+            $errorLog->save();
+
+            return redirect()->back()->with('success', 'Error Log acknowledged successfully.');
 
         } elseif ($request->input('action') == 'assign') {
             // Assign staff

@@ -15,6 +15,7 @@ class SensorTemperature extends Model
         'blue_phase_temp',
         'max_temp',
         'min_temp',
+        'diff_temp',
         'variance_percent',
         'alert_triggered',
         'created_at',

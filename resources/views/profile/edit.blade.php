@@ -102,7 +102,7 @@
                                                 <input type="email" id="email" name="email"
                                                     class="form-control border-start-0 ps-0"
                                                     value="{{ old('email', Auth::user()->email) }}" required
-                                                    placeholder="Enter your email address">
+                                                    placeholder="Enter your email address" readonly>
                                                 <div class="invalid-feedback">Please provide a valid email address.</div>
                                             </div>
                                         </div>
@@ -131,7 +131,7 @@
                                                 <input type="text" id="department" name="department"
                                                     class="form-control border-start-0 ps-0"
                                                     value="{{ old('department', Auth::user()->department ?? '') }}"
-                                                    placeholder="Enter your department">
+                                                    placeholder="Enter your department" readonly>
                                             </div>
                                         </div>
                                     </div>

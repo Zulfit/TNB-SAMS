@@ -170,6 +170,78 @@
                             {{ $sensors->total() }} {{ Str::plural('sensor', $sensors->total()) }}
                         </span>
                     </div>
+                    <div class="card-body p-4">
+                        <form method="GET" id="filterForm" class="row g-3">
+                            <div class="col-md-4 col-lg-2">
+                                <label class="form-label small text-muted">Substation</label>
+                                <select class="form-select form-select-sm auto-filter" name="substation">
+                                    <option value="">All Substations</option>
+                                    @if (isset($substations) && count($substations) > 0)
+                                        @foreach ($substations as $substation)
+                                            <option value="{{ $substation->id }}"
+                                                {{ request('substation') == $substation->id ? 'selected' : '' }}>
+                                                {{ $substation->substation_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-lg-2">
+                                <label class="form-label small text-muted">Panel</label>
+                                <select class="form-select form-select-sm auto-filter" name="panel">
+                                    <option value="">All Panels</option>
+                                    @if (isset($panels) && count($panels) > 0)
+                                        @foreach ($panels as $panel)
+                                            <option value="{{ $panel->id }}"
+                                                {{ request('panel') == $panel->id ? 'selected' : '' }}>
+                                                {{ $panel->panel_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-lg-2">
+                                <label class="form-label small text-muted">Compartment</label>
+                                <select class="form-select form-select-sm auto-filter" name="compartment">
+                                    <option value="">All Compartments</option>
+                                    @if (isset($compartments) && count($compartments) > 0)
+                                        @foreach ($compartments as $compartment)
+                                            <option value="{{ $compartment->id }}"
+                                                {{ request('compartment') == $compartment->id ? 'selected' : '' }}>
+                                                {{ $compartment->compartment_name }}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-lg-2">
+                                <label class="form-label small text-muted">Measurement</label>
+                                <select class="form-select form-select-sm auto-filter" name="measurement">
+                                    <option value="">All Measurements</option>
+                                    <option value="Temperature"
+                                        {{ request('measurement') == 'Temperature' ? 'selected' : '' }}>Temperature
+                                    </option>
+                                    <option value="Partial Discharge"
+                                        {{ request('measurement') == 'Partial Discharge' ? 'selected' : '' }}>Partial
+                                        Discharge</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 col-lg-2">
+                                <label class="form-label small text-muted">Status</label>
+                                <select class="form-select form-select-sm auto-filter" name="status">
+                                    <option value="">All Statuses</option>
+                                    <option value="Active" {{ request('status') == 'Active' ? 'selected' : '' }}>Active
+                                    </option>
+                                    <option value="Inactive" {{ request('status') == 'Inactive' ? 'selected' : '' }}>
+                                        Inactive</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
                     <div class="card-body p-0">
                         <table class="table table-hover align-middle mb-0">
                             <thead class="table-light text-center">
@@ -256,6 +328,14 @@
                     </div>
                 </div>
             </div>
+
+            <script>
+                document.querySelectorAll('.auto-filter').forEach(function(select) {
+                    select.addEventListener('change', function() {
+                        document.getElementById('filterForm').submit();
+                    });
+                });
+            </script>            
 
         </section>
     </main>

@@ -18,14 +18,15 @@ class NewStaffRegistration extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct($user)
+    public function __construct($user,public string $telegramLink)
     {
         $this->user = $user;
+        $this->telegramLink = $telegramLink;
     }
 
     public function build()
     {
-        return $this->subject('New Staff Registration Pending Approval')
+        return $this->subject('')
                     ->view('emails.new-staff-registration');
     }
 
@@ -35,7 +36,7 @@ class NewStaffRegistration extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Staff Registration',
+            subject: 'Your Account Has Been Created',
         );
     }
 

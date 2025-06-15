@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\UserManagement;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class UserManagementController extends Controller
 {
@@ -33,8 +35,12 @@ class UserManagementController extends Controller
     public function store(Request $request)
     {
         // Validate request
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'id_staff' => ['required', 'string', 'max:50', 'unique:users,id_staff'],
+            'department' => ['required', 'in:Distribution Network Division,Transmission Division'],
+            'position' => ['required', 'in:Manager,Staff'],
         ]);
 
         // Define all your screens
@@ -57,15 +63,31 @@ class UserManagementController extends Controller
             $permissions[$screen] = $request->input($key, []);
         }
 
-        // Store in DB
-        UserManagement::updateOrCreate(
-            ['user_id' => $request->user_id],
-            ['permissions' => $permissions]
-        );
+        $user = User::create([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'id_staff' => $validatedData['id_staff'],
+            'department' => $validatedData['department'],
+            'position' => $validatedData['position'],
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'), // Default password
+        ]);
 
-        $staff = User::find($request->user_id);
-        $staff->email_verified_at = now();
-        $staff->save();
+        if($user->position == 'Staff'){
+            $telegramLink = 'https://t.me/+HE_QqRrNfsIzNGVl';
+        }else{
+            $telegramLink = 'https://t.me/+CstEvaCqXLhiMmNl';
+        }
+        // dd($user);
+
+        $access= UserManagement::create([
+            'user_id' => $user->id,
+            'permissions' => $permissions
+        ]);
+
+        // dd($access);
+        
+        Mail::to($user->email)->send(new \App\Mail\NewStaffRegistration($user,$telegramLink));
 
         return redirect()->back()->with('success', 'User verified successfully.');
     }

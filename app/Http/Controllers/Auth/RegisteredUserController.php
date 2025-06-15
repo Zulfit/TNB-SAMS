@@ -49,7 +49,7 @@ class RegisteredUserController extends Controller
         ]);
 
 
-        Mail::to('tnbsamsa@gmail.com')->send(new \App\Mail\NewStaffRegistration($user));
+        // Mail::to('tnbsamsa@gmail.com')->send(new \App\Mail\NewStaffRegistration($user));
 
         // return redirect(route('dashboard', absolute: false));
         return redirect()->route('login')->with('message', 'Your account is awaiting approval. You will receive an email once approved.');

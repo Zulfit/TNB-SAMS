@@ -29,29 +29,30 @@
                             @csrf
                             @method('PUT')
 
-                            <!-- User's Name (Full Width) -->
                             <div class="mb-3">
                                 <label class="form-label fw-semibold">User’s Name</label>
-                                <input value="{{ $user->name }}" type="text" class="form-control readonly-field"
-                                    readonly>
+                                <input type="text" class="form-control readonly-field" value="{{ $user->name }}" readonly>
                             </div>
 
-                            <!-- Email, ID, and Role in One Row -->
-                            <div class="row g-3 mb-4">
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">User’s Email</label>
-                                    <input value="{{ $user->email }}" type="text" class="form-control readonly-field"
-                                        readonly>
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label fw-semibold">User's Email</label>
+                                    <input type="email" class="form-control readonly-field" value="{{ $user->email }}" readonly>
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">User’s ID</label>
-                                    <input value="{{ $user->id_staff }}" type="text" class="form-control readonly-field"
-                                        readonly>
+                                <div class="col-md-6">
+                                    <label for="id_staff" class="form-label fw-semibold">User's ID</label>
+                                    <input type="text" class="form-control readonly-field" value="{{ $user->id_staff }}" readonly>
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">User’s Role</label>
-                                    <input value="{{ $user->position }}" type="text" class="form-control readonly-field"
-                                        readonly>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="department" class="form-label fw-semibold">User's Department</label>
+                                    <input type="text" class="form-control readonly-field" value="{{ $user->department }}" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="position" class="form-label fw-semibold">User's Position</label>
+                                    <input type="text" class="form-control readonly-field" value="{{ $user->position }}" readonly>
                                 </div>
                             </div>
 
@@ -137,38 +138,40 @@
                             <tbody class="text-center">
                                 @if (isset($users) && count($users) > 0)
                                     @foreach ($users as $user)
-                                        <tr>
-                                            <td> {{ $loop->iteration }} </td>
-                                            <td> {{ $user->user->name }} </td>
-                                            <td> {{ $user->user->position }} </td>
-                                            <td><span class="badge bg-success">Success</span></td>
-                                            <td>
-                                                @if (in_array('view', $global_permissions['user_management_access'] ?? []) ||
-                                                        in_array('full', $global_permissions['user_management_access'] ?? []))
-                                                    <a href="{{ route('user_management.show', $user->id) }}"
-                                                        class="text-primary bi bi-eye me-2"></a>
-                                                @endif
+                                        @if ($user->user->position !== 'Admin')
+                                            <tr>
+                                                <td> {{ $loop->iteration }} </td>
+                                                <td> {{ $user->user->name }} </td>
+                                                <td> {{ $user->user->position }} </td>
+                                                <td><span class="badge bg-success">Success</span></td>
+                                                <td>
+                                                    @if (in_array('view', $global_permissions['user_management_access'] ?? []) ||
+                                                            in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                        <a href="{{ route('user_management.show', $user->id) }}"
+                                                            class="text-primary bi bi-eye me-2"></a>
+                                                    @endif
 
-                                                @if (in_array('edit', $global_permissions['user_management_access'] ?? []) ||
-                                                        in_array('full', $global_permissions['user_management_access'] ?? []))
-                                                    <a
-                                                        href="{{ route('user_management.edit', $user->id) }}"class="text-success bi bi-pencil-square"></a>
-                                                @endif
+                                                    @if (in_array('edit', $global_permissions['user_management_access'] ?? []) ||
+                                                            in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                        <a
+                                                            href="{{ route('user_management.edit', $user->id) }}"class="text-success bi bi-pencil-square"></a>
+                                                    @endif
 
-                                                @if (in_array('delete', $global_permissions['user_management_access'] ?? []) ||
-                                                        in_array('full', $global_permissions['user_management_access'] ?? []))
-                                                    <form action="{{ route('user_management.destroy', $user->id) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Are you sure you want to delete this user?');"
-                                                        style="display: inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                                    </form>
-                                                @endif
-                                            </td>
-                                        </tr>
+                                                    @if (in_array('delete', $global_permissions['user_management_access'] ?? []) ||
+                                                            in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                        <form action="{{ route('user_management.destroy', $user->id) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                                            style="display: inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                        </form>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 @else
                                     <tr>

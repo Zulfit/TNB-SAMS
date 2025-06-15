@@ -30,36 +30,75 @@
 
                                 <!-- User Selection -->
                                 <div class="mb-4">
-                                    <label for="user-select" class="form-label fw-semibold">User’s Name</label>
-                                    <select name="user_id" id="user-select" class="form-select @error('user_id') is-invalid @enderror">
-                                        <option value="" selected disabled>Select a user</option>
-                                        @foreach ($unverified_users as $unverified_user)
-                                            <option value="{{ $unverified_user->id }}"
-                                                data-email="{{ $unverified_user->email }}"
-                                                data-id="{{ $unverified_user->id_staff }}"
-                                                data-role="{{ $unverified_user->position }}">
-                                                {{ $unverified_user->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @if ($errors->has('user_id'))
-                                        <div class="invalid-feedback">{{ $errors->first('user_id') }}</div>
+                                    <label for="name" class="form-label fw-semibold">User's Name</label>
+                                    <input type="text" id="name" name="name"
+                                        class="form-control @error('name') is-invalid @enderror"
+                                        placeholder="Enter user name" value="{{ old('name') }}">
+                                    @if ($errors->has('name'))
+                                        <div class="invalid-feedback">{{ $errors->first('name') }}</div>
                                     @endif
                                 </div>
 
-                                <!-- User Details (Auto-filled) -->
                                 <div class="row mb-4">
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-semibold">User’s Email</label>
-                                        <input type="text" id="user-email" class="form-control readonly-field" readonly>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label fw-semibold">User's Email</label>
+                                        <input type="email" id="email" name="email"
+                                            class="form-control @error('email') is-invalid @enderror"
+                                            placeholder="Enter user email" value="{{ old('email') }}">
+                                        @if ($errors->has('email'))
+                                            <div class="invalid-feedback">{{ $errors->first('email') }}</div>
+                                        @endif
                                     </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-semibold">User’s ID</label>
-                                        <input type="text" id="user-id" class="form-control readonly-field" readonly>
+                                    <div class="col-md-6">
+                                        <label for="id_staff" class="form-label fw-semibold">User's ID</label>
+                                        <input type="text" id="id_staff" name="id_staff"
+                                            class="form-control @error('id_staff') is-invalid @enderror"
+                                            placeholder="Enter user ID" value="{{ old('id_staff') }}">
+                                        @if ($errors->has('id_staff'))
+                                            <div class="invalid-feedback">{{ $errors->first('id_staff') }}</div>
+                                        @endif
                                     </div>
-                                    <div class="col-md-4">
-                                        <label class="form-label fw-semibold">User’s Role</label>
-                                        <input type="text" id="user-role" class="form-control readonly-field" readonly>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label for="department" class="form-label fw-semibold">User's Department</label>
+                                        @php
+                                            $dep_list = ['Distribution Network Division', 'Transmission Division'];
+                                        @endphp
+                                        <select id="department" name="department"
+                                            class="form-control @error('department') is-invalid @enderror">
+                                            <option value="">-- Select Department --</option>
+                                            @foreach ($dep_list as $dep)
+                                                <option value="{{ $dep }}"
+                                                    {{ old('department') == $dep ? 'selected' : '' }}>
+                                                    {{ $dep }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->has('department'))
+                                            <div class="invalid-feedback">{{ $errors->first('department') }}</div>
+                                        @endif
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        @php
+                                            $positions = ['Manager', 'Staff'];
+                                        @endphp
+                                        <label for="position" class="form-label fw-semibold">User's Position</label>
+                                        <select id="position" name="position"
+                                            class="form-control @error('position') is-invalid @enderror">
+                                            <option value="">-- Select Role --</option>
+                                            @foreach ($positions as $position)
+                                                <option value="{{ $position }}"
+                                                    {{ old('position') == $position ? 'selected' : '' }}>
+                                                    {{ $position }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->has('position'))
+                                            <div class="invalid-feedback">{{ $errors->first('position') }}</div>
+                                        @endif
                                     </div>
                                 </div>
 
@@ -144,38 +183,40 @@
                             <tbody class="text-center">
                                 @if (isset($users) && count($users) > 0)
                                     @foreach ($users as $user)
-                                        <tr>
-                                            <td> {{ $loop->iteration }} </td>
-                                            <td> {{ $user->user->name }} </td>
-                                            <td> {{ $user->user->position }} </td>
-                                            <td><span class="badge bg-success">Success</span></td>
-                                            <td>
-                                                @if (in_array('view', $global_permissions['user_management_access'] ?? []) ||
-                                                        in_array('full', $global_permissions['user_management_access'] ?? []))
-                                                    <a href="{{ route('user_management.show', $user->id) }}"
-                                                        class="text-primary bi bi-eye me-2"></a>
-                                                @endif
+                                        @if ($user->user->position !== 'Admin')
+                                            <tr>
+                                                <td> {{ $loop->iteration }} </td>
+                                                <td> {{ $user->user->name }} </td>
+                                                <td> {{ $user->user->position }} </td>
+                                                <td><span class="badge bg-success">Success</span></td>
+                                                <td>
+                                                    @if (in_array('view', $global_permissions['user_management_access'] ?? []) ||
+                                                            in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                        <a href="{{ route('user_management.show', $user->id) }}"
+                                                            class="text-primary bi bi-eye me-2"></a>
+                                                    @endif
 
-                                                @if (in_array('edit', $global_permissions['user_management_access'] ?? []) ||
-                                                        in_array('full', $global_permissions['user_management_access'] ?? []))
-                                                    <a
-                                                        href="{{ route('user_management.edit', $user->id) }}"class="text-success bi bi-pencil-square"></a>
-                                                @endif
+                                                    @if (in_array('edit', $global_permissions['user_management_access'] ?? []) ||
+                                                            in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                        <a
+                                                            href="{{ route('user_management.edit', $user->id) }}"class="text-success bi bi-pencil-square"></a>
+                                                    @endif
 
-                                                @if (in_array('delete', $global_permissions['user_management_access'] ?? []) ||
-                                                        in_array('full', $global_permissions['user_management_access'] ?? []))
-                                                    <form action="{{ route('user_management.destroy', $user->id) }}"
-                                                        method="POST"
-                                                        onsubmit="return confirm('Are you sure you want to delete this user?');"
-                                                        style="display: inline;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit"
-                                                            class="border-0 bg-transparent text-danger bi bi-trash"></button>
-                                                    </form>
-                                                @endif
-                                            </td>
-                                        </tr>
+                                                    @if (in_array('delete', $global_permissions['user_management_access'] ?? []) ||
+                                                            in_array('full', $global_permissions['user_management_access'] ?? []))
+                                                        <form action="{{ route('user_management.destroy', $user->id) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                                            style="display: inline;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="border-0 bg-transparent text-danger bi bi-trash"></button>
+                                                        </form>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 @else
                                     <tr>

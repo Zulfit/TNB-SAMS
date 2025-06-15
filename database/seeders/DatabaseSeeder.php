@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call(SensorSeeder::class);
 
-        $this->call(ErrorSeeder::class);
+        // $this->call(ErrorSeeder::class);
 
         $this->call(SensorTempSeeder::class);
 

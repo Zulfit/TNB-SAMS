@@ -16,12 +16,14 @@ class SensorPDSedder extends Seeder
     {
         $startTime = Carbon::create(now()->year, 4, 1)->startOfDay();
         // $endTime = Carbon::create(now()->year, 5, 31)->endOfDay();
-        $endTime = now(); 
+        $endTime = now();
         $data = [];
 
         $sensorIds = DB::table('sensors')
             ->where('sensor_measurement', 'Partial Discharge')
-            ->where('sensor_status','Online')
+            ->where('sensor_substation', 1)
+            ->where('sensor_panel', 1)
+            ->where('sensor_status', 'Online')
             ->pluck('id')
             ->toArray();
 
@@ -32,33 +34,48 @@ class SensorPDSedder extends Seeder
 
                 if ($levelRoll <= 85) {
                     // Normal: 85% of time
-                    $lfbRatio = 0;
-                    $mfbRatio = 0;
-                    $hfbRatio = 0;
-                    $lfbEPPC = 0;
-                    $mfbEPPC = 0;
-                    $hfbEPPC = 0;
+                    $lfbRatio = $mfbRatio = $hfbRatio = 0;
+                    $lfbEPPC = $mfbEPPC = $hfbEPPC = 0;
+
+                    $lfbLinear = pow(10, $lfbRatio / 10);
+                    $mfbLinear = pow(10, $mfbRatio / 10);
+                    $hfbLinear = pow(10, $hfbRatio / 10);
+
+                    $meanLinear = ($lfbLinear + $mfbLinear + $hfbLinear) / 3;
+                    $meanRatio = $meanLinear > 0 ? 10 * log10($meanLinear) : 0;
+                    $meanEPPC = ($lfbEPPC + $mfbEPPC + $hfbEPPC) / 3;
+
+                    $indicator = 0;
                 } else {
                     // Force values to generate an indicator between 1–3 (Critical)
-                    $lfbRatio = rand(0, 5);  // dB
-                    $mfbRatio = rand(0, 5);
-                    $hfbRatio = rand(0, 5);
-                    $lfbEPPC = rand(0, 5);
-                    $mfbEPPC = rand(0, 5);
-                    $hfbEPPC = rand(0, 5);
-                }                
+                    $lfbRatio = 10 + rand(0, 100) / 100; // e.g. 10.00 to 11.00 dB
+                    $mfbRatio = 11 + rand(0, 100) / 100;
+                    $hfbRatio = 12 + rand(0, 100) / 100;
 
-                // Convert ratios to linear
-                $lfbLinear = pow(10, $lfbRatio / 10);
-                $mfbLinear = pow(10, $mfbRatio / 10);
-                $hfbLinear = pow(10, $hfbRatio / 10);
+                    $lfbEPPC = 0.01 + rand(0, 30) / 1000; // e.g. 0.01 to 0.04
+                    $mfbEPPC = 0.02 + rand(0, 30) / 1000;
+                    $hfbEPPC = 0.03 + rand(0, 30) / 1000;
 
-                $meanLinear = ($lfbLinear + $mfbLinear + $hfbLinear) / 3;
-                $meanRatio = $meanLinear > 0 ? 10 * log10($meanLinear) : 0;
+                    $lfbLinear = pow(10, $lfbRatio / 10);
+                    $mfbLinear = pow(10, $mfbRatio / 10);
+                    $hfbLinear = pow(10, $hfbRatio / 10);
 
-                $meanEPPC = ($lfbEPPC + $mfbEPPC + $hfbEPPC) / 3;
+                    $meanLinear = ($lfbLinear + $mfbLinear + $hfbLinear) / 3;
+                    $meanRatio = 10 * log10($meanLinear);
+                    $meanEPPC = ($lfbEPPC + $mfbEPPC + $hfbEPPC) / 3;
 
-                $indicator = round($meanRatio * $meanEPPC, 2);
+                    // Calculate indicator to be between 0 and 1 for critical alert
+                    $indicator = round($meanRatio * $meanEPPC, 2);
+
+                    // Ensure indicator is between 0 and 1
+                    if ($indicator >= 1.0) {
+                        $indicator = 0.1 + rand(0, 800) / 1000; // 0.1 to 0.9
+                        $indicator = round($indicator, 2);
+                    } elseif ($indicator <= 0) {
+                        $indicator = 0.1 + rand(0, 800) / 1000; // 0.1 to 0.9
+                        $indicator = round($indicator, 2);
+                    }
+                }
 
                 if ($indicator == 0) {
                     $alert = 'normal';

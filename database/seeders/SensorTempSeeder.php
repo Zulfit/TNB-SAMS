@@ -21,6 +21,8 @@ class SensorTempSeeder extends Seeder
 
         $sensorIds = DB::table('sensors')
             ->where('sensor_measurement', 'Temperature')
+            ->where('sensor_substation',1)
+            ->where('sensor_panel',1)
             ->where('sensor_status', 'Online')
             ->pluck('id')
             ->toArray();
@@ -30,33 +32,34 @@ class SensorTempSeeder extends Seeder
             foreach ($sensorIds as $sensorId) {
                 // Biased temperature generation for more 'normal' data
                 $levelRoll = rand(1, 100);
-
-                if ($levelRoll <= 80) {
-                    // Normal (80%)
-                    $base = rand(25, 30);
-                    $red = $base + rand(-5, 5) / 10;
-                    $yellow = $base + rand(-5, 5) / 10;
-                    $blue = $base + rand(-5, 5) / 10;
-                } elseif ($levelRoll <= 95) {
-                    // Warn (15%)
-                    $base = rand(25, 30);
-                    $red = $base + rand(-10, 10) / 10;
-                    $yellow = $base + rand(-15, 15) / 10;
-                    $blue = $base + rand(-10, 10) / 10;
-                } else {
-                    // Critical (5%)
-                    $base = rand(25, 30);
-                    $red = $base + rand(-20, 20) / 10;
-                    $yellow = $base + rand(-25, 25) / 10;
-                    $blue = $base + rand(-20, 20) / 10;
-                }
-
-                $temps = [$red, $yellow, $blue];
-                $max = max($temps);
-                $min = min($temps);
-                $diff = $max - $min;
+                $base = rand(25, 30); // Common base
+            
+                do {
+                    if ($levelRoll <= 80) {
+                        // Normal (80%) - Tight variation
+                        $red = $base + rand(-5, 5) / 10;
+                        $yellow = $base + rand(-5, 5) / 10;
+                        $blue = $base + rand(-5, 5) / 10;
+                    } elseif ($levelRoll <= 95) {
+                        // Warn (15%) - Moderate variation
+                        $red = $base + rand(-10, 10) / 10;
+                        $yellow = $base + rand(-10, 10) / 10;
+                        $blue = $base + rand(-10, 10) / 10;
+                    } else {
+                        // Critical (5%) - Still bounded variation
+                        $red = $base + rand(-19, 19) / 10;
+                        $yellow = $base + rand(-19, 19) / 10;
+                        $blue = $base + rand(-19, 19) / 10;
+                    }
+            
+                    $temps = [$red, $yellow, $blue];
+                    $max = max($temps);
+                    $min = min($temps);
+                    $diff = $max - $min;
+                } while ($diff >= 2); // Regenerate until diff is less than 2
+            
                 $variance = round(($max - $min) / $max * 100, 2);
-
+            
                 if ($diff >= 1) {
                     $alertLevel = 'critical';
                 } elseif ($diff >= 0.8) {
@@ -64,7 +67,7 @@ class SensorTempSeeder extends Seeder
                 } else {
                     $alertLevel = 'normal';
                 }
-
+            
                 $data[] = [
                     'sensor_id' => $sensorId,
                     'red_phase_temp' => $red,
@@ -78,7 +81,7 @@ class SensorTempSeeder extends Seeder
                     'created_at' => $startTime->copy(),
                     'updated_at' => $startTime->copy(),
                 ];
-            }
+            }            
 
             // Insert in chunks of 1000
             if (count($data) >= 1000) {

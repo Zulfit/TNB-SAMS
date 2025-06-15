@@ -69,9 +69,7 @@ window.Echo.channel('sensor-alerts')
                 
                 // Show badge if it was hidden
                 if (currentCount > 0) {
-                    badge.style.display = 'inline';
-                    // or if using Bootstrap classes:
-                    // badge.classList.remove('d-none');
+                    badge.classList.remove('d-none');
                 }
             }
         });

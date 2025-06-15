@@ -76,7 +76,7 @@ class SensorAlertNotification extends Notification
             $text .= "Panel: " . $this->escapeHtml($this->sensorData['panel']) . "\n";
             $text .= "Compartment: " . $this->escapeHtml($this->sensorData['compartment']) . "\n";
             $text .= "Sensor: " . $this->escapeHtml($this->sensorData['sensor_name']) . "\n";
-            $text .= "Partial Discharge Level: " . $this->escapeHtml($this->sensorData['discharge_level']) . "\n";
+            $text .= "Indicator: " . $this->escapeHtml($this->sensorData['indicator']) . "\n";
             $text .= "Status: <b>" . $this->escapeHtml(strtoupper($this->sensorData['alert_level'])) . "</b>";
         }
 

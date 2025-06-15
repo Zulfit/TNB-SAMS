@@ -23,6 +23,8 @@ class ReportController extends Controller
      */
     public function index()
     {
+        $this->checkAccessOrAbort('report_access');
+
         $substations = Substation::all();
         $panels = Panels::all();
         $compartments = Compartments::all();

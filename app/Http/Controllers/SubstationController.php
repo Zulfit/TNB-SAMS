@@ -12,6 +12,8 @@ class SubstationController extends Controller
      */
     public function index()
     {
+        $this->checkAccessOrAbort('substation_access');
+
         $substations = Substation::all();
 
         return view('substation.index',compact('substations'));

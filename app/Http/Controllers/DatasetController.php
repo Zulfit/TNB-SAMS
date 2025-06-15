@@ -19,6 +19,7 @@ class DatasetController extends Controller
      */
     public function index()
     {
+        $this->checkAccessOrAbort('dataset_access');
         $sensors = Sensor::all();
         $datasets = Dataset::all();
 
@@ -76,7 +77,7 @@ class DatasetController extends Controller
                 continue;
 
             if ($request->dataset_measurement == 'Temperature') {
-                if (count($row) < 9)
+                if (count($row) < 10)
                     continue;
 
                 SensorTemperature::create([
@@ -86,9 +87,10 @@ class DatasetController extends Controller
                     'blue_phase_temp' => $row[3],
                     'max_temp' => $row[4],
                     'min_temp' => $row[5],
-                    'variance_percent' => $row[6],
-                    'alert_triggered' => $row[7],
-                    'created_at' => $row[8],
+                    'diff_temp' => $row[6],
+                    'variance_percent' => $row[7],
+                    'alert_triggered' => $row[8],
+                    'created_at' => $row[9],
                     'updated_at' => now(),
                 ]);
             }

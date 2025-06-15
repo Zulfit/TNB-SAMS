@@ -23,7 +23,8 @@ class ErrorLogController extends Controller
      */
     public function index(Request $request)
     {
-        // Base query: load nested relationships (sensor.sensor.substation, etc.)
+        $this->checkAccessOrAbort('error_log_access');
+
         $query = ErrorLog::with([
             'sensor.sensor.substation',
             'sensor.sensor.panel',
@@ -31,70 +32,67 @@ class ErrorLogController extends Controller
             'user'
         ]);
 
-        // Filter by user role
+        // Restrict to staff if needed
         if (Auth::user()->position == 'Staff') {
             $query->where('pic', Auth::user()->id);
         }
 
-        // Filters using nested whereHas for substation/panel/compartment (through sensor.sensor)
-        if ($request->filled('substation')) {
-            $query->whereHas('sensor.sensor', function ($q) use ($request) {
-                $q->where('sensor_substation', $request->substation);
-            });
-        }
-
-        if ($request->filled('panel')) {
-            $query->whereHas('sensor.sensor', function ($q) use ($request) {
-                $q->where('sensor_panel', $request->panel);
-            });
-        }
-
-        if ($request->filled('compartment')) {
-            $query->whereHas('sensor.sensor', function ($q) use ($request) {
-                $q->where('sensor_compartment', $request->compartment);
-            });
-        }
-
-        if ($request->filled('measurement')) {
-            $query->whereHas('sensor.sensor', function ($q) use ($request) {
-                $q->where('sensor_measurement', $request->measurement);
-            });
-        }
-
+        // Simplified filters
         if ($request->filled('error_id')) {
             $query->where('id', 'like', '%' . $request->error_id . '%');
         }
 
-        if ($request->filled('state')) {
-            $query->where('state', $request->state);
+        if ($request->filled('substation')) {
+            $query->whereHasMorph('sensor', [SensorTemperature::class, SensorPartialDischarge::class], function ($q) use ($request) {
+                $q->whereHas('sensor.substation', function ($q2) use ($request) {
+                    $q2->where('id', $request->substation);
+                });
+            });
+        }
+        
+        if ($request->filled('panel')) {
+            $query->whereHasMorph('sensor', [SensorTemperature::class, SensorPartialDischarge::class], function ($q) use ($request) {
+                $q->whereHas('sensor.panel', function ($q2) use ($request) {
+                    $q2->where('id', $request->panel);
+                });
+            });
+        }
+
+        if ($request->filled('compartment')) {
+            $query->whereHasMorph('sensor', [SensorTemperature::class, SensorPartialDischarge::class], function ($q) use ($request) {
+                $q->whereHas('sensor.compartment', function ($q2) use ($request) {
+                    $q2->where('id', $request->compartment);
+                });
+            });
+        }
+
+        if ($request->filled('severity')) {
+            $query->where('severity', $request->severity);
         }
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Get the filtered results
         $errors = $query->orderBy('updated_at', 'desc')->get();
 
-        // Get filter options
+        // Filter options
         $substations = Substation::all();
         $panels = Panels::all();
         $compartments = Compartments::all();
-
-        $measurements = Sensor::distinct()->pluck('sensor_measurement')->filter()->sort()->values();
-        $states = ErrorLog::distinct()->pluck('state')->filter()->sort()->values();
+        $states = ['Normal','Warning','Critical'];
         $statuses = ['New', 'Acknowledge', 'Review', 'Quiry', 'Completed'];
 
         return view('error-log.index', compact(
             'errors',
             'substations',
-            'panels',
-            'compartments',
-            'measurements',
             'states',
-            'statuses'
+            'statuses',
+            'panels',
+            'compartments'
         ));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -116,18 +114,19 @@ class ErrorLogController extends Controller
             ->whereNotNull('email_verified_at')
             ->get();
         // dd($error->sensor->sensor_id);
+        $pd = 5;
         if ($error->sensor_type == 'App\Models\SensorTemperature') {
-            $datas = SensorTemperature::select('diff_temp','created_at')
+            $datas = SensorTemperature::select('diff_temp', 'created_at')
                 ->where('sensor_id', $error->sensor->sensor_id)
                 ->whereBetween('created_at', [$error->created_at, now()])
                 ->get();
-        }elseif ($error->sensor_type == 'App\Models\SensorPartialDischarge') {
-            $datas = SensorPartialDischarge::select('indicator','created_at')
-                ->where('sensor_id', $error->sensor->sensor_id)
+        } elseif ($error->sensor_type == 'App\Models\SensorPartialDischarge') {
+            $datas = SensorPartialDischarge::select('indicator', 'created_at')
+                ->where('sensor_id', $pd)
                 ->whereBetween('created_at', [$error->created_at, now()])
                 ->get();
         }
-        return view('error-log.create', compact('error', 'staff','datas'));
+        return view('error-log.create', compact('error', 'staff', 'datas'));
     }
 
     /**
@@ -177,20 +176,6 @@ class ErrorLogController extends Controller
             $sensor->sensor_status = $validated['sensor_status'];
             $sensor->save();
 
-            $error = ErrorLog::where('id', $errorLog->id)->first();
-            if ($error->sensor_type == 'App\Models\SensorTemperature') {
-                $temp = SensorTemperature::where('sensor_id', $error->sensor->sensor_id)
-                    ->orderBy('updated_at', 'desc')
-                    ->first();
-            } elseif ($error->sensor_type == 'App\Models\SensorPartialDischarge') {
-                $temp = SensorPartialDischarge::where('sensor_id', $error->sensor->sensor_id)
-                    ->orderBy('updated_at', 'desc')
-                    ->first();
-            }            
-            // dd($temp);
-            $temp->alert_triggered = 'normal';
-            $temp->save();
-
         } elseif ($request->action === 'quiry') {
             $validated = $request->validate([
                 'admin_review' => 'string',
@@ -205,6 +190,22 @@ class ErrorLogController extends Controller
             $sensor->sensor_status = $validated['sensor_status'];
             $sensor->save();
 
+            $error = ErrorLog::where('id', $errorLog->id)->first();
+            // dd($error->sensor->sensor_id);
+            $pd_id = 5;
+            if ($error->sensor_type == 'App\Models\SensorTemperature') {
+                $temp = SensorTemperature::where('sensor_id', $error->sensor->sensor_id)
+                    ->orderBy('updated_at', 'desc')
+                    ->first();
+            } elseif ($error->sensor_type == 'App\Models\SensorPartialDischarge') {
+                $temp = SensorPartialDischarge::where('sensor_id', $pd_id)
+                    ->orderBy('updated_at', 'desc')
+                    ->first();
+            }
+            // dd($temp);
+            $temp->alert_triggered = 'normal';
+            $temp->save();
+
         } elseif ($request->action === 'review') {
             $validated = $request->validate([
                 'report' => 'required|string'
@@ -215,6 +216,22 @@ class ErrorLogController extends Controller
                 $errorLog->report = $validated['report'],
                 $errorLog->completed_at = now()
             ]);
+
+            $error = ErrorLog::where('id', $errorLog->id)->first();
+            // dd($error->sensor->sensor_id);
+            $pd_id = 5;
+            if ($error->sensor_type == 'App\Models\SensorTemperature') {
+                $temp = SensorTemperature::where('sensor_id', $error->sensor->sensor_id)
+                    ->orderBy('updated_at', 'desc')
+                    ->first();
+            } elseif ($error->sensor_type == 'App\Models\SensorPartialDischarge') {
+                $temp = SensorPartialDischarge::where('sensor_id', $pd_id)
+                    ->orderBy('updated_at', 'desc')
+                    ->first();
+            }
+            // dd($temp);
+            $temp->alert_triggered = 'normal';
+            $temp->save();
 
         } elseif ($request->action === 'acknowledge') {
             $errorLog->update([

@@ -20,6 +20,8 @@ class AnalyticsController extends Controller
      */
     public function index(Request $request)
     {
+        $this->checkAccessOrAbort('analytics_access');
+
         $sensors = Sensor::query()
             ->when($request->substation, fn($q) => $q->where('sensor_substation', $request->substation))
             ->when($request->panel, fn($q) => $q->where('sensor_panel', $request->panel))

@@ -15,15 +15,28 @@ class SensorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $substations = Substation::all();
-        $panels = Panels::all();
-        $compartments = Compartments::all();
-        // $sensors = Sensor::with('substation')->get();
-        $sensors = Sensor::with(['substation', 'panel', 'compartment'])->paginate(10);
+        $this->checkAccessOrAbort('sensor_access');
 
-        return view('sensor.index', compact('substations', 'sensors', 'panels', 'compartments'));
+        $sensors = Sensor::query()
+            ->when($request->substation, fn($q) => $q->where('sensor_substation', $request->substation))
+            ->when($request->panel, fn($q) => $q->where('sensor_panel', $request->panel))
+            ->when($request->compartment, fn($q) => $q->where('sensor_compartment', $request->compartment))
+            ->when($request->measurement, fn($q) => $q->where('sensor_measurement', $request->measurement))
+            ->when($request->status, fn($q) => $q->where('sensor_status', $request->status))
+            ->with(['substation', 'panel', 'compartment'])
+            ->orderByDesc('updated_at')
+            ->paginate(10)
+            ->withQueryString();
+
+
+        return view('sensor.index', [
+            'sensors' => $sensors,        
+            'substations' => Substation::all(),
+            'panels' => Panels::all(),
+            'compartments' => Compartments::all(),
+        ]);
     }
 
     /**
@@ -45,6 +58,7 @@ class SensorController extends Controller
             'sensor_compartment' => 'required|exists:compartments,id',
             'sensor_substation' => 'required|exists:substations,id',
             'sensor_date' => 'required|date|before_or_equal:today',
+            'sensor_measurement' => 'required',
             'sensor_status' => 'required',
         ]);
 
@@ -62,6 +76,7 @@ class SensorController extends Controller
             'sensor_panel' => $validated['sensor_panel'],
             'sensor_compartment' => $validated['sensor_compartment'],
             'sensor_substation' => $validated['sensor_substation'],
+            'sensor_measurement' => $validated['sensor_measurement'],
             'sensor_date' => $validated['sensor_date'],
             'sensor_status' => $validated['sensor_status'],
         ]);
@@ -165,6 +180,7 @@ class SensorController extends Controller
             'sensor_panel' => 'required|exists:panels,id',
             'sensor_compartment' => 'required|exists:compartments,id',
             'sensor_substation' => 'required|exists:substations,id',
+            'sensor_measurement' => 'required',
             'sensor_date' => 'required|date|before_or_equal:today',
             'sensor_status' => 'required',
         ]);
@@ -173,6 +189,7 @@ class SensorController extends Controller
         $sensor->sensor_panel = $request->sensor_panel;
         $sensor->sensor_compartment = $request->sensor_compartment;
         $sensor->sensor_substation = $request->sensor_substation;
+        $sensor->sensor_measurement = $request->sensor_measurement;
         $sensor->sensor_date = $request->sensor_date;
         $sensor->sensor_status = $request->sensor_status;
 

@@ -15,6 +15,8 @@ class UserManagementController extends Controller
      */
     public function index()
     {
+        $this->checkAccessOrAbort('user_management_access');
+
         $unverified_users = User::where('email_verified_at', NULL)->get();
         $users = UserManagement::with('user')->get();
 

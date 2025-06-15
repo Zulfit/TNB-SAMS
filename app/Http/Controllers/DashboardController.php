@@ -9,6 +9,7 @@ use App\Models\Sensor;
 use App\Models\SensorTemperature;
 use App\Models\Substation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -20,6 +21,14 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
+        $this->checkAccessOrAbort('dashboard_access');
+        $user = Auth::user();
+        $totalTasks = ErrorLog::where('pic', $user->id)
+            ->where('status', "New")
+            ->count();
+        $totalQuiry = ErrorLog::where('pic', $user->id)
+            ->where('status', "Quiry")
+            ->count();
         $substations = Substation::all();
         $panels = Panels::all();
         $compartments = Compartments::all();
@@ -31,10 +40,10 @@ class DashboardController extends Controller
 
         // Calculate totals - some filtered by year, some not
         $total_substation = Substation::count();
-        $total_sensor = Sensor::where('sensor_status', 'Active')->count();
+        $total_sensor = Sensor::where('sensor_status', 'Online')->count();
 
         // Build query for failures based on filters
-        $failureQuery = ErrorLog::query();
+        $failureQuery = ErrorLog::where('status', '!=', 'Completed');
         $warningQuery = ErrorLog::where('severity', 'warn');
         $criticalQuery = ErrorLog::where('severity', 'critical');
         $resolvedQuery = ErrorLog::where('status', 'Completed');
@@ -82,7 +91,9 @@ class DashboardController extends Controller
             'total_review',
             'total_query',
             'year',
-            'month'
+            'month',
+            'totalTasks',
+            'totalQuiry'
         ));
     }
 
@@ -93,7 +104,7 @@ class DashboardController extends Controller
         $timeGap = $request->input('timeGap', 'daily');
 
         // Build queries
-        $failureQuery = ErrorLog::query();
+        $failureQuery = ErrorLog::where('status', '!=', 'Completed');
         $warningQuery = ErrorLog::where('severity', 'warn');
         $criticalQuery = ErrorLog::where('severity', 'critical');
         $resolvedQuery = ErrorLog::where('status', 'Completed');
@@ -341,6 +352,9 @@ class DashboardController extends Controller
             ], 500);
         }
     }
+
+
+
     public function create()
     {
         //

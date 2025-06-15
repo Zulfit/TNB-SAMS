@@ -156,9 +156,9 @@
 
                     if (unreadCount > 0) {
                         badge.textContent = unreadCount;
-                        badge.style.display = 'inline'; // or badge.classList.remove('d-none') if using Bootstrap classes
+                        badge.classList.remove('d-none')
                     } else {
-                        badge.style.display = 'none'; // or badge.classList.add('d-none') if using Bootstrap classes
+                        badge.classList.add('d-none')
                     }
 
                     header.innerHTML = `You have ${unreadCount} new message${unreadCount === 1 ? '' : 's'} 
@@ -251,9 +251,14 @@
                 setTimeout(() => dismissToast(), 7000);
             };
 
-            function dismissToast() {
+            window.handleTakeAction = function() {
+                window.location.href = "{{ route('error-log.index') }}";
+            };
+
+            window.dismissToast = function() {
                 document.getElementById('alert-toast').style.display = 'none';
-            }
+            };
+
         });
     </script>
 

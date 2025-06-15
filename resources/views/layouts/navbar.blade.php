@@ -1,13 +1,16 @@
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
     <div class="sidebar-header">
-        <a href="#" class="sams-logo" id="toggleLogo">
+        <div class="sams-logo" id="toggleLogo" style="display: flex; align-items: center;">
             <div class="logo-icon"
                 style="width: 40px; height: 40px; background: linear-gradient(135deg, #011567 0%, #0020f0 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 0.5rem;">
                 <i class="fas fa-bolt"></i>
             </div>
-            <span class="logo-text">TNB-SAMS</span>
-        </a>
+            <a href="/dashboard" class="logo-text" style="text-decoration: none; color: inherit;">
+                <span>TNB-SAMS</span>
+            </a>
+        </div>
+        
         <div class="toggle-container">
             <i id="toggleSidebar" class="toggle-sidebar-btn bi bi-chevron-left"></i>
         </div>

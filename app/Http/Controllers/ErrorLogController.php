@@ -66,8 +66,8 @@ class ErrorLogController extends Controller
             });
         }
 
-        if ($request->filled('severity')) {
-            $query->where('severity', $request->severity);
+        if ($request->filled('state')) {
+            $query->where('state', $request->state);
         }
 
         if ($request->filled('status')) {
@@ -80,7 +80,7 @@ class ErrorLogController extends Controller
         $substations = Substation::all();
         $panels = Panels::all();
         $compartments = Compartments::all();
-        $states = ['Normal','Warning','Critical'];
+        $states = ['NORMAL','AWAIT','ALARM'];
         $statuses = ['New', 'Acknowledge', 'Review', 'Quiry', 'Completed'];
 
         return view('error-log.index', compact(

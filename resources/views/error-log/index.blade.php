@@ -83,12 +83,12 @@
                             </div> --}}
 
                             <div class="col-md-4 col-lg-3">
-                                <label for="severity" class="form-label small text-muted">Severity</label>
-                                <select id="severity" name="severity" class="form-select form-select-sm auto-filter">
-                                    <option value="">All Severity</option>
+                                <label for="state" class="form-label small text-muted">State</label>
+                                <select id="state" name="state" class="form-select form-select-sm auto-filter">
+                                    <option value="">All State</option>
                                     @foreach ($states as $state)
                                         <option value="{{ $state }}"
-                                            {{ request('severity') == $state ? 'selected' : '' }}>
+                                            {{ request('state') == $state ? 'selected' : '' }}>
                                             {{ $state }}
                                         </option>
                                     @endforeach

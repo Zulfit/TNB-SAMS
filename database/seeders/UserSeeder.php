@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -12,61 +11,63 @@ class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * Demo accounts only. The password comes from SEED_USER_PASSWORD
+     * (config app.seed_user_password) and defaults to the local demo value.
      */
-
-    protected static ?string $password;
-    
     public function run(): void
     {
+        $password = Hash::make((string) config('app.seed_user_password', 'password'));
+
         $users = [
             [
-                'name' => 'Admin',
-                'email' => 'tnbsamsa@tnb.com.my',
+                'name' => 'Example Admin',
+                'email' => 'admin@example.com',
                 'email_verified_at' => now(),
-                'id_staff' => 'TNB001',
+                'id_staff' => 'EX001',
                 'position' => 'Admin',
-                'password' => static::$password ??= Hash::make('password'),
+                'password' => $password,
                 'remember_token' => Str::random(10),
             ],
             [
-                'name' => 'Fathul',
-                'email' => 'fathul@tnb.com.my',
+                'name' => 'Example Manager',
+                'email' => 'manager@example.com',
                 'email_verified_at' => now(),
-                'id_staff' => 'TNB002',
+                'id_staff' => 'EX002',
                 'position' => 'Manager',
-                'password' => static::$password ??= Hash::make('password'),
+                'password' => $password,
                 'remember_token' => Str::random(10),
             ],
             [
-                'name' => 'Akmal',
-                'email' => 'akmal@tnb.com.my',
+                'name' => 'Example Staff',
+                'email' => 'staff@example.com',
                 'email_verified_at' => now(),
-                'id_staff' => 'TNB003',
+                'id_staff' => 'EX003',
                 'position' => 'Staff',
-                'password' => static::$password ??= Hash::make('password'),
+                'password' => $password,
                 'remember_token' => Str::random(10),
             ],
             [
-                'name' => 'Safwan',
-                'email' => 'safwan@tnb.com.my',
+                'name' => 'Example Staff Pending',
+                'email' => 'staff.pending@example.com',
                 'email_verified_at' => null,
-                'id_staff' => 'TNB004',
+                'id_staff' => 'EX004',
                 'position' => 'Staff',
-                'password' => static::$password ??= Hash::make('password'),
+                'password' => $password,
                 'remember_token' => Str::random(10),
             ],
             [
-                'name' => 'Aqhila',
-                'email' => 'aqhila@tnb.com.my',
+                'name' => 'Example Manager Pending',
+                'email' => 'manager.pending@example.com',
                 'email_verified_at' => null,
-                'id_staff' => 'TNB005',
+                'id_staff' => 'EX005',
                 'position' => 'Manager',
-                'password' => static::$password ??= Hash::make('password'),
+                'password' => $password,
                 'remember_token' => Str::random(10),
             ],
         ];
 
-        foreach ($users as $user){
+        foreach ($users as $user) {
             User::create($user);
         }
     }

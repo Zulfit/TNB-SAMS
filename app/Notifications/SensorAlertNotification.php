@@ -3,9 +3,9 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Log;
 
 class SensorAlertNotification extends Notification
@@ -13,6 +13,7 @@ class SensorAlertNotification extends Notification
     use Queueable;
 
     protected $sensorData;
+
     protected $measurementType;
 
     public function __construct($sensorData, $measurementType)
@@ -36,21 +37,21 @@ class SensorAlertNotification extends Notification
         $this->sendTelegramMessage(); // 👈 Manually send telegram here
 
         $mail = (new MailMessage)
-            ->subject('🚨 Sensor Alert - ' . ucfirst($this->measurementType));
+            ->subject('🚨 Sensor Alert - '.ucfirst($this->measurementType));
 
         if ($this->measurementType === 'Temperature') {
-            $mail->line('Difference Temperature: ' . $this->sensorData['diff_temp'] . '°C')
-                ->line('Variance: ' . $this->sensorData['variance_percent'] . '%')
-                ->line('Sensor: ' . $this->sensorData['sensor_name'])
-                ->line('Substation: ' . $this->sensorData['substation'])
-                ->line('Panel: ' . $this->sensorData['panel'])
-                ->line('Compartment: ' . $this->sensorData['compartment']);
+            $mail->line('Difference Temperature: '.$this->sensorData['diff_temp'].'°C')
+                ->line('Variance: '.$this->sensorData['variance_percent'].'%')
+                ->line('Sensor: '.$this->sensorData['sensor_name'])
+                ->line('Substation: '.$this->sensorData['substation'])
+                ->line('Panel: '.$this->sensorData['panel'])
+                ->line('Compartment: '.$this->sensorData['compartment']);
         } elseif ($this->measurementType === 'Partial Discharge') {
-            $mail->line('Partial Discharge detected: Level ' . $this->sensorData['discharge_level'])
-                ->line('Sensor: ' . $this->sensorData['sensor_name'])
-                ->line('Substation: ' . $this->sensorData['substation'])
-                ->line('Panel: ' . $this->sensorData['panel'])
-                ->line('Compartment: ' . $this->sensorData['compartment']);
+            $mail->line('Partial Discharge detected: Level '.$this->sensorData['discharge_level'])
+                ->line('Sensor: '.$this->sensorData['sensor_name'])
+                ->line('Substation: '.$this->sensorData['substation'])
+                ->line('Panel: '.$this->sensorData['panel'])
+                ->line('Compartment: '.$this->sensorData['compartment']);
         }
 
         return $mail;
@@ -58,40 +59,40 @@ class SensorAlertNotification extends Notification
 
     public function sendTelegramMessage()
     {
-        $chatId = env('GROUP_ADMIN_CHAT_ID');
+        $chatId = config('services.telegram.admin_chat_id');
 
-        $text = "🚨 <b>Sensor Alert</b> - " . $this->escapeHtml(ucfirst($this->measurementType)) . "\n";
+        $text = '🚨 <b>Sensor Alert</b> - '.$this->escapeHtml(ucfirst($this->measurementType))."\n";
 
         if ($this->measurementType === 'Temperature') {
-            $text .= "Error Log ID: " . $this->escapeHtml($this->sensorData['error_log_id']) . "\n";
-            $text .= "Substation: " . $this->escapeHtml($this->sensorData['substation']) . "\n";
-            $text .= "Panel: " . $this->escapeHtml($this->sensorData['panel']) . "\n";
-            $text .= "Compartment: " . $this->escapeHtml($this->sensorData['compartment']) . "\n";
-            $text .= "Sensor: " . $this->escapeHtml($this->sensorData['sensor_name']) . "\n";
-            $text .= "Temperature: " . $this->escapeHtml($this->sensorData['diff_temp']) . "°C\n";
-            $text .= "Variance: " . $this->escapeHtml($this->sensorData['variance_percent']) . "%\n";
-            $text .= "Status: <b>" . $this->escapeHtml(strtoupper($this->sensorData['alert_level'])) . "</b>\n";
+            $text .= 'Error Log ID: '.$this->escapeHtml($this->sensorData['error_log_id'])."\n";
+            $text .= 'Substation: '.$this->escapeHtml($this->sensorData['substation'])."\n";
+            $text .= 'Panel: '.$this->escapeHtml($this->sensorData['panel'])."\n";
+            $text .= 'Compartment: '.$this->escapeHtml($this->sensorData['compartment'])."\n";
+            $text .= 'Sensor: '.$this->escapeHtml($this->sensorData['sensor_name'])."\n";
+            $text .= 'Temperature: '.$this->escapeHtml($this->sensorData['diff_temp'])."°C\n";
+            $text .= 'Variance: '.$this->escapeHtml($this->sensorData['variance_percent'])."%\n";
+            $text .= 'Status: <b>'.$this->escapeHtml(strtoupper($this->sensorData['alert_level']))."</b>\n";
         } elseif ($this->measurementType === 'Partial Discharge') {
-            $text .= "Substation: " . $this->escapeHtml($this->sensorData['substation']) . "\n";
-            $text .= "Panel: " . $this->escapeHtml($this->sensorData['panel']) . "\n";
-            $text .= "Compartment: " . $this->escapeHtml($this->sensorData['compartment']) . "\n";
-            $text .= "Sensor: " . $this->escapeHtml($this->sensorData['sensor_name']) . "\n";
-            $text .= "Indicator: " . $this->escapeHtml($this->sensorData['indicator']) . "\n";
-            $text .= "Status: <b>" . $this->escapeHtml(strtoupper($this->sensorData['alert_level'])) . "</b>";
+            $text .= 'Substation: '.$this->escapeHtml($this->sensorData['substation'])."\n";
+            $text .= 'Panel: '.$this->escapeHtml($this->sensorData['panel'])."\n";
+            $text .= 'Compartment: '.$this->escapeHtml($this->sensorData['compartment'])."\n";
+            $text .= 'Sensor: '.$this->escapeHtml($this->sensorData['sensor_name'])."\n";
+            $text .= 'Indicator: '.$this->escapeHtml($this->sensorData['indicator'])."\n";
+            $text .= 'Status: <b>'.$this->escapeHtml(strtoupper($this->sensorData['alert_level'])).'</b>';
         }
 
         try {
-            $response = Http::post('https://api.telegram.org/bot' . config('services.telegram.bot_admin_token') . '/sendMessage', [
+            $response = Http::post('https://api.telegram.org/bot'.config('services.telegram.bot_admin_token').'/sendMessage', [
                 'chat_id' => $chatId,
                 'text' => $text,
                 'parse_mode' => 'HTML',
             ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 throw new \Exception('Failed to send message to Telegram');
             }
         } catch (\Exception $e) {
-            Log::error('Telegram message error: ' . $e->getMessage());
+            Log::error('Telegram message error: '.$e->getMessage());
         }
 
         Log::info('Telegram response:', [
@@ -102,30 +103,30 @@ class SensorAlertNotification extends Notification
 
     public function sendAssignMessageAdmin()
     {
-        $chatId = env('GROUP_ADMIN_CHAT_ID');
+        $chatId = config('services.telegram.admin_chat_id');
 
         $text = "🔔 <b>New Error Log Assigned!</b>\n";
-        $text .= "Error Log ID: #" . $this->escapeHtml($this->sensorData['error_log_id']) . "\n";
-        $text .= "Sensor: " . $this->escapeHtml($this->sensorData['sensor_name']) . "\n";
-        $text .= "Substation: " . $this->escapeHtml($this->sensorData['substation']) . "\n";
-        $text .= "Panel: " . $this->escapeHtml($this->sensorData['panel']) . "\n";
-        $text .= "Compartment: " . $this->escapeHtml($this->sensorData['compartment']) . "\n";
-        $text .= "Sensor: " . $this->escapeHtml($this->sensorData['measurement']) . "\n";
-        $text .= "Severity: <b>" . $this->escapeHtml($this->sensorData['severity']) . "</b>\n";
-        $text .= "Assigned To: <b>" . $this->escapeHtml($this->sensorData['pic']) . "</b>";
+        $text .= 'Error Log ID: #'.$this->escapeHtml($this->sensorData['error_log_id'])."\n";
+        $text .= 'Sensor: '.$this->escapeHtml($this->sensorData['sensor_name'])."\n";
+        $text .= 'Substation: '.$this->escapeHtml($this->sensorData['substation'])."\n";
+        $text .= 'Panel: '.$this->escapeHtml($this->sensorData['panel'])."\n";
+        $text .= 'Compartment: '.$this->escapeHtml($this->sensorData['compartment'])."\n";
+        $text .= 'Sensor: '.$this->escapeHtml($this->sensorData['measurement'])."\n";
+        $text .= 'Severity: <b>'.$this->escapeHtml($this->sensorData['severity'])."</b>\n";
+        $text .= 'Assigned To: <b>'.$this->escapeHtml($this->sensorData['pic']).'</b>';
 
         try {
-            $response = Http::post('https://api.telegram.org/bot' . config('services.telegram.bot_admin_token') . '/sendMessage', [
+            $response = Http::post('https://api.telegram.org/bot'.config('services.telegram.bot_admin_token').'/sendMessage', [
                 'chat_id' => $chatId,
                 'text' => $text,
                 'parse_mode' => 'HTML',
             ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 throw new \Exception('Failed to send message to Telegram');
             }
         } catch (\Exception $e) {
-            Log::error('Telegram message error: ' . $e->getMessage());
+            Log::error('Telegram message error: '.$e->getMessage());
         }
 
         Log::info('Telegram response:', [
@@ -136,30 +137,30 @@ class SensorAlertNotification extends Notification
 
     public function sendAssignMessageStaff()
     {
-        $chatId = env('GROUP_STAFF_CHAT_ID');
+        $chatId = config('services.telegram.staff_chat_id');
 
         $text = "🔔 <b>New Error Log Assigned!</b>\n";
-        $text .= "Error Log ID: #" . $this->escapeHtml($this->sensorData['error_log_id']) . "\n";
-        $text .= "Sensor: " . $this->escapeHtml($this->sensorData['sensor_name']) . "\n";
-        $text .= "Substation: " . $this->escapeHtml($this->sensorData['substation']) . "\n";
-        $text .= "Panel: " . $this->escapeHtml($this->sensorData['panel']) . "\n";
-        $text .= "Compartment: " . $this->escapeHtml($this->sensorData['compartment']) . "\n";
-        $text .= "Sensor: " . $this->escapeHtml($this->sensorData['measurement']) . "\n";
-        $text .= "Severity: <b>" . $this->escapeHtml($this->sensorData['severity']) . "</b>\n";
-        $text .= "Assigned To: <b>" . $this->escapeHtml($this->sensorData['pic']) . "</b>";
+        $text .= 'Error Log ID: #'.$this->escapeHtml($this->sensorData['error_log_id'])."\n";
+        $text .= 'Sensor: '.$this->escapeHtml($this->sensorData['sensor_name'])."\n";
+        $text .= 'Substation: '.$this->escapeHtml($this->sensorData['substation'])."\n";
+        $text .= 'Panel: '.$this->escapeHtml($this->sensorData['panel'])."\n";
+        $text .= 'Compartment: '.$this->escapeHtml($this->sensorData['compartment'])."\n";
+        $text .= 'Sensor: '.$this->escapeHtml($this->sensorData['measurement'])."\n";
+        $text .= 'Severity: <b>'.$this->escapeHtml($this->sensorData['severity'])."</b>\n";
+        $text .= 'Assigned To: <b>'.$this->escapeHtml($this->sensorData['pic']).'</b>';
 
         try {
-            $response = Http::post('https://api.telegram.org/bot' . config('services.telegram.bot_admin_token') . '/sendMessage', [
+            $response = Http::post('https://api.telegram.org/bot'.config('services.telegram.bot_admin_token').'/sendMessage', [
                 'chat_id' => $chatId,
                 'text' => $text,
                 'parse_mode' => 'HTML',
             ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 throw new \Exception('Failed to send message to Telegram');
             }
         } catch (\Exception $e) {
-            Log::error('Telegram message error: ' . $e->getMessage());
+            Log::error('Telegram message error: '.$e->getMessage());
         }
 
         Log::info('Telegram response:', [

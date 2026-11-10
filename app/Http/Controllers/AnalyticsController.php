@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Analytics;
 use App\Models\Compartments;
-use App\Models\ErrorLog;
 use App\Models\Panels;
 use App\Models\Sensor;
 use App\Models\Substation;
@@ -15,6 +14,8 @@ use Illuminate\Support\Facades\Log;
 
 class AnalyticsController extends Controller
 {
+    protected ?string $modulePermission = 'analytics_access';
+
     /**
      * Display a listing of the resource.
      */
@@ -23,11 +24,11 @@ class AnalyticsController extends Controller
         $this->checkAccessOrAbort('analytics_access');
 
         $sensors = Sensor::query()
-            ->when($request->substation, fn($q) => $q->where('sensor_substation', $request->substation))
-            ->when($request->panel, fn($q) => $q->where('sensor_panel', $request->panel))
-            ->when($request->compartment, fn($q) => $q->where('sensor_compartment', $request->compartment))
-            ->when($request->measurement, fn($q) => $q->where('sensor_measurement', $request->measurement))
-            ->when($request->status, fn($q) => $q->where('sensor_status', $request->status))
+            ->when($request->substation, fn ($q) => $q->where('sensor_substation', $request->substation))
+            ->when($request->panel, fn ($q) => $q->where('sensor_panel', $request->panel))
+            ->when($request->compartment, fn ($q) => $q->where('sensor_compartment', $request->compartment))
+            ->when($request->measurement, fn ($q) => $q->where('sensor_measurement', $request->measurement))
+            ->when($request->status, fn ($q) => $q->where('sensor_status', $request->status))
             ->with(['substation', 'panel', 'compartment'])
             ->orderByDesc('updated_at')
             ->paginate(10)
@@ -44,7 +45,6 @@ class AnalyticsController extends Controller
             'compartments' => Compartments::all(),
         ]);
     }
-
 
     public function sensorTable(Request $request)
     {
@@ -104,6 +104,7 @@ class AnalyticsController extends Controller
         }
 
         Log::info('Sensor Table Query Data:', ['data' => $data]);
+
         return response()->json($data);
     }
 
@@ -196,10 +197,9 @@ class AnalyticsController extends Controller
             'substation_name' => $sensor->substation->substation_name ?? '',
             'panel_name' => $sensor->panel->panel_name ?? '',
             'compartment_name' => $sensor->compartment->compartment_name ?? '',
-            'sensor_measurement' => $sensor->sensor_measurement
+            'sensor_measurement' => $sensor->sensor_measurement,
         ]);
     }
-
 
     /**
      * Show the form for editing the specified resource.

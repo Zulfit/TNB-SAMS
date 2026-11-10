@@ -123,4 +123,17 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Demo seed password
+    |--------------------------------------------------------------------------
+    |
+    | Password hashed for accounts created by Database\Seeders\UserSeeder.
+    | The default is a local demo value. Set SEED_USER_PASSWORD before
+    | seeding any database that is not a private demo.
+    |
+    */
+
+    'seed_user_password' => env('SEED_USER_PASSWORD', 'password'),
+
 ];

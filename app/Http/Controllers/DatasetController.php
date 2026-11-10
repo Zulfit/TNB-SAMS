@@ -7,13 +7,13 @@ use App\Models\Dataset;
 use App\Models\Sensor;
 use App\Models\SensorPartialDischarge;
 use App\Models\SensorTemperature;
-use App\Models\Substation;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DatasetController extends Controller
 {
+    protected ?string $modulePermission = 'dataset_access';
+
     /**
      * Display a listing of the resource.
      */
@@ -54,7 +54,7 @@ class DatasetController extends Controller
 
         if ($exists) {
             return back()->withErrors([
-                'custom_popup' => 'A dataset for this sensor and measurement type has already been uploaded.'
+                'custom_popup' => 'A dataset for this sensor and measurement type has already been uploaded.',
             ]);
         }
 
@@ -73,12 +73,14 @@ class DatasetController extends Controller
 
         foreach ($rows[0] as $index => $row) {
             // Skip header
-            if ($index === 0)
+            if ($index === 0) {
                 continue;
+            }
 
             if ($request->dataset_measurement == 'Temperature') {
-                if (count($row) < 10)
+                if (count($row) < 10) {
                     continue;
+                }
 
                 SensorTemperature::create([
                     'sensor_id' => $request->dataset_sensor,
@@ -96,8 +98,9 @@ class DatasetController extends Controller
             }
 
             if ($request->dataset_measurement == 'Partial Discharge') {
-                if (count($row) < 15)
+                if (count($row) < 15) {
                     continue;
+                }
 
                 SensorPartialDischarge::create([
                     'sensor_id' => $request->dataset_sensor,
@@ -151,9 +154,10 @@ class DatasetController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(Dataset $dataset)
-    { {
-            $dataset->delete();
-            return redirect()->route('dataset.index')->with('success', 'Dataset successfully deleted!');
-        }
+    {
+        $dataset->delete();
+
+        return redirect()->route('dataset.index')->with('success', 'Dataset successfully deleted!');
+
     }
 }

@@ -7,11 +7,11 @@ use App\Models\Panels;
 use App\Models\Sensor;
 use App\Models\Substation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class SensorController extends Controller
 {
+    protected ?string $modulePermission = 'sensor_access';
+
     /**
      * Display a listing of the resource.
      */
@@ -20,19 +20,18 @@ class SensorController extends Controller
         $this->checkAccessOrAbort('sensor_access');
 
         $sensors = Sensor::query()
-            ->when($request->substation, fn($q) => $q->where('sensor_substation', $request->substation))
-            ->when($request->panel, fn($q) => $q->where('sensor_panel', $request->panel))
-            ->when($request->compartment, fn($q) => $q->where('sensor_compartment', $request->compartment))
-            ->when($request->measurement, fn($q) => $q->where('sensor_measurement', $request->measurement))
-            ->when($request->status, fn($q) => $q->where('sensor_status', $request->status))
+            ->when($request->substation, fn ($q) => $q->where('sensor_substation', $request->substation))
+            ->when($request->panel, fn ($q) => $q->where('sensor_panel', $request->panel))
+            ->when($request->compartment, fn ($q) => $q->where('sensor_compartment', $request->compartment))
+            ->when($request->measurement, fn ($q) => $q->where('sensor_measurement', $request->measurement))
+            ->when($request->status, fn ($q) => $q->where('sensor_status', $request->status))
             ->with(['substation', 'panel', 'compartment'])
             ->orderByDesc('updated_at')
             ->paginate(10)
             ->withQueryString();
 
-
         return view('sensor.index', [
-            'sensors' => $sensors,        
+            'sensors' => $sensors,
             'substations' => Substation::all(),
             'panels' => Panels::all(),
             'compartments' => Compartments::all(),
@@ -67,7 +66,7 @@ class SensorController extends Controller
 
         if ($exists) {
             return back()->withErrors([
-                'custom_popup' => 'A sensor name have been used.'
+                'custom_popup' => 'A sensor name have been used.',
             ]);
         }
 
@@ -119,14 +118,14 @@ class SensorController extends Controller
                 $indexPadded = str_pad($index, 3, '0', STR_PAD_LEFT);
 
                 // e.g. TBHN-sensor-001
-                $sensorName = $sensorData['name'] . '_' . $indexPadded;
+                $sensorName = $sensorData['name'].'_'.$indexPadded;
 
                 $exists = Sensor::where('sensor_name', $request->sensor_name)
                     ->exists();
 
                 if ($exists) {
                     return back()->withErrors([
-                        'custom_popup' => 'A sensor name have been used.'
+                        'custom_popup' => 'A sensor name have been used.',
                     ]);
                 }
 
@@ -147,14 +146,13 @@ class SensorController extends Controller
         return redirect()->route('sensor.index')->with('success', 'Bulk sensors created for each compartment!');
     }
 
-
-
     /**
      * Display the specified resource.
      */
     public function show(Sensor $sensor)
     {
         $sensors = Sensor::with(['substation', 'panel', 'compartment'])->paginate(10);
+
         return view('sensor.show', compact('sensor', 'sensors'));
     }
 
@@ -167,6 +165,7 @@ class SensorController extends Controller
         $substations = Substation::all();
         $panels = Panels::all();
         $compartments = Compartments::all();
+
         return view('sensor.edit', compact('sensor', 'sensors', 'substations', 'panels', 'compartments'));
     }
 
@@ -205,7 +204,7 @@ class SensorController extends Controller
     public function destroy(Sensor $sensor)
     {
         $sensor->delete();
+
         return redirect()->route('sensor.index')->with('success', 'Sensor successfully deleted!');
     }
-
 }

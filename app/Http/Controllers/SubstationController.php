@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class SubstationController extends Controller
 {
+    protected ?string $modulePermission = 'substation_access';
+
     /**
      * Display a listing of the resource.
      */
@@ -16,7 +18,7 @@ class SubstationController extends Controller
 
         $substations = Substation::all();
 
-        return view('substation.index',compact('substations'));
+        return view('substation.index', compact('substations'));
     }
 
     /**
@@ -44,7 +46,7 @@ class SubstationController extends Controller
             'substation_date' => $validated['substation_date'],
         ]);
 
-        return redirect()->route('substation.index')->with('success','Substation created successfully!');
+        return redirect()->route('substation.index')->with('success', 'Substation created successfully!');
     }
 
     /**
@@ -53,7 +55,8 @@ class SubstationController extends Controller
     public function show(Substation $substation)
     {
         $substations = Substation::all();
-        return view('substation.show',compact('substation','substations'));
+
+        return view('substation.show', compact('substation', 'substations'));
     }
 
     /**
@@ -62,7 +65,8 @@ class SubstationController extends Controller
     public function edit(Substation $substation)
     {
         $substations = Substation::all();
-        return view('substation.edit',compact('substation','substations'));
+
+        return view('substation.edit', compact('substation', 'substations'));
     }
 
     /**
@@ -75,14 +79,14 @@ class SubstationController extends Controller
             'substation_location' => 'required|max:255| string',
             'substation_date' => 'required|date|before_or_equal:today',
         ]);
-        
+
         $substation->substation_name = $request->substation_name;
         $substation->substation_location = $request->substation_location;
         $substation->substation_date = $request->substation_date;
 
         $substation->save();
 
-        return redirect()->route('substation.index')->with('success','Substation successfully updated!');
+        return redirect()->route('substation.index')->with('success', 'Substation successfully updated!');
     }
 
     /**
@@ -91,6 +95,7 @@ class SubstationController extends Controller
     public function destroy(Substation $substation)
     {
         $substation->delete();
-        return redirect()->route('substation.index')->with('success','Substation successfully deleted!');
+
+        return redirect()->route('substation.index')->with('success', 'Substation successfully deleted!');
     }
 }

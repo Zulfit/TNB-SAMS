@@ -6,7 +6,6 @@ use App\Models\Compartments;
 use App\Models\ErrorLog;
 use App\Models\Panels;
 use App\Models\Sensor;
-use App\Models\SensorTemperature;
 use App\Models\Substation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,19 +14,20 @@ use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
+    protected ?string $modulePermission = 'dashboard_access';
+
     /**
      * Display a listing of the resource.
      */
-
     public function index(Request $request)
     {
         $this->checkAccessOrAbort('dashboard_access');
         $user = Auth::user();
         $totalTasks = ErrorLog::where('pic', $user->id)
-            ->where('status', "New")
+            ->where('status', 'New')
             ->count();
         $totalQuiry = ErrorLog::where('pic', $user->id)
-            ->where('status', "Quiry")
+            ->where('status', 'Quiry')
             ->count();
         $substations = Substation::all();
         $panels = Panels::all();
@@ -142,7 +142,7 @@ class DashboardController extends Controller
             'total_query' => $quiryQuery->count(),
             'year' => $year,
             'month' => $month,
-            'timeGap' => $timeGap
+            'timeGap' => $timeGap,
         ];
 
         // Log::info('Stats data:', $stats);
@@ -168,10 +168,10 @@ class DashboardController extends Controller
                 ->where('sensor_measurement', 'Temperature')
                 ->first();
 
-            if (!$sensor) {
+            if (! $sensor) {
                 return response()->json([
                     'error' => true,
-                    'message' => 'Sensor not found.'
+                    'message' => 'Sensor not found.',
                 ], 404);
             }
 
@@ -243,7 +243,7 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => true,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -321,7 +321,7 @@ class DashboardController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'error' => true,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -331,11 +331,12 @@ class DashboardController extends Controller
     {
         try {
             $panels = Panels::where('substation_id', $substationId)->get();
+
             return response()->json($panels);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => true,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
@@ -344,16 +345,15 @@ class DashboardController extends Controller
     {
         try {
             $compartments = Compartments::where('panel_id', $panelId)->get();
+
             return response()->json($compartments);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => true,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
-
-
 
     public function create()
     {
@@ -399,5 +399,4 @@ class DashboardController extends Controller
     {
         //
     }
-
 }

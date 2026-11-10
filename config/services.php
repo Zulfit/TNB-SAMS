@@ -43,7 +43,10 @@ return [
     'telegram' => [
         'bot_token' => env('TELEGRAM_BOT_TOKEN'),
         'bot_admin_token' => env('GROUP_ADMIN_BOT_TOKEN'),
+        'admin_chat_id' => env('GROUP_ADMIN_CHAT_ID'),
+        'staff_chat_id' => env('GROUP_STAFF_CHAT_ID'),
+        'staff_group_invite' => env('TELEGRAM_STAFF_GROUP_INVITE'),
+        'admin_group_invite' => env('TELEGRAM_ADMIN_GROUP_INVITE'),
     ],
-
 
 ];

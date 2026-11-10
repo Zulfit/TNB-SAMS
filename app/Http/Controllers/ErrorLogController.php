@@ -14,10 +14,11 @@ use App\Models\User;
 use App\Notifications\SensorAlertNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class ErrorLogController extends Controller
 {
+    protected ?string $modulePermission = 'error_log_access';
+
     /**
      * Display a listing of the resource.
      */
@@ -29,7 +30,7 @@ class ErrorLogController extends Controller
             'sensor.sensor.substation',
             'sensor.sensor.panel',
             'sensor.sensor.compartment',
-            'user'
+            'user',
         ]);
 
         // Restrict to staff if needed
@@ -39,7 +40,7 @@ class ErrorLogController extends Controller
 
         // Simplified filters
         if ($request->filled('error_id')) {
-            $query->where('id', 'like', '%' . $request->error_id . '%');
+            $query->where('id', 'like', '%'.$request->error_id.'%');
         }
 
         if ($request->filled('substation')) {
@@ -49,7 +50,7 @@ class ErrorLogController extends Controller
                 });
             });
         }
-        
+
         if ($request->filled('panel')) {
             $query->whereHasMorph('sensor', [SensorTemperature::class, SensorPartialDischarge::class], function ($q) use ($request) {
                 $q->whereHas('sensor.panel', function ($q2) use ($request) {
@@ -80,7 +81,7 @@ class ErrorLogController extends Controller
         $substations = Substation::all();
         $panels = Panels::all();
         $compartments = Compartments::all();
-        $states = ['NORMAL','AWAIT','ALARM'];
+        $states = ['NORMAL', 'AWAIT', 'ALARM'];
         $statuses = ['New', 'Acknowledge', 'Review', 'Quiry', 'Completed'];
 
         return view('error-log.index', compact(
@@ -92,7 +93,6 @@ class ErrorLogController extends Controller
             'compartments'
         ));
     }
-
 
     /**
      * Show the form for creating a new resource.
@@ -126,6 +126,7 @@ class ErrorLogController extends Controller
                 ->whereBetween('created_at', [$error->created_at, now()])
                 ->get();
         }
+
         return view('error-log.create', compact('error', 'staff', 'datas'));
     }
 
@@ -162,7 +163,7 @@ class ErrorLogController extends Controller
         if ($request->input('action') == 'complete') {
             $validated = $request->validate([
                 'admin_review' => 'string',
-                'sensor_status' => 'string'
+                'sensor_status' => 'string',
             ]);
 
             $errorLog->state = 'NORMAL';
@@ -179,7 +180,7 @@ class ErrorLogController extends Controller
         } elseif ($request->action === 'quiry') {
             $validated = $request->validate([
                 'admin_review' => 'string',
-                'sensor_status' => 'string'
+                'sensor_status' => 'string',
             ]);
 
             $sensor = Sensor::find($errorLog->sensor->sensor_id);
@@ -208,13 +209,13 @@ class ErrorLogController extends Controller
 
         } elseif ($request->action === 'review') {
             $validated = $request->validate([
-                'report' => 'required|string'
+                'report' => 'required|string',
             ]);
 
             $errorLog->update([
                 'status' => 'Review',
-                $errorLog->report = $validated['report'],
-                $errorLog->completed_at = now()
+                'report' => $validated['report'],
+                'completed_at' => now(),
             ]);
 
             $error = ErrorLog::where('id', $errorLog->id)->first();
@@ -266,8 +267,8 @@ class ErrorLogController extends Controller
             ];
 
             // Use SensorAlertNotification to send Telegram message
-            new SensorAlertNotification($alert, '')->sendAssignMessageAdmin();
-            new SensorAlertNotification($alert, '')->sendAssignMessageStaff();
+            (new SensorAlertNotification($alert, ''))->sendAssignMessageAdmin();
+            (new SensorAlertNotification($alert, ''))->sendAssignMessageStaff();
             event(new NotificationEvent(
                 'New Error Log Assigned!',
                 "Error Log ID: #{$errorLog->id}<br>Sensor Name: {$errorLog->sensor->sensor->sensor_name}<br>PIC: {$errorLog->user->name}"
@@ -286,5 +287,4 @@ class ErrorLogController extends Controller
     {
         //
     }
-
 }

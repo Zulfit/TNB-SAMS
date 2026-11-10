@@ -10,14 +10,16 @@ use App\Models\Sensor;
 use App\Models\SensorPartialDischarge;
 use App\Models\SensorTemperature;
 use App\Models\Substation;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Collection;
 
 class ReportController extends Controller
 {
+    protected ?string $modulePermission = 'report_access';
+
     /**
      * Display a listing of the resource.
      */
@@ -29,6 +31,7 @@ class ReportController extends Controller
         $panels = Panels::all();
         $compartments = Compartments::all();
         $reports = Report::orderBy('created_at', 'desc')->get();
+
         return view('report.index', compact('substations', 'panels', 'compartments', 'reports'));
     }
 
@@ -112,22 +115,22 @@ class ReportController extends Controller
                     });
                 });
         })
-        ->orWhere(function ($query) use ($sensorIds) {
-            $query->where('sensor_type', 'App\Models\SensorPartialDischarge')
-                ->whereHas('sensor', function ($subQuery) use ($sensorIds) {
-                    $subQuery->whereHas('sensor', function ($deepQuery) use ($sensorIds) {
-                        $deepQuery->whereIn('sensor_id', $sensorIds);
+            ->orWhere(function ($query) use ($sensorIds) {
+                $query->where('sensor_type', 'App\Models\SensorPartialDischarge')
+                    ->whereHas('sensor', function ($subQuery) use ($sensorIds) {
+                        $subQuery->whereHas('sensor', function ($deepQuery) use ($sensorIds) {
+                            $deepQuery->whereIn('sensor_id', $sensorIds);
+                        });
                     });
-                });
-        })
-        ->whereBetween('created_at', [$request->start_date, $request->end_date])
-        ->with(['sensor.sensor']) // Load the nested relationships
-        ->get();
+            })
+            ->whereBetween('created_at', [$request->start_date, $request->end_date])
+            ->with(['sensor.sensor']) // Load the nested relationships
+            ->get();
 
         // dd($errorLogs);
 
         $errorStats = $errorLogs->groupBy(function ($error) {
-            return $error->sensor_type . '_' . $error->sensor_id; // Group by sensor type + ID
+            return $error->sensor_type.'_'.$error->sensor_id; // Group by sensor type + ID
         })->map(function (Collection $errors, $groupKey) {
             $firstError = $errors->first();
 
@@ -139,7 +142,7 @@ class ReportController extends Controller
                 'latest_error' => $errors->sortByDesc('created_at')->first()->created_at->format('Y-m-d H:i:s'),
                 'severity_levels' => $errors->pluck('severity')->unique()->values()->toArray(),
                 'states' => $errors->pluck('state')->unique()->values()->toArray(),
-                'status_breakdown' => $errors->countBy('status')->all()
+                'status_breakdown' => $errors->countBy('status')->all(),
             ];
         });
         // dd($errorStats);
@@ -154,12 +157,12 @@ class ReportController extends Controller
             'maxIndPerSensor' => $maxIndPerSensor,
             'errorStats' => $errorStats,
             'generated_by' => $user->name,
-            'generated_at' => now()
+            'generated_at' => now(),
         ]);
         // dd($pdf);
 
-        $filename = 'report_' . uniqid() . '.pdf';
-        $path = 'public/reports/' . $filename;
+        $filename = 'report_'.uniqid().'.pdf';
+        $path = 'public/reports/'.$filename;
         Storage::put($path, $pdf->output());
 
         Report::create([
@@ -167,7 +170,7 @@ class ReportController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'generated_by' => $user->id,
-            'file_report' => 'reports/' . $filename,
+            'file_report' => 'reports/'.$filename,
         ]);
 
         return redirect()->back()->with('success', 'Report generated successfully.');
@@ -177,13 +180,12 @@ class ReportController extends Controller
     {
         $report = Report::findOrFail($id);
 
-        if (!Storage::exists('public/' . $report->file_report)) {
+        if (! Storage::exists('public/'.$report->file_report)) {
             abort(404, 'File not found.');
         }
 
-        return Storage::download('public/' . $report->file_report);
+        return Storage::download('public/'.$report->file_report);
     }
-
 
     /**
      * Display the specified resource.
@@ -215,6 +217,7 @@ class ReportController extends Controller
     public function destroy(Report $report)
     {
         $report->delete();
+
         return redirect()->route('report.index')->with('success', 'Report successfully deleted!');
     }
 }

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Mail;
 
 class UserManagementController extends Controller
 {
+    protected ?string $modulePermission = 'user_management_access';
+
     /**
      * Display a listing of the resource.
      */
@@ -17,7 +19,7 @@ class UserManagementController extends Controller
     {
         $this->checkAccessOrAbort('user_management_access');
 
-        $unverified_users = User::where('email_verified_at', NULL)->get();
+        $unverified_users = User::where('email_verified_at', null)->get();
         $users = UserManagement::with('user')->get();
 
         return view('user_management.index', compact('unverified_users', 'users'));
@@ -54,14 +56,14 @@ class UserManagementController extends Controller
             'asset',
             'sensor',
             'report',
-            'user_management'
+            'user_management',
         ];
 
         $permissions = [];
 
         // Loop through each screen and collect permissions
         foreach ($screens as $screen) {
-            $key = $screen . '_access';
+            $key = $screen.'_access';
             $permissions[$screen] = $request->input($key, []);
         }
 
@@ -75,21 +77,21 @@ class UserManagementController extends Controller
             'password' => Hash::make('password'), // Default password
         ]);
 
-        if($user->position == 'Staff'){
-            $telegramLink = 'https://t.me/+HE_QqRrNfsIzNGVl';
-        }else{
-            $telegramLink = 'https://t.me/+CstEvaCqXLhiMmNl';
+        if ($user->position == 'Staff') {
+            $telegramLink = (string) config('services.telegram.staff_group_invite');
+        } else {
+            $telegramLink = (string) config('services.telegram.admin_group_invite');
         }
         // dd($user);
 
-        $access= UserManagement::create([
+        $access = UserManagement::create([
             'user_id' => $user->id,
-            'permissions' => $permissions
+            'permissions' => $permissions,
         ]);
 
         // dd($access);
-        
-        Mail::to($user->email)->send(new \App\Mail\NewStaffRegistration($user,$telegramLink));
+
+        Mail::to($user->email)->send(new \App\Mail\NewStaffRegistration($user, $telegramLink));
 
         return redirect()->back()->with('success', 'User verified successfully.');
     }
@@ -121,7 +123,6 @@ class UserManagementController extends Controller
         $permissions = $userPermission ? $userPermission->permissions : [];
         $users = UserManagement::with('user')->get();
 
-
         return view('user_management.edit', compact('user', 'permissions', 'users'));
     }
 
@@ -145,8 +146,6 @@ class UserManagementController extends Controller
         return redirect()->back()->with('success', 'Permissions updated.');
     }
 
-
-
     /**
      * Remove the specified resource from storage.
      */
@@ -155,7 +154,7 @@ class UserManagementController extends Controller
         $userManagement->delete();
 
         User::where('id', $userManagement)->update([
-            'email_verified_at' => null
+            'email_verified_at' => null,
         ]);
     }
 }

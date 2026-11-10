@@ -19,43 +19,27 @@ class UserFactory extends Factory
     /**
      * Define the model's default state.
      *
+     * Emails stay on example domains. The password is the demo value the
+     * Breeze tests sign in with. Call unverified() when a test needs a
+     * null email_verified_at.
+     *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
-        static $isFirst = true;
-        if ($isFirst == true) {
-
-            $isFirst = false;
-
-            return [
-
-                'name' => 'Admin',
-                'email' => 'tnbsamsa@tnb.com.my',
-                'email_verified_at' => now(),
-                'id_staff' => 'TNB001',
-                'position' => 'Admin',
-                'password' => static::$password ??= Hash::make('password'),
-                'remember_token' => Str::random(10),
-            ];         
-        }
-
-        else{
-
-            return [
-
-                'name' => $this->faker->name,
-                'email' => $this->faker->userName().'@tnb.com.my',
-                'email_verified_at' => null,
-                'id_staff' => 'TNB00'.$this->faker->unique()->numberBetween(2,10),
-                'position' => $this->faker->randomElement([
-                    'Staff',
-                    'Manager'
-                ]),
-                'password' => static::$password ??= Hash::make('password'),
-                'remember_token' => Str::random(10),
-            ];
-        }
+        return [
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'email_verified_at' => now(),
+            'id_staff' => 'EX'.$this->faker->unique()->numerify('#####'),
+            'position' => $this->faker->randomElement([
+                'Staff',
+                'Manager',
+                'Admin',
+            ]),
+            'password' => static::$password ??= Hash::make('password'),
+            'remember_token' => Str::random(10),
+        ];
     }
 
     /**
@@ -63,7 +47,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
